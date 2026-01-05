@@ -7,17 +7,20 @@
 
 <style>
 body{margin:0;font-family:Arial;background:#f2f6fb}
-header{background:#2b66e3;color:#fff;padding:30px;text-align:center}
+header{background:#2b66e3;color:#fff;padding:40px;text-align:center}
 section{padding:20px}
 .products{display:flex;gap:15px;flex-wrap:wrap;justify-content:center}
-.box{background:#fff;padding:20px;border-radius:10px;width:220px;text-align:center;box-shadow:0 4px 10px rgba(0,0,0,.1);cursor:pointer}
+.box{background:#fff;padding:20px;border-radius:10px;width:260px;text-align:center;
+box-shadow:0 4px 10px rgba(0,0,0,.1);cursor:pointer}
+.admin-login,.admin{max-width:900px;margin:30px auto;background:#fff;padding:20px;border-radius:10px}
+.card{margin:8px 0}
+input{padding:6px;width:160px;margin:4px}
+button{padding:6px 12px;cursor:pointer}
+hr{margin:20px 0}
 table{width:100%;border-collapse:collapse;margin-top:15px}
 th,td{border:1px solid #ccc;padding:8px;text-align:center}
 th{background:#eee}
-input{padding:5px;width:70px}
-button{padding:6px 10px;cursor:pointer}
 .hidden{display:none}
-.admin-login,.admin{max-width:800px;margin:30px auto;background:#fff;padding:20px;border-radius:10px}
 </style>
 </head>
 
@@ -28,23 +31,35 @@ button{padding:6px 10px;cursor:pointer}
 <p>Manufacturer of uPVC Pipe | Garden Pipe | Section Pipe | SWR Pipe</p>
 </header>
 
+<!-- PRODUCTS -->
 <section>
 <h2 style="text-align:center">Our Products</h2>
 <div class="products">
+<div class="box" onclick="showList('upvc')">uPVC Pipe</div>
+<div class="box" onclick="showList('garden')">Garden Pipe</div>
 <div class="box" onclick="showList('section')">Section Pipe</div>
+<div class="box" onclick="showList('swr')">SWR Pipe</div>
 </div>
 </section>
 
+<!-- PRODUCT LIST -->
 <section id="productList" class="hidden">
-<h2>SECTION PIPE PRICE LIST</h2>
+<h2 id="listTitle"></h2>
+
+<div style="text-align:center;margin-bottom:10px">
+<input id="custName" placeholder="Customer Name">
+<input id="custMobile" placeholder="Mobile Number">
+</div>
+
 <table>
 <thead>
 <tr>
 <th>Size</th>
-<th>PN</th>
+<th>Type / PN</th>
 <th>Base Price</th>
-<th>Quantity</th>
+<th>GST</th>
 <th>Total Price</th>
+<th>Qty</th>
 <th>Action</th>
 </tr>
 </thead>
@@ -52,90 +67,114 @@ button{padding:6px 10px;cursor:pointer}
 </table>
 </section>
 
+<!-- ADMIN LOGIN -->
 <div class="admin-login">
-<h3>Admin Panel</h3>
+<h3>Admin Control</h3>
 <input id="adminPass" placeholder="Password">
 <button onclick="unlockAdmin()">Unlock</button>
 </div>
 
+<!-- ADMIN PANEL -->
 <section id="adminPanel" class="admin hidden">
-<h3>GST (%)</h3>
-<input id="GST_RATE" value="18">
-<button onclick="saveGST()">Save GST</button>
+
+<h2>ADMIN PANEL</h2>
+
+<div class="card">
+<b>GST (%)</b><br>
+<input id="GST_RATE">
+<button onclick="saveGST()">Save</button>
+</div>
+
+<div class="card">
+<b>WhatsApp Order Number</b><br>
+<input id="WA_NUMBER_INPUT" placeholder="91XXXXXXXXXX">
+<button onclick="saveWANumber()">Save</button>
+</div>
 
 <hr>
 
-<h3>Section Pipe Prices</h3>
-2.5" PN6 ₹ <input id="section_2.5_PN6">
-<button onclick="savePrice('section_2.5_PN6')">Save</button>
+<h3>PRICE CONTROL</h3>
+
+<div class="card">uPVC ½" PN6 <input id="upvc_0.5_PN6"><button onclick="savePrice('upvc_0.5_PN6')">Save</button></div>
+<div class="card">uPVC 1" PN6 <input id="upvc_1_PN6"><button onclick="savePrice('upvc_1_PN6')">Save</button></div>
+
+<div class="card">Garden ½" TP <input id="garden_0.5_TP"><button onclick="savePrice('garden_0.5_TP')">Save</button></div>
+
+<div class="card">Section 2.5" PN6 <input id="section_2.5_PN6"><button onclick="savePrice('section_2.5_PN6')">Save</button></div>
+
+<div class="card">SWR 4" PN6 <input id="swr_4_PN6"><button onclick="savePrice('swr_4_PN6')">Save</button></div>
+
 </section>
 
 <script>
-const WHATSAPP_NUMBER = "917003764905";
-const PASS = "1234";
+const PASS="1234";
+let WHATSAPP_NUMBER = localStorage.getItem("WA_NUMBER") || "917003764905";
 
-const products = {
- section:[
-  ["2.5\"", "PN6", "section_2.5_PN6"]
- ]
+const products={
+ upvc:[["½\"","PN6","upvc_0.5_PN6"],["1\"","PN6","upvc_1_PN6"]],
+ garden:[["½\"","TP","garden_0.5_TP"]],
+ section:[["2.5\"","PN6","section_2.5_PN6"]],
+ swr:[["4\"","PN6","swr_4_PN6"]]
 };
 
 function showList(type){
+ const gst=Number(localStorage.getItem("GST")||18);
  document.getElementById("productList").classList.remove("hidden");
+ document.getElementById("listTitle").innerText=type.toUpperCase()+" PIPE PRICE LIST";
  const body=document.getElementById("listBody");
  body.innerHTML="";
- const gst=Number(localStorage.getItem("GST")||18);
-
  products[type].forEach(p=>{
   const price=Number(localStorage.getItem(p[2])||0);
-  const total=(price*(1+gst/100)).toFixed(2);
-
   body.innerHTML+=`
-  <tr>
-   <td>${p[0]}</td>
-   <td>${p[1]}</td>
-   <td>₹${price}</td>
-   <td>
-     <input type="number" min="1" value="1" id="qty_${p[2]}" 
-     onchange="calc('${p[2]}')">
-   </td>
-   <td id="total_${p[2]}">₹${total}</td>
-   <td>
-     <button onclick="orderWhatsApp('${p[2]}','${p[0]} ${p[1]}')">
-       Order on WhatsApp
-     </button>
-   </td>
-  </tr>`;
+<tr>
+<td>${p[0]}</td>
+<td>${p[1]}</td>
+<td>₹${price}</td>
+<td>${gst}%</td>
+<td id="total_${p[2]}">₹${(price*(1+gst/100)).toFixed(2)}</td>
+<td><input type="number" id="qty_${p[2]}" value="1" min="1"></td>
+<td>
+<button onclick="calc('${p[2]}')">Update</button>
+<button onclick="orderWhatsApp('${p[2]}','${p[0]} ${p[1]}')">WhatsApp</button>
+</td>
+</tr>`;
  });
 }
 
 function calc(id){
- const qty=Number(document.getElementById("qty_"+id).value);
- const price=Number(localStorage.getItem(id)||0);
- const gst=Number(localStorage.getItem("GST")||18);
- const total=price*qty*(1+gst/100);
- document.getElementById("total_"+id).innerText="₹"+total.toFixed(2);
+ const q=Number(document.getElementById("qty_"+id).value);
+ const p=Number(localStorage.getItem(id)||0);
+ const g=Number(localStorage.getItem("GST")||18);
+ document.getElementById("total_"+id).innerText="₹"+(p*q*(1+g/100)).toFixed(2);
 }
 
 function orderWhatsApp(id,name){
- const qty=Number(document.getElementById("qty_"+id).value);
- const price=Number(localStorage.getItem(id)||0);
- const gst=Number(localStorage.getItem("GST")||18);
- const total=(price*qty*(1+gst/100)).toFixed(2);
+ const q=Number(document.getElementById("qty_"+id).value);
+ const p=Number(localStorage.getItem(id)||0);
+ const g=Number(localStorage.getItem("GST")||18);
+ const total=(p*q*(1+g/100)).toFixed(2);
 
- const msg=`Order Details:
+ const cname=document.getElementById("custName").value||"Not Given";
+ const mob=document.getElementById("custMobile").value||"Not Given";
+
+ const msg=`🧾 NEW ORDER
+------------------
+Name: ${cname}
+Mobile: ${mob}
+
 Product: ${name}
-Quantity: ${qty}
-Total Price: ₹${total}`;
+Qty: ${q}
+Total: ₹${total}
 
- const url=`https://wa.me/${917003764905}?text=${encodeURIComponent(msg)}`;
- window.open(url,"_blank");
+JGD Quality Industries`;
+
+ window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`,"_blank");
 }
 
 function unlockAdmin(){
- if(document.getElementById("adminPass").value===PASS){
+ if(document.getElementById("adminPass").value===PASS)
   document.getElementById("adminPanel").classList.remove("hidden");
- }else alert("Wrong Password");
+ else alert("Wrong Password");
 }
 
 function savePrice(id){
@@ -148,11 +187,19 @@ function saveGST(){
  alert("GST Saved");
 }
 
+function saveWANumber(){
+ const n=document.getElementById("WA_NUMBER_INPUT").value;
+ localStorage.setItem("WA_NUMBER",n);
+ WHATSAPP_NUMBER=n;
+ alert("WhatsApp Saved");
+}
+
 window.onload=()=>{
  document.getElementById("GST_RATE").value=localStorage.getItem("GST")||18;
- if(localStorage.getItem("section_2.5_PN6"))
-  document.getElementById("section_2.5_PN6").value=
-  localStorage.getItem("section_2.5_PN6");
+ document.getElementById("WA_NUMBER_INPUT").value=localStorage.getItem("WA_NUMBER")||"";
+ document.querySelectorAll("input").forEach(i=>{
+  if(localStorage.getItem(i.id)) i.value=localStorage.getItem(i.id);
+ });
 }
 </script>
 
