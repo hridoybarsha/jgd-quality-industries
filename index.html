@@ -118,6 +118,7 @@ th{background:#eee}
 
 <script>
 const PASS="1234";
+const WHATSAPP_NUMBER="917003764905"; // এখানে তোমার WhatsApp নাম্বার বসানো
 
 const products={
  upvc:[
@@ -186,8 +187,8 @@ function orderWhatsApp(id,name){
  const price=Number(localStorage.getItem(id)||0);
  const gst=Number(localStorage.getItem("GST")||18);
  const total=(price*qty*(1+gst/100)).toFixed(2);
- const msg=`I want ${name} Quantity ${qty}. Total Price ₹${total}`;
- const wa=`https://wa.me/919999999999?text=${encodeURIComponent(msg)}`;
+ const msg=`I want ${name}, Quantity: ${qty}, Total Price: ₹${total}`;
+ const wa=`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
  window.open(wa,"_blank");
 }
 
