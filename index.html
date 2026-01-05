@@ -35,10 +35,8 @@ input:focus,select:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px 
 .btn:hover{transform:scale(1.05);box-shadow:0 5px 15px rgba(37,99,235,0.3);}
 
 /* Admin Panel */
-.admin-panel{background:#fff;padding:25px;margin:30px auto;border-radius:16px;box-shadow:0 8px 25px rgba(0,0,0,0.1);max-width:700px;}
+.admin-panel{background:#fff;padding:25px;margin:30px auto;border-radius:16px;box-shadow:0 8px 25px rgba(0,0,0,0.1);max-width:700px;display:none;}
 .admin-panel h2{text-align:center;margin-bottom:20px;}
-.admin-panel input, .admin-panel select{margin:8px 0;}
-.admin-panel button{margin-top:10px;}
 
 /* Footer */
 footer{background:#0f172a;color:#fff;text-align:center;padding:20px;margin-top:30px;font-size:0.95rem;letter-spacing:1px;}
@@ -173,8 +171,11 @@ footer{background:#0f172a;color:#fff;text-align:center;padding:20px;margin-top:3
   <button class="btn" onclick="sendWhatsApp('Section')">Send on WhatsApp</button>
 </section>
 
+<!-- Admin Login Button -->
+<button class="btn" style="margin:20px auto;display:block;" onclick="showAdminPanel()">Admin Login</button>
+
 <!-- Admin Panel -->
-<section class="admin-panel">
+<section class="admin-panel" id="adminPanel">
 <h2>Admin Price Control</h2>
 <label>Product</label>
 <select id="adminProduct">
@@ -251,6 +252,17 @@ function sendWhatsApp(product){
   window.open("https://wa.me/+917003764905?text="+msg);
 }
 
+// Admin Password Protection
+const ADMIN_PASSWORD = "JGD2026"; // Change this password
+function showAdminPanel(){
+  let pass = prompt("Enter Admin Password:");
+  if(pass === ADMIN_PASSWORD){
+    document.getElementById("adminPanel").style.display = "block";
+  } else {
+    alert("Incorrect Password!");
+  }
+}
+
 // Admin Price Update
 function updatePrice(){
   let product=document.getElementById("adminProduct").value;
@@ -262,6 +274,5 @@ function updatePrice(){
   alert("Price Updated Successfully!");
 }
 </script>
-
 </body>
 </html>
