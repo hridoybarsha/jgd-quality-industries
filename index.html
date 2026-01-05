@@ -35,8 +35,11 @@ input:focus,select:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px 
 .btn:hover{transform:scale(1.05);box-shadow:0 5px 15px rgba(37,99,235,0.3);}
 
 /* Admin Panel */
-.admin-panel{background:#fff;padding:25px;margin:30px auto;border-radius:16px;box-shadow:0 8px 25px rgba(0,0,0,0.1);max-width:700px;display:none;}
+.admin-panel{background:#fff;padding:25px;margin:30px auto;border-radius:16px;box-shadow:0 8px 25px rgba(0,0,0,0.1);max-width:95%;display:none;}
 .admin-panel h2{text-align:center;margin-bottom:20px;}
+.admin-panel table{width:100%;border-collapse:collapse;margin-bottom:25px;}
+.admin-panel th, .admin-panel td{border:1px solid #cbd5e1;padding:10px;text-align:center;}
+.admin-panel th{background:#e0f2fe;color:#1e3a8a;}
 
 /* Footer */
 footer{background:#0f172a;color:#fff;text-align:center;padding:20px;margin-top:30px;font-size:0.95rem;letter-spacing:1px;}
@@ -54,7 +57,7 @@ footer{background:#0f172a;color:#fff;text-align:center;padding:20px;margin-top:3
 <!-- Hero Banner -->
 <header>
   <h1>JGD QUALITY INDUSTRIES</h1>
-  <p>Manufacturer of uPVC Pipe | Garden Pipe | Section Pipe</p>
+  <p>Manufacturer of uPVC Pipe | Garden Pipe | Section Pipe | SWR Pipe</p>
   <button class="btn" onclick="scrollToProducts()">Order Now</button>
   <div class="hero-slide active" style="background-image:url('https://images.unsplash.com/photo-1596464716121-9d9f0f4958b0?fit=crop&w=1200&q=80');"></div>
   <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1581092334420-3d6df29c3d7e?fit=crop&w=1200&q=80');"></div>
@@ -77,10 +80,15 @@ footer{background:#0f172a;color:#fff;text-align:center;padding:20px;margin-top:3
       <h3>Section Pipe</h3>
       <p>Premium Section Pipes for industrial and home projects.</p>
     </div>
+    <div class="product-card" onclick="showSection('SWR')">
+      <h3>SWR Pipe</h3>
+      <p>Durable SWR Pipes for drainage and sewer systems.</p>
+    </div>
   </div>
 </section>
 
 <!-- Order Sections -->
+<!-- uPVC -->
 <section class="order-section" id="uPVC">
   <h2>uPVC Pipe Order</h2>
   <label>Pipe Size</label>
@@ -104,6 +112,10 @@ footer{background:#0f172a;color:#fff;text-align:center;padding:20px;margin-top:3
   </select>
   <label>Quantity (Meter)</label>
   <input type="number" id="qty_uPVC" oninput="calculatePrice('uPVC')">
+  <label>Subtotal</label>
+  <input type="text" id="subtotal_uPVC" readonly>
+  <label>GST (18%)</label>
+  <input type="text" id="gst_uPVC" readonly>
   <label>Total Price</label>
   <input type="text" id="price_uPVC" readonly>
   <label>Name</label>
@@ -113,6 +125,7 @@ footer{background:#0f172a;color:#fff;text-align:center;padding:20px;margin-top:3
   <button class="btn" onclick="sendWhatsApp('uPVC')">Send on WhatsApp</button>
 </section>
 
+<!-- Garden -->
 <section class="order-section" id="Garden">
   <h2>Garden Pipe Order</h2>
   <label>Pipe Size</label>
@@ -133,6 +146,10 @@ footer{background:#0f172a;color:#fff;text-align:center;padding:20px;margin-top:3
   </select>
   <label>Quantity (Meter)</label>
   <input type="number" id="qty_Garden" oninput="calculatePrice('Garden')">
+  <label>Subtotal</label>
+  <input type="text" id="subtotal_Garden" readonly>
+  <label>GST (18%)</label>
+  <input type="text" id="gst_Garden" readonly>
   <label>Total Price</label>
   <input type="text" id="price_Garden" readonly>
   <label>Name</label>
@@ -142,6 +159,7 @@ footer{background:#0f172a;color:#fff;text-align:center;padding:20px;margin-top:3
   <button class="btn" onclick="sendWhatsApp('Garden')">Send on WhatsApp</button>
 </section>
 
+<!-- Section -->
 <section class="order-section" id="Section">
   <h2>Section Pipe Order</h2>
   <label>Pipe Size</label>
@@ -162,6 +180,10 @@ footer{background:#0f172a;color:#fff;text-align:center;padding:20px;margin-top:3
   </select>
   <label>Quantity (Meter)</label>
   <input type="number" id="qty_Section" oninput="calculatePrice('Section')">
+  <label>Subtotal</label>
+  <input type="text" id="subtotal_Section" readonly>
+  <label>GST (18%)</label>
+  <input type="text" id="gst_Section" readonly>
   <label>Total Price</label>
   <input type="text" id="price_Section" readonly>
   <label>Name</label>
@@ -171,38 +193,47 @@ footer{background:#0f172a;color:#fff;text-align:center;padding:20px;margin-top:3
   <button class="btn" onclick="sendWhatsApp('Section')">Send on WhatsApp</button>
 </section>
 
+<!-- SWR -->
+<section class="order-section" id="SWR">
+  <h2>SWR Pipe Order</h2>
+  <label>Pipe Size</label>
+  <select id="size_SWR" onchange="calculatePrice('SWR')">
+      <option value="">Select</option>
+      <option value="4">4 Inch</option>
+      <option value="6">6 Inch</option>
+      <option value="8">8 Inch</option>
+      <option value="10">10 Inch</option>
+      <option value="12">12 Inch</option>
+  </select>
+  <label>PN</label>
+  <select id="pn_SWR" onchange="calculatePrice('SWR')">
+      <option value="">Select</option>
+      <option value="PN4">PN4</option>
+      <option value="PN6">PN6</option>
+      <option value="PN10">PN10</option>
+  </select>
+  <label>Quantity (Meter)</label>
+  <input type="number" id="qty_SWR" oninput="calculatePrice('SWR')">
+  <label>Subtotal</label>
+  <input type="text" id="subtotal_SWR" readonly>
+  <label>GST (18%)</label>
+  <input type="text" id="gst_SWR" readonly>
+  <label>Total Price</label>
+  <input type="text" id="price_SWR" readonly>
+  <label>Name</label>
+  <input type="text" id="name_SWR">
+  <label>Mobile</label>
+  <input type="text" id="mobile_SWR">
+  <button class="btn" onclick="sendWhatsApp('SWR')">Send on WhatsApp</button>
+</section>
+
 <!-- Admin Login Button -->
 <button class="btn" style="margin:20px auto;display:block;" onclick="showAdminPanel()">Admin Login</button>
 
 <!-- Admin Panel -->
 <section class="admin-panel" id="adminPanel">
-<h2>Admin Price Control</h2>
-<label>Product</label>
-<select id="adminProduct">
-  <option value="uPVC">uPVC Pipe</option>
-  <option value="Garden">Garden Pipe</option>
-  <option value="Section">Section Pipe</option>
-</select>
-<label>Size</label>
-<select id="adminSize">
-  <option value="1/2">1/2 Inch</option>
-  <option value="3/4">3/4 Inch</option>
-  <option value="1">1 Inch</option>
-  <option value="1.5">1.5 Inch</option>
-  <option value="2">2 Inch</option>
-  <option value="2.5">2.5 Inch</option>
-  <option value="3">3 Inch</option>
-  <option value="4">4 Inch</option>
-</select>
-<label>PN</label>
-<select id="adminPN">
-  <option value="PN4">PN4</option>
-  <option value="PN6">PN6</option>
-  <option value="PN10">PN10</option>
-</select>
-<label>Price per Unit</label>
-<input type="number" id="adminPrice">
-<button onclick="updatePrice()">Update Price</button>
+<h2>Admin Panel - Price Control</h2>
+<div id="adminTables"></div>
 </section>
 
 <footer>
@@ -217,62 +248,22 @@ showSlide();setInterval(showSlide,5000);
 
 // Scroll
 function scrollToProducts(){document.getElementById('products').scrollIntoView({behavior:'smooth'});}
-function showSection(id){['uPVC','Garden','Section'].forEach(s=>document.getElementById(s).style.display='none');document.getElementById(id).style.display='block';}
+function showSection(id){['uPVC','Garden','Section','SWR'].forEach(s=>document.getElementById(s).style.display='none');document.getElementById(id).style.display='block';}
 
-// Prices
+// Prices Object
 let prices = {
-  "1/2_PN4":25,"1/2_PN6":35,"1/2_PN10":50,
-  "3/4_PN4":30,"3/4_PN6":40,"3/4_PN10":55,
-  "1_PN4":50,"1_PN6":65,"1_PN10":85,
-  "1.5_PN4":80,"1.5_PN6":100,"1.5_PN10":130,
-  "2_PN4":120,"2_PN6":145,"2_PN10":180,
-  "2.5_PN4":200,"2.5_PN6":240,"2.5_PN10":300,
-  "3_PN4":250,"3_PN6":300,"3_PN10":370,
-  "4_PN4":350,"4_PN6":420,"4_PN10":500
+  "uPVC":{"1/2_PN4":25,"1/2_PN6":35,"1/2_PN10":50,"3/4_PN4":30,"3/4_PN6":40,"3/4_PN10":55,"1_PN4":50,"1_PN6":65,"1_PN10":85,"1.5_PN4":80,"1.5_PN6":100,"1.5_PN10":130,"2_PN4":120,"2_PN6":145,"2_PN10":180,"2.5_PN4":200,"2.5_PN6":240,"2.5_PN10":300,"3_PN4":250,"3_PN6":300,"3_PN10":370,"4_PN4":350,"4_PN6":420,"4_PN10":500},
+  "Garden":{"1/2_PN4":20,"1/2_PN6":30,"1/2_PN10":45,"3/4_PN4":25,"3/4_PN6":35,"3/4_PN10":50,"1_PN4":40,"1_PN6":55,"1_PN10":75,"1.5_PN4":70,"1.5_PN6":90,"1.5_PN10":120,"2_PN4":110,"2_PN6":135,"2_PN10":170},
+  "Section":{"1/2_PN4":15,"1/2_PN6":25,"1/2_PN10":35,"3/4_PN4":20,"3/4_PN6":30,"3/4_PN10":45,"1_PN4":35,"1_PN6":50,"1_PN10":70,"1.5_PN4":60,"1.5_PN6":80,"1.5_PN10":110,"2_PN4":100,"2_PN6":125,"2_PN10":160},
+  "SWR":{"4_PN4":300,"4_PN6":360,"4_PN10":450,"6_PN4":500,"6_PN6":600,"6_PN10":750,"8_PN4":800,"8_PN6":950,"8_PN10":1200,"10_PN4":1200,"10_PN6":1500,"10_PN10":1800,"12_PN4":1600,"12_PN6":2000,"12_PN10":2500}
 };
 
+const GST_PERCENT = 18;
+
+// Calculate Price
 function calculatePrice(product){
-  let size=document.getElementById("size_"+product).value;
-  let pn=document.getElementById("pn_"+product).value;
-  let qty=parseFloat(document.getElementById("qty_"+product).value)||0;
-  let key=size+"_"+pn;
-  let rate=prices[key]||0;
-  document.getElementById("price_"+product).value="₹ "+(rate*qty);
-}
-
-function sendWhatsApp(product){
-  let name=document.getElementById("name_"+product).value;
-  let mobile=document.getElementById("mobile_"+product).value;
-  let size=document.getElementById("size_"+product).value;
-  let pn=document.getElementById("pn_"+product).value;
-  let qty=document.getElementById("qty_"+product).value;
-  let total=document.getElementById("price_"+product).value;
-  if(!name||!mobile||!size||!pn||!qty){alert("Please fill all fields"); return;}
-  let msg=`Order Inquiry%0AProduct: ${product}%0ASize: ${size}%0APN: ${pn}%0AQuantity: ${qty}%0ATotal Price: ${total}%0AName: ${name}%0AMobile: ${mobile}`;
-  window.open("https://wa.me/+917003764905?text="+msg);
-}
-
-// Admin Password Protection
-const ADMIN_PASSWORD = "JGD2026"; // Change this password
-function showAdminPanel(){
-  let pass = prompt("Enter Admin Password:");
-  if(pass === ADMIN_PASSWORD){
-    document.getElementById("adminPanel").style.display = "block";
-  } else {
-    alert("Incorrect Password!");
-  }
-}
-
-// Admin Price Update
-function updatePrice(){
-  let product=document.getElementById("adminProduct").value;
-  let size=document.getElementById("adminSize").value;
-  let pn=document.getElementById("adminPN").value;
-  let price=parseFloat(document.getElementById("adminPrice").value);
-  if(!price){alert("Enter valid price"); return;}
-  prices[size+"_"+pn]=price;
-  alert("Price Updated Successfully!");
-}
-</script>
-</body>
-</html>
+  let size = document.getElementById("size_" + product).value;
+  let pn = document.getElementById("pn_" + product).value;
+  let qty = parseFloat(document.getElementById("qty_" + product).value) || 0;
+  let key = size + "_" + pn;
+  let rate =
