@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
 <meta charset="UTF-8">
 <title>JGD Quality Industries</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body{margin:0;font-family:Arial;background:#f2f2f2}
 header{background:#0a3d62;color:#fff;padding:20px;text-align:center}
 nav{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;background:#1e3799;padding:10px}
 nav button{padding:10px 15px;border:none;font-weight:bold;cursor:pointer}
 section{display:none;padding:20px}
-.card{background:#fff;padding:15px;margin:10px auto;max-width:400px;border-radius:6px}
+.card{background:#fff;padding:15px;margin:10px auto;max-width:420px;border-radius:6px}
 input,select,button{width:100%;padding:8px;margin-top:6px}
 button{background:#1e3799;color:#fff;border:none}
 footer{text-align:center;padding:15px;background:#111;color:#aaa;cursor:pointer}
@@ -34,30 +34,7 @@ footer{text-align:center;padding:15px;background:#111;color:#aaa;cursor:pointer}
 <button onclick="openP('dealer')">Dealer</button>
 </nav>
 
-<!-- PRODUCT TEMPLATE -->
-<script>
-function productHTML(type, hasPN=true){
-return `
-<div class="card">
-<select id="${type}Size">
-<option>2.5 Inch</option>
-<option>3 Inch</option>
-<option>4 Inch</option>
-</select>
-${hasPN?`
-<select id="${type}PN">
-<option>PN6</option>
-<option>PN8</option>
-<option>PN10</option>
-</select>`:""}
-<input id="${type}Qty" type="number" placeholder="Quantity">
-<button onclick="calc('${type}')">Get Price</button>
-<p id="${type}Out"></p>
-<button onclick="wa('${type}')">Order on WhatsApp</button>
-</div>`;
-}
-</script>
-
+<!-- PRODUCTS -->
 <section id="upvc"><h2>uPVC Pipe</h2></section>
 <section id="garden"><h2>Garden Pipe</h2></section>
 <section id="section"><h2>Section Pipe</h2></section>
@@ -69,24 +46,45 @@ ${hasPN?`
 <input id="dName" placeholder="Name">
 <input id="dMobile" placeholder="Mobile">
 <input id="dCity" placeholder="City">
-<select id="dType"><option>Dealer</option><option>Distributor</option></select>
+<select id="dType">
+<option>Dealer</option>
+<option>Distributor</option>
+</select>
 <button onclick="dealerWA()">Send Enquiry</button>
 </div>
 </section>
 
-<!-- ADMIN -->
+<!-- ADMIN PANEL -->
 <div id="adminPanel" class="admin">
 <h2>Admin Price Control</h2>
+
 <select id="aProduct">
-<option>upvc</option><option>garden</option>
-<option>section</option><option>swr</option>
+<option value="upvc">uPVC</option>
+<option value="garden">Garden</option>
+<option value="section">Section</option>
+<option value="swr">SWR</option>
 </select>
+
 <select id="aSize">
-<option>2.5 Inch</option><option>3 Inch</option><option>4 Inch</option>
+<option>½"</option>
+<option>¾"</option>
+<option>1"</option>
+<option>1.25"</option>
+<option>1.5"</option>
+<option>2"</option>
+<option>2.5"</option>
+<option>3"</option>
+<option>4"</option>
+<option>6"</option>
 </select>
+
 <select id="aPN">
-<option>PN6</option><option>PN8</option><option>PN10</option>
+<option>PN6</option>
+<option>PN8</option>
+<option>PN10</option>
+<option>PN12.5</option>
 </select>
+
 <input id="aPrice" type="number" placeholder="Price">
 <input id="aGST" type="number" placeholder="GST %" value="18">
 <button onclick="save()">Save</button>
@@ -98,16 +96,52 @@ ${hasPN?`
 const ADMIN_PASS="JGD2026";
 let clicks=0;
 
+/* ---------- SIZE CONFIG ---------- */
+function sizeOptions(type){
+if(type==="garden"||type==="upvc")
+return `<option>½"</option><option>¾"</option><option>1"</option><option>1.25"</option><option>1.5"</option>`;
+if(type==="section")
+return `<option>1"</option><option>1.25"</option><option>2"</option><option>2.5"</option><option>3"</option>`;
+if(type==="swr")
+return `<option>2.5"</option><option>3"</option><option>4"</option><option>6"</option>`;
+}
+
+/* ---------- PRODUCT HTML ---------- */
+function productHTML(type, hasPN=true){
+return `
+<div class="card">
+<select id="${type}Size">${sizeOptions(type)}</select>
+
+${hasPN?`
+<select id="${type}PN">
+<option>PN6</option>
+<option>PN8</option>
+<option>PN10</option>
+<option>PN12.5</option>
+</select>`:""}
+
+<input id="${type}Qty" type="number" placeholder="Quantity">
+
+<button onclick="calc('${type}')">Get Price</button>
+<p id="${type}Out"></p>
+
+<button onclick="wa('${type}')">Order on WhatsApp</button>
+</div>`;
+}
+
+/* ---------- LOAD PRODUCTS ---------- */
 upvc.innerHTML+=productHTML("upvc",true);
 garden.innerHTML+=productHTML("garden",false);
 section.innerHTML+=productHTML("section",false);
 swr.innerHTML+=productHTML("swr",false);
 
+/* ---------- NAV ---------- */
 function openP(id){
 document.querySelectorAll("section").forEach(s=>s.style.display="none");
 document.getElementById(id).style.display="block";
 }
 
+/* ---------- PRICE KEY ---------- */
 function key(type){
 let size=document.getElementById(type+"Size").value;
 let pnEl=document.getElementById(type+"PN");
@@ -115,6 +149,7 @@ let pn=pnEl?pnEl.value:"NA";
 return type+"_"+size+"_"+pn;
 }
 
+/* ---------- CALCULATION ---------- */
 function calc(type){
 let qty=+document.getElementById(type+"Qty").value||1;
 let price=localStorage.getItem(key(type))||0;
@@ -122,37 +157,41 @@ let gst=localStorage.getItem(type+"_GST")||0;
 let total=price*qty;
 let gstAmt=total*gst/100;
 document.getElementById(type+"Out").innerText=
-`Price: ₹${price} | Qty:${qty}
+`Price: ₹${price}
+Qty: ${qty}
 Total: ₹${total}
-GST(${gst}%): ₹${gstAmt}
+GST (${gst}%): ₹${gstAmt}
 Grand Total: ₹${total+gstAmt}`;
 }
 
+/* ---------- ADMIN SAVE ---------- */
 function save(){
 localStorage.setItem(
 aProduct.value+"_"+aSize.value+"_"+aPN.value,
 aPrice.value
 );
 localStorage.setItem(aProduct.value+"_GST",aGST.value);
-alert("Updated");
+alert("Price Updated");
 }
 
+/* ---------- WHATSAPP ---------- */
 function wa(type){
-let msg=`Order:
-Product:${type}
+let msg=`Order Details
+Product: ${type.toUpperCase()}
 ${document.getElementById(type+"Out").innerText}`;
 window.open("https://wa.me/917003764905?text="+encodeURIComponent(msg));
 }
 
 function dealerWA(){
 let msg=`Dealer Enquiry
-Name:${dName.value}
-Mobile:${dMobile.value}
-City:${dCity.value}
-Type:${dType.value}`;
+Name: ${dName.value}
+Mobile: ${dMobile.value}
+City: ${dCity.value}
+Type: ${dType.value}`;
 window.open("https://wa.me/917003764905?text="+encodeURIComponent(msg));
 }
 
+/* ---------- ADMIN LOGIN ---------- */
 adminTrigger.onclick=()=>{
 clicks++;
 if(clicks==5){
