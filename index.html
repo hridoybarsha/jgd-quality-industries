@@ -180,13 +180,16 @@ function updateTotal(id){
 }
 
 function orderWhatsApp(id,name){
- const qty=Number(document.getElementById("qty_"+id).value||1);
- const price=Number(localStorage.getItem(id)||0);
- const gst=Number(localStorage.getItem("GST")||18);
- const total=(price*qty*(1+gst/100)).toFixed(2);
- const msg=`I want ${name}\nQuantity: ${qty}\nTotal Price: ₹${total}`;
- const waUrl=`https://wa.me/${WHATSAPP_NUMBER.replace(/\+/g,"")}?text=${encodeURIComponent(msg)}`;
- window.open(waUrl,"_blank");
+    const qty = Number(document.getElementById("qty_"+id).value || 1);
+    const price = Number(localStorage.getItem(id) || 0);
+    const gst = Number(localStorage.getItem("GST") || 18);
+    const total = (price * qty * (1 + gst/100)).toFixed(2);
+    
+    const number = "917003764905"; // WhatsApp number (country code + number, no +)
+    const msg = `I want ${name}\nQuantity: ${qty}\nTotal Price: ₹${total}`;
+    const url = `https://wa.me/${number}?text=${encodeURIComponent(msg)}`;
+    
+    window.open(url, "_blank");
 }
 
 function unlockAdmin(){
@@ -215,3 +218,4 @@ window.onload=()=>{
 
 </body>
 </html>
+
