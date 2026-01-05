@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>JGD Pipe Order</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{margin:0;font-family:Arial;background:#f2f6fb}
+header{background:#2b66e3;color:#fff;padding:30px;text-align:center}
+table{width:100%;border-collapse:collapse;margin:20px 0}
+th,td{border:1px solid #ccc;padding:8px;text-align:center}
+th{background:#eee}
+input{width:60px;padding:4px}
+button{padding:5px 8px;margin-left:4px;cursor:pointer}
+.admin-login,.admin{max-width:800px;margin:20px auto;background:#fff;padding:20px;border-radius:10px}
+.card{margin:8px 0}
+</style>
+</head>
+<body>
+
+<header>
+<h1>JGD Pipe Order</h1>
+<p>Place your order via WhatsApp</p>
+</header>
+
+<!-- PRODUCTS TABLE -->
+<table>
+<thead>
+<tr>
+<th>Product</th>
+<th>Type/PN</th>
+<th>Base Price</th>
+<th>GST (%)</th>
+<th>Total Price</th>
+<th>Quantity</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="productTable"></tbody>
+</table>
+
+<!-- ADMIN LOGIN -->
+<div class="admin-login">
+<h3>Admin Panel Login</h3>
+<input type="password" id="adminPass" placeholder="Password">
+<button onclick="unlockAdmin()">Unlock Admin Panel</button>
+</div>
+
+<!-- ADMIN PANEL -->
+<section id="adminPanel" class="admin" style="display:none;">
+<h2>ADMIN PANEL</h2>
+
+<div class="card">
+<b>GST (%)</b><br>
+<input type="number" id="GST_RATE">
+<button onclick="saveGST()">Save GST</button>
+</div>
+
+<hr>
+
+<h3>Update Product Prices</h3>
+<div id="adminProducts"></div>
+
+</section>
+
+<script>
+// WhatsApp Number
+const phone = "917003764905";  // এখানে তোমার WhatsApp নাম্বার বসাও
+
+// Admin Password
+const PASS = "1234";
+
+// Products List
+let products = [
+  {id:'upvc_0.5', name:'uPVC ½"', type:'PN6', price:80},
+  {id:'garden_0.5', name:'Garden ½"', type:'TP', price:50},
+  {id:'section_2.5', name:'Section 2.5"', type:'PN6', price:180},
+  {id:'swr_3', name:'SWR 3"', type:'PN6', price:250}
+];
+
+// Load saved GST and prices from localStorage
+let GST = Number(localStorage.getItem("GST") || 18);
+products.forEach(p => {
+  const savedPrice = localStorage.getItem(p.id);
+  if(savedPrice) p.price = Number(savedPrice);
+});
+
+// Render Products Table
+function renderTable(){
+  const tbody = document.getElementById("productTable");
+  tbody.innerHTML = "";
+  products.forEach(p => {
+    const total = p.price * (1 + GST/100);
+    tbody.innerHTML += `<tr>
+      <td>${p.name}</td>
+      <td>${p.type}</td>
+      <td>₹${p.price}</td>
+      <td>${GST}%</td>
+      <td id="total_${p.id}">₹${total.toFixed(2)}</td>
+      <td><input type="number" id="qty_${p.id}" value="1" min="1"></td>
+      <td>
+        <button onclick="calculatePrice('${p.id}', ${p.price})">Get Price</button>
+        <button onclick="orderWhatsApp('${p.id}', '${p.name} ${p.type}', ${p.price})">Order on WhatsApp</button>
+      </td>
+    </tr>`;
+  });
+}
+
+// Calculate Total Price
+function calculatePrice(id, price){
+  const qty = Number(document.getElementById("qty_"+id).value || 1);
+  const total = price * qty * (1 + GST/100);
+  document.getElementById("total_"+id).innerText = "₹" + total.toFixed(2);
+}
+
+// WhatsApp Order Function (fixed)
+function orderWhatsApp(id, name, price){
+  const qty = Number(document.getElementById("qty_"+id).value || 1);
+  const total = (price * qty * (1 + GST/100)).toFixed(2);
+  const msg = `🧾 New Order\nProduct: ${name}\nQuantity: ${qty}\nTotal Price: ₹${total}`;
+  const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+  window.open(waLink, "_blank");
+}
+
+// Admin Panel Unlock
+function unlockAdmin(){
+  const pass = document.getElementById("adminPass").value;
+  if(pass === PASS){
+    document.getElementById("adminPanel").style.display = "block";
+    renderAdminProducts();
+  } else alert("Wrong Password");
+}
+
+// Render Admin Product Inputs
+function renderAdminProducts(){
+  const container = document.getElementById("adminProducts");
+  container.innerHTML = "";
+  products.forEach(p => {
+    container.innerHTML += `<div class="card">
+      ${p.name} | ${p.type} <input type="number" id="admin_${p.id}" value="${p.price}">
+      <button onclick="savePriceAdmin('${p.id}')">Save</button>
+    </div>`;
+  });
+  document.getElementById("GST_RATE").value = GST;
+}
+
+// Save Individual Product Price from Admin
+function savePriceAdmin(id){
+  const newPrice = Number(document.getElementById("admin_"+id).value);
+  const product = products.find(p=>p.id===id);
+  product.price = newPrice;
+  localStorage.setItem(id, newPrice);
+  renderTable();
+  alert("Price Updated");
+}
+
+// Save GST
+function saveGST(){
+  GST = Number(document.getElementById("GST_RATE").value);
+  localStorage.setItem("GST", GST);
+  renderTable();
+  alert("GST Updated");
+}
+
+// Initial Render
+window.onload = renderTable;
+</script>
+
+</body>
+</html>
