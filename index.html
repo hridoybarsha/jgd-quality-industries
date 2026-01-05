@@ -3,121 +3,112 @@
 <head>
 <meta charset="UTF-8">
 <title>JGD Quality Industries</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body{margin:0;font-family:Arial;background:#f2f6fb}
-header{background:#2b66e3;color:#fff;padding:40px;text-align:center}
-section{padding:20px}
-.products{display:flex;gap:15px;flex-wrap:wrap;justify-content:center}
-.box{background:#fff;padding:20px;border-radius:10px;width:260px;text-align:center;box-shadow:0 4px 10px rgba(0,0,0,.1)}
-.admin-login,.admin{max-width:700px;margin:30px auto;background:#fff;padding:20px;border-radius:10px}
-.card{margin:8px 0}
-input{padding:6px;width:150px}
-button{padding:6px 10px;margin-left:5px}
-hr{margin:20px 0}
+body{font-family:Arial;margin:0;background:#f2f4f7}
+.header{background:#2f66d0;color:#fff;padding:40px 20px;text-align:center}
+.container{padding:20px}
+.card{background:#fff;padding:15px;margin:10px 0;border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,.1)}
+.btn{padding:15px;background:#fff;border-radius:12px;margin:10px 0;text-align:center;font-weight:bold}
+.hidden{display:none}
+select,input{width:100%;padding:10px;margin:8px 0}
+.admin{background:#111;color:#fff;padding:15px;border-radius:12px}
 </style>
 </head>
 
 <body>
 
-<!-- ================= HEADER ================= -->
-<header>
+<div class="header">
 <h1>JGD QUALITY INDUSTRIES</h1>
 <p>Manufacturer of uPVC Pipe | Garden Pipe | Section Pipe</p>
-</header>
-
-<!-- ================= PRODUCTS ================= -->
-<section>
-<h2 style="text-align:center">Our Products</h2>
-<div class="products">
-<div class="box">uPVC Pipe</div>
-<div class="box">Garden Pipe</div>
-<div class="box">Section Pipe</div>
-<div class="box">SWR Pipe</div>
-</div>
-</section>
-
-<!-- ================= ADMIN LOGIN ================= -->
-<div class="admin-login">
-<h3>Admin Price Control</h3>
-<input id="adminPass" placeholder="Password">
-<button onclick="unlockAdmin()">Unlock Admin Panel</button>
 </div>
 
-<!-- ================= ADMIN PANEL ================= -->
-<section id="adminPanel" class="admin" style="display:none">
+<div class="container">
 
-<h2>ADMIN PRICE CONTROL</h2>
+<h2>Our Products</h2>
+<div class="btn" onclick="openProduct('upvc')">uPVC Pipe</div>
+<div class="btn" onclick="openProduct('garden')">Garden Pipe</div>
+<div class="btn" onclick="openProduct('section')">Section Pipe</div>
+<div class="btn" onclick="openProduct('swr')">SWR Pipe</div>
 
-<div class="card">
-<b>GST (%)</b><br>
-<input id="GST_RATE" value="18">
-<button onclick="saveGST()">Save GST</button>
+<!-- PRODUCT VIEW -->
+<div id="productView" class="card hidden">
+<h3 id="productTitle"></h3>
+
+<select id="size"></select>
+<select id="pn"></select>
+<select id="quality"></select>
+
+<input type="number" id="qty" value="1" min="1">
+
+<p>Price: ₹<span id="price">0</span></p>
+<p>GST (18%): ₹<span id="gst">0</span></p>
+<h3>Total: ₹<span id="total">0</span></h3>
 </div>
 
-<hr>
+<!-- ADMIN PANEL -->
+<div class="admin">
+<h2>Admin Price Control</h2>
 
-<h3>uPVC PIPE</h3>
-<div class="card">½" | PN6 <input id="upvc_0.5_PN6"><button onclick="savePrice('upvc_0.5_PN6')">Save</button></div>
-<div class="card">¾" | PN6 <input id="upvc_0.75_PN6"><button onclick="savePrice('upvc_0.75_PN6')">Save</button></div>
-<div class="card">1" | PN6 <input id="upvc_1_PN6"><button onclick="savePrice('upvc_1_PN6')">Save</button></div>
-<div class="card">1.25" | PN6 <input id="upvc_1.25_PN6"><button onclick="savePrice('upvc_1.25_PN6')">Save</button></div>
-<div class="card">1.5" | PN6 <input id="upvc_1.5_PN6"><button onclick="savePrice('upvc_1.5_PN6')">Save</button></div>
+<select id="aProduct">
+<option>uPVC</option>
+<option>Garden</option>
+<option>Section</option>
+<option>SWR</option>
+</select>
 
-<hr>
+<input placeholder="Size (e.g. 2.5,3,4)">
+<input placeholder="PN (e.g. PN6)">
+<input placeholder="Quality (TP/OP/Zebra/STD)">
+<input placeholder="Price">
 
-<h3>GARDEN PIPE</h3>
-<div class="card">½" | TP <input id="garden_0.5_TP"><button onclick="savePrice('garden_0.5_TP')">Save</button></div>
-<div class="card">½" | OP <input id="garden_0.5_OP"><button onclick="savePrice('garden_0.5_OP')">Save</button></div>
-<div class="card">½" | Zebra <input id="garden_0.5_Zebra"><button onclick="savePrice('garden_0.5_Zebra')">Save</button></div>
-<div class="card">1" | TP <input id="garden_1_TP"><button onclick="savePrice('garden_1_TP')">Save</button></div>
-<div class="card">1" | OP <input id="garden_1_OP"><button onclick="savePrice('garden_1_OP')">Save</button></div>
-<div class="card">1" | Zebra <input id="garden_1_Zebra"><button onclick="savePrice('garden_1_Zebra')">Save</button></div>
+<button onclick="savePrice()">Save Price</button>
+</div>
 
-<hr>
-
-<h3>SECTION PIPE</h3>
-<div class="card">1" | PN6 <input id="section_1_PN6"><button onclick="savePrice('section_1_PN6')">Save</button></div>
-<div class="card">1.25" | PN6 <input id="section_1.25_PN6"><button onclick="savePrice('section_1.25_PN6')">Save</button></div>
-<div class="card">2" | PN6 <input id="section_2_PN6"><button onclick="savePrice('section_2_PN6')">Save</button></div>
-<div class="card">2.5" | PN6 <input id="section_2.5_PN6"><button onclick="savePrice('section_2.5_PN6')">Save</button></div>
-<div class="card">3" | PN6 <input id="section_3_PN6"><button onclick="savePrice('section_3_PN6')">Save</button></div>
-
-<hr>
-
-<h3>SWR PIPE</h3>
-<div class="card">2.5" | PN6 <input id="swr_2.5_PN6"><button onclick="savePrice('swr_2.5_PN6')">Save</button></div>
-<div class="card">3" | PN6 <input id="swr_3_PN6"><button onclick="savePrice('swr_3_PN6')">Save</button></div>
-<div class="card">4" | PN6 <input id="swr_4_PN6"><button onclick="savePrice('swr_4_PN6')">Save</button></div>
-<div class="card">6" | PN6 <input id="swr_6_PN6"><button onclick="savePrice('swr_6_PN6')">Save</button></div>
-
-</section>
+</div>
 
 <script>
-const PASS="1234";
+let prices = JSON.parse(localStorage.getItem("prices")||"{}");
 
-function unlockAdmin(){
- if(document.getElementById("adminPass").value===PASS){
-  document.getElementById("adminPanel").style.display="block";
- } else alert("Wrong Password");
+function openProduct(p){
+document.getElementById("productView").classList.remove("hidden");
+document.getElementById("productTitle").innerText=p+" Pipe";
+
+fill(["2.5","3","4","6"],"size");
+fill(p=="SWR"?["PN6","PN8","PN10"]:["STD"],"pn");
+fill(p=="Garden"?["TP","OP","Zebra"]:["STD"],"quality");
+
+calc();
+["size","pn","quality","qty"].forEach(id=>{
+document.getElementById(id).onchange=calc;
+});
 }
 
-function savePrice(id){
- localStorage.setItem(id,document.getElementById(id).value);
- alert("Saved");
+function fill(arr,id){
+let s=document.getElementById(id);s.innerHTML="";
+arr.forEach(v=>s.innerHTML+=`<option>${v}</option>`);
 }
 
-function saveGST(){
- localStorage.setItem("GST",document.getElementById("GST_RATE").value);
- alert("GST Saved");
+function calc(){
+let k = key();
+let p = prices[k]||0;
+let q = qty.value;
+price.innerText = p*q;
+let g = p*q*0.18;
+gst.innerText = g.toFixed(2);
+total.innerText = (p*q+g).toFixed(2);
 }
 
-window.onload=()=>{
- document.getElementById("GST_RATE").value=localStorage.getItem("GST")||18;
- document.querySelectorAll("input").forEach(i=>{
-  if(localStorage.getItem(i.id)) i.value=localStorage.getItem(i.id);
- });
+function key(){
+return productTitle.innerText+"|"+size.value+"|"+pn.value+"|"+quality.value;
+}
+
+function savePrice(){
+let v=document.querySelectorAll(".admin input");
+let k=document.getElementById("aProduct").value+" Pipe|"+v[0].value+"|"+v[1].value+"|"+v[2].value;
+prices[k]=parseFloat(v[3].value);
+localStorage.setItem("prices",JSON.stringify(prices));
+alert("Price Saved");
 }
 </script>
 
