@@ -17,7 +17,6 @@ footer{text-align:center;padding:15px;background:#111;color:#aaa;cursor:pointer}
 .admin{display:none;background:#fff;padding:20px;max-width:600px;margin:20px auto;box-shadow:0 0 8px rgba(0,0,0,0.2)}
 </style>
 </head>
-
 <body>
 
 <header>
@@ -54,24 +53,41 @@ footer{text-align:center;padding:15px;background:#111;color:#aaa;cursor:pointer}
 </div>
 </section>
 
-<!-- ADMIN PANEL -->
-<div id="adminPanel" class="admin">
-<h2>Admin Price Control</h2>
+<!-- ADMIN PANELS -->
+<div id="adminUpvc" class="admin">
+<h2>Admin Panel: uPVC Pipe</h2>
+<select id="upvcSize"></select>
+<select id="upvcPN"></select>
+<input id="upvcPrice" type="number" placeholder="Price">
+<input id="upvcGST" type="number" placeholder="GST %" value="18">
+<button onclick="save('upvc')">Save uPVC Price</button>
+</div>
 
-<select id="aProduct">
-<option value="upvc">uPVC</option>
-<option value="garden">Garden</option>
-<option value="section">Section</option>
-<option value="swr">SWR</option>
-</select>
+<div id="adminGarden" class="admin">
+<h2>Admin Panel: Garden Pipe</h2>
+<select id="gardenSize"></select>
+<select id="gardenMaterial"></select>
+<input id="gardenPrice" type="number" placeholder="Price">
+<input id="gardenGST" type="number" placeholder="GST %" value="18">
+<button onclick="save('garden')">Save Garden Price</button>
+</div>
 
-<select id="aSize"></select>
-<select id="aPN"></select>
-<select id="aMaterial"></select> <!-- Garden Material Dropdown -->
+<div id="adminSection" class="admin">
+<h2>Admin Panel: Section Pipe</h2>
+<select id="sectionSize"></select>
+<select id="sectionPN"></select>
+<input id="sectionPrice" type="number" placeholder="Price">
+<input id="sectionGST" type="number" placeholder="GST %" value="18">
+<button onclick="save('section')">Save Section Price</button>
+</div>
 
-<input id="aPrice" type="number" placeholder="Price">
-<input id="aGST" type="number" placeholder="GST %" value="18">
-<button onclick="save()">Save</button>
+<div id="adminSWR" class="admin">
+<h2>Admin Panel: SWR Pipe</h2>
+<select id="swrSize"></select>
+<select id="swrPN"></select>
+<input id="swrPrice" type="number" placeholder="Price">
+<input id="swrGST" type="number" placeholder="GST %" value="18">
+<button onclick="save('swr')">Save SWR Price</button>
 </div>
 
 <footer id="adminTrigger">© JGD Quality Industries</footer>
@@ -80,20 +96,24 @@ footer{text-align:center;padding:15px;background:#111;color:#aaa;cursor:pointer}
 const ADMIN_PASS="JGD2026";
 let clicks=0;
 
-/* ---------- SIZE CONFIG ---------- */
+/* ---------- CONFIG ---------- */
 const sizes = {
   upvc: ['½"', '¾"', '1"', '1.25"', '1.5"'],
   garden: ['½"', '¾"', '1"', '1.25"', '1.5"'],
   section: ['1"', '1.25"', '2"', '2.5"', '3"'],
   swr: ['2.5"', '3"', '4"', '6"']
 };
-const pnOptions = ['PN6','PN8','PN10','PN12.5'];
+const pnOptions = {
+  upvc: ['PN6','PN8','PN10','PN12.5'],
+  section: ['PN6','PN8','PN10','PN12.5'],
+  swr: ['PN6','PN8','PN10']
+};
 const gardenMaterials = ['TP','OP','Zebra'];
 
 /* ---------- PRODUCT HTML ---------- */
-function productHTML(type, hasPN=true, hasMaterial=false){
+function productHTML(type, hasPN=false, hasMaterial=false){
   let sizeOpts = sizes[type].map(s=>`<option>${s}</option>`).join('');
-  let pnHTML = hasPN ? `<select id="${type}PN">${pnOptions.map(p=>`<option>${p}</option>`).join('')}</select>` : '';
+  let pnHTML = hasPN ? `<select id="${type}PN">${pnOptions[type].map(p=>`<option>${p}</option>`).join('')}</select>` : '';
   let materialHTML = hasMaterial ? `<select id="${type}Material">${gardenMaterials.map(m=>`<option>${m}</option>`).join('')}</select>` : '';
   
   return `
@@ -109,10 +129,10 @@ ${materialHTML}
 }
 
 /* ---------- LOAD PRODUCTS ---------- */
-upvc.innerHTML+=productHTML("upvc",true,false);
-garden.innerHTML+=productHTML("garden",false,true);
-section.innerHTML+=productHTML("section",false,false);
-swr.innerHTML+=productHTML("swr",false,false);
+upvc.innerHTML+=productHTML('upvc',true,false);
+garden.innerHTML+=productHTML('garden',false,true);
+section.innerHTML+=productHTML('section',true,false);
+swr.innerHTML+=productHTML('swr',true,false);
 
 /* ---------- NAV ---------- */
 function openP(id){
@@ -120,36 +140,22 @@ function openP(id){
   document.getElementById(id).style.display="block";
 }
 
-/* ---------- ADMIN PANEL DYNAMIC ---------- */
-const aProduct = document.getElementById('aProduct');
-const aSize = document.getElementById('aSize');
-const aPN = document.getElementById('aPN');
-const aMaterial = document.getElementById('aMaterial');
-
-function updateAdminFields(){
-  // Size
-  aSize.innerHTML = sizes[aProduct.value].map(s=>`<option>${s}</option>`).join('');
-  
-  // PN
-  if(aProduct.value==='upvc' || aProduct.value==='swr' || aProduct.value==='section'){
-    aPN.style.display = 'block';
-    aPN.innerHTML = pnOptions.map(p=>`<option>${p}</option>`).join('');
-  } else {
-    aPN.style.display = 'none';
-    aPN.innerHTML = '';
-  }
-
-  // Material
-  if(aProduct.value==='garden'){
-    aMaterial.style.display='block';
-    aMaterial.innerHTML = gardenMaterials.map(m=>`<option>${m}</option>`).join('');
-  } else {
-    aMaterial.style.display='none';
-    aMaterial.innerHTML='';
-  }
+/* ---------- POPULATE ADMIN SELECTS ---------- */
+function initAdmin(){
+  // uPVC
+  document.getElementById('upvcSize').innerHTML = sizes.upvc.map(s=>`<option>${s}</option>`).join('');
+  document.getElementById('upvcPN').innerHTML = pnOptions.upvc.map(p=>`<option>${p}</option>`).join('');
+  // Garden
+  document.getElementById('gardenSize').innerHTML = sizes.garden.map(s=>`<option>${s}</option>`).join('');
+  document.getElementById('gardenMaterial').innerHTML = gardenMaterials.map(m=>`<option>${m}</option>`).join('');
+  // Section
+  document.getElementById('sectionSize').innerHTML = sizes.section.map(s=>`<option>${s}</option>`).join('');
+  document.getElementById('sectionPN').innerHTML = pnOptions.section.map(p=>`<option>${p}</option>`).join('');
+  // SWR
+  document.getElementById('swrSize').innerHTML = sizes.swr.map(s=>`<option>${s}</option>`).join('');
+  document.getElementById('swrPN').innerHTML = pnOptions.swr.map(p=>`<option>${p}</option>`).join('');
 }
-aProduct.addEventListener('change', updateAdminFields);
-updateAdminFields();
+initAdmin();
 
 /* ---------- PRICE KEY ---------- */
 function key(type,size,pn,material){
@@ -163,12 +169,11 @@ function calc(type){
   let size = document.getElementById(type+"Size").value;
   let pnEl = document.getElementById(type+"PN");
   let pn = pnEl ? pnEl.value : "NA";
-
   let material = "";
   if(type==='garden') material = document.getElementById('gardenMaterial').value;
 
   let qty = +document.getElementById(type+"Qty").value || 1;
-  let priceKey = type==='garden' ? key(type,size,pn,material) : key(type,size,pn);
+  let priceKey = key(type,size,pn,material);
   let price = localStorage.getItem(priceKey) || 0;
   let gst = localStorage.getItem(type+"_GST") || 0;
   let total = price*qty;
@@ -183,15 +188,20 @@ Grand Total: ₹${total+gstAmt}`;
 }
 
 /* ---------- ADMIN SAVE ---------- */
-function save(){
-  let size = aSize.value;
-  let pn = aPN.value || "NA";
-  let material = aMaterial.value || "";
-  let priceKey = aProduct.value==='garden' ? key(aProduct.value,size,pn,material) : key(aProduct.value,size,pn);
+function save(type){
+  let size = document.getElementById(type+"Size").value;
+  let pnEl = document.getElementById(type+"PN");
+  let pn = pnEl ? pnEl.value : "NA";
+  let material = "";
+  if(type==='garden') material = document.getElementById(type+"Material").value;
 
-  localStorage.setItem(priceKey,aPrice.value);
-  localStorage.setItem(aProduct.value+"_GST",aGST.value);
-  alert("Price Updated Successfully!");
+  let priceKey = key(type,size,pn,material);
+  let priceInput = document.getElementById(type+"Price").value;
+  let gstInput = document.getElementById(type+"GST").value;
+
+  localStorage.setItem(priceKey,priceInput);
+  localStorage.setItem(type+"_GST",gstInput);
+  alert("Price Updated for "+type+"!");
 }
 
 /* ---------- WHATSAPP ---------- */
@@ -212,13 +222,14 @@ Type: ${dType.value}`;
 }
 
 /* ---------- ADMIN LOGIN ---------- */
-const adminPanel = document.getElementById('adminPanel');
+const adminPanels = [document.getElementById('adminUpvc'),document.getElementById('adminGarden'),document.getElementById('adminSection'),document.getElementById('adminSWR')];
 document.getElementById('adminTrigger').onclick=()=>{
   clicks++;
   if(clicks==5){
     let p=prompt("Admin Password");
-    if(p===ADMIN_PASS) adminPanel.style.display="block";
-    else alert("Wrong Password");
+    if(p===ADMIN_PASS){
+      adminPanels.forEach(a=>a.style.display="block");
+    } else alert("Wrong Password");
     clicks=0;
   }
 }
