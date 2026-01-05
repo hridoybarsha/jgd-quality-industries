@@ -14,7 +14,7 @@ section{display:none;padding:20px}
 input,select,button{width:100%;padding:8px;margin-top:6px;border-radius:4px;border:1px solid #ccc}
 button{background:#1e3799;color:#fff;border:none;cursor:pointer}
 footer{text-align:center;padding:15px;background:#111;color:#aaa;cursor:pointer}
-.admin{display:none;background:#fff;padding:20px;max-width:550px;margin:20px auto;box-shadow:0 0 8px rgba(0,0,0,0.2)}
+.admin{display:none;background:#fff;padding:20px;max-width:600px;margin:20px auto;box-shadow:0 0 8px rgba(0,0,0,0.2)}
 </style>
 </head>
 
@@ -87,15 +87,14 @@ const sizes = {
   section: ['1"', '1.25"', '2"', '2.5"', '3"'],
   swr: ['2.5"', '3"', '4"', '6"']
 };
-
 const pnOptions = ['PN6','PN8','PN10','PN12.5'];
 const gardenMaterials = ['TP','OP','Zebra'];
 
 /* ---------- PRODUCT HTML ---------- */
-function productHTML(type, hasPN=true){
+function productHTML(type, hasPN=true, hasMaterial=false){
   let sizeOpts = sizes[type].map(s=>`<option>${s}</option>`).join('');
   let pnHTML = hasPN ? `<select id="${type}PN">${pnOptions.map(p=>`<option>${p}</option>`).join('')}</select>` : '';
-  let materialHTML = type==='garden' ? `<select id="${type}Material">${gardenMaterials.map(m=>`<option>${m}</option>`).join('')}</select>` : '';
+  let materialHTML = hasMaterial ? `<select id="${type}Material">${gardenMaterials.map(m=>`<option>${m}</option>`).join('')}</select>` : '';
   
   return `
 <div class="card">
@@ -110,10 +109,10 @@ ${materialHTML}
 }
 
 /* ---------- LOAD PRODUCTS ---------- */
-upvc.innerHTML+=productHTML("upvc",true);
-garden.innerHTML+=productHTML("garden",false);
-section.innerHTML+=productHTML("section",false);
-swr.innerHTML+=productHTML("swr",false);
+upvc.innerHTML+=productHTML("upvc",true,false);
+garden.innerHTML+=productHTML("garden",false,true);
+section.innerHTML+=productHTML("section",false,false);
+swr.innerHTML+=productHTML("swr",false,false);
 
 /* ---------- NAV ---------- */
 function openP(id){
@@ -121,18 +120,18 @@ function openP(id){
   document.getElementById(id).style.display="block";
 }
 
-/* ---------- ADMIN PANEL DYNAMIC SIZE/PN/MATERIAL ---------- */
+/* ---------- ADMIN PANEL DYNAMIC ---------- */
 const aProduct = document.getElementById('aProduct');
 const aSize = document.getElementById('aSize');
 const aPN = document.getElementById('aPN');
 const aMaterial = document.getElementById('aMaterial');
 
 function updateAdminFields(){
-  // Size options
+  // Size
   aSize.innerHTML = sizes[aProduct.value].map(s=>`<option>${s}</option>`).join('');
   
-  // PN options
-  if(aProduct.value==='upvc'){
+  // PN
+  if(aProduct.value==='upvc' || aProduct.value==='swr' || aProduct.value==='section'){
     aPN.style.display = 'block';
     aPN.innerHTML = pnOptions.map(p=>`<option>${p}</option>`).join('');
   } else {
@@ -140,7 +139,7 @@ function updateAdminFields(){
     aPN.innerHTML = '';
   }
 
-  // Garden Material
+  // Material
   if(aProduct.value==='garden'){
     aMaterial.style.display='block';
     aMaterial.innerHTML = gardenMaterials.map(m=>`<option>${m}</option>`).join('');
@@ -166,17 +165,14 @@ function calc(type){
   let pn = pnEl ? pnEl.value : "NA";
 
   let material = "";
-  if(type==='garden'){
-    material = document.getElementById('gardenMaterial').value;
-  }
+  if(type==='garden') material = document.getElementById('gardenMaterial').value;
 
   let qty = +document.getElementById(type+"Qty").value || 1;
-
   let priceKey = type==='garden' ? key(type,size,pn,material) : key(type,size,pn);
   let price = localStorage.getItem(priceKey) || 0;
   let gst = localStorage.getItem(type+"_GST") || 0;
-  let total = price * qty;
-  let gstAmt = total * gst / 100;
+  let total = price*qty;
+  let gstAmt = total*gst/100;
 
   document.getElementById(type+"Out").innerText=
 `Price: ₹${price}
@@ -193,8 +189,8 @@ function save(){
   let material = aMaterial.value || "";
   let priceKey = aProduct.value==='garden' ? key(aProduct.value,size,pn,material) : key(aProduct.value,size,pn);
 
-  localStorage.setItem(priceKey, aPrice.value);
-  localStorage.setItem(aProduct.value+"_GST", aGST.value);
+  localStorage.setItem(priceKey,aPrice.value);
+  localStorage.setItem(aProduct.value+"_GST",aGST.value);
   alert("Price Updated Successfully!");
 }
 
