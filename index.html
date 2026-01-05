@@ -34,6 +34,12 @@ input:focus,select:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px 
 .btn{background:linear-gradient(90deg,#2563eb,#3b82f6);color:#fff;padding:14px;border:none;border-radius:10px;width:100%;font-size:1.05rem;cursor:pointer;transition:0.3s;}
 .btn:hover{transform:scale(1.05);box-shadow:0 5px 15px rgba(37,99,235,0.3);}
 
+/* Admin Panel */
+.admin-panel{background:#fff;padding:25px;margin:30px auto;border-radius:16px;box-shadow:0 8px 25px rgba(0,0,0,0.1);max-width:700px;}
+.admin-panel h2{text-align:center;margin-bottom:20px;}
+.admin-panel input, .admin-panel select{margin:8px 0;}
+.admin-panel button{margin-top:10px;}
+
 /* Footer */
 footer{background:#0f172a;color:#fff;text-align:center;padding:20px;margin-top:30px;font-size:0.95rem;letter-spacing:1px;}
 
@@ -41,7 +47,7 @@ footer{background:#0f172a;color:#fff;text-align:center;padding:20px;margin-top:3
 @keyframes fadeIn{0%{opacity:0;transform:translateY(20px);}100%{opacity:1;transform:translateY(0);}}
 @media(max-width:700px){
   .product-selector{flex-direction:column;align-items:center;}
-  section.order-section{width:95%;}
+  section.order-section,.admin-panel{width:95%;}
 }
 </style>
 </head>
@@ -167,6 +173,37 @@ footer{background:#0f172a;color:#fff;text-align:center;padding:20px;margin-top:3
   <button class="btn" onclick="sendWhatsApp('Section')">Send on WhatsApp</button>
 </section>
 
+<!-- Admin Panel -->
+<section class="admin-panel">
+<h2>Admin Price Control</h2>
+<label>Product</label>
+<select id="adminProduct">
+  <option value="uPVC">uPVC Pipe</option>
+  <option value="Garden">Garden Pipe</option>
+  <option value="Section">Section Pipe</option>
+</select>
+<label>Size</label>
+<select id="adminSize">
+  <option value="1/2">1/2 Inch</option>
+  <option value="3/4">3/4 Inch</option>
+  <option value="1">1 Inch</option>
+  <option value="1.5">1.5 Inch</option>
+  <option value="2">2 Inch</option>
+  <option value="2.5">2.5 Inch</option>
+  <option value="3">3 Inch</option>
+  <option value="4">4 Inch</option>
+</select>
+<label>PN</label>
+<select id="adminPN">
+  <option value="PN4">PN4</option>
+  <option value="PN6">PN6</option>
+  <option value="PN10">PN10</option>
+</select>
+<label>Price per Unit</label>
+<input type="number" id="adminPrice">
+<button onclick="updatePrice()">Update Price</button>
+</section>
+
 <footer>
 © 2026 JGD QUALITY INDUSTRIES | Contact: +917003764905
 </footer>
@@ -212,6 +249,17 @@ function sendWhatsApp(product){
   if(!name||!mobile||!size||!pn||!qty){alert("Please fill all fields"); return;}
   let msg=`Order Inquiry%0AProduct: ${product}%0ASize: ${size}%0APN: ${pn}%0AQuantity: ${qty}%0ATotal Price: ${total}%0AName: ${name}%0AMobile: ${mobile}`;
   window.open("https://wa.me/+917003764905?text="+msg);
+}
+
+// Admin Price Update
+function updatePrice(){
+  let product=document.getElementById("adminProduct").value;
+  let size=document.getElementById("adminSize").value;
+  let pn=document.getElementById("adminPN").value;
+  let price=parseFloat(document.getElementById("adminPrice").value);
+  if(!price){alert("Enter valid price"); return;}
+  prices[size+"_"+pn]=price;
+  alert("Price Updated Successfully!");
 }
 </script>
 
