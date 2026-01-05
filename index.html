@@ -1,130 +1,125 @@
-<div id="adminPanel" class="admin">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>JGD Quality Industries</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{margin:0;font-family:Arial;background:#f2f6fb}
+header{background:#2b66e3;color:#fff;padding:40px;text-align:center}
+section{padding:20px}
+.products{display:flex;gap:15px;flex-wrap:wrap;justify-content:center}
+.box{background:#fff;padding:20px;border-radius:10px;width:260px;text-align:center;box-shadow:0 4px 10px rgba(0,0,0,.1)}
+.admin-login,.admin{max-width:700px;margin:30px auto;background:#fff;padding:20px;border-radius:10px}
+.card{margin:8px 0}
+input{padding:6px;width:150px}
+button{padding:6px 10px;margin-left:5px}
+hr{margin:20px 0}
+</style>
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+<header>
+<h1>JGD QUALITY INDUSTRIES</h1>
+<p>Manufacturer of uPVC Pipe | Garden Pipe | Section Pipe</p>
+</header>
+
+<!-- ================= PRODUCTS ================= -->
+<section>
+<h2 style="text-align:center">Our Products</h2>
+<div class="products">
+<div class="box">uPVC Pipe</div>
+<div class="box">Garden Pipe</div>
+<div class="box">Section Pipe</div>
+<div class="box">SWR Pipe</div>
+</div>
+</section>
+
+<!-- ================= ADMIN LOGIN ================= -->
+<div class="admin-login">
+<h3>Admin Price Control</h3>
+<input id="adminPass" placeholder="Password">
+<button onclick="unlockAdmin()">Unlock Admin Panel</button>
+</div>
+
+<!-- ================= ADMIN PANEL ================= -->
+<section id="adminPanel" class="admin" style="display:none">
 
 <h2>ADMIN PRICE CONTROL</h2>
 
-<!-- GST -->
 <div class="card">
-<b>GST (%)</b>
-<input id="GST_RATE" placeholder="GST %" value="18">
+<b>GST (%)</b><br>
+<input id="GST_RATE" value="18">
 <button onclick="saveGST()">Save GST</button>
 </div>
 
-<!-- ================= uPVC PIPE ================= -->
+<hr>
+
 <h3>uPVC PIPE</h3>
-
-<div class="card">½" | PN6
-<input id="upvc_0.5_PN6" placeholder="Price">
-<button onclick="savePrice('upvc_0.5_PN6')">Save</button>
-</div>
-
-<div class="card">¾" | PN6
-<input id="upvc_0.75_PN6" placeholder="Price">
-<button onclick="savePrice('upvc_0.75_PN6')">Save</button>
-</div>
-
-<div class="card">1" | PN6
-<input id="upvc_1_PN6" placeholder="Price">
-<button onclick="savePrice('upvc_1_PN6')">Save</button>
-</div>
-
-<div class="card">1.25" | PN6
-<input id="upvc_1.25_PN6" placeholder="Price">
-<button onclick="savePrice('upvc_1.25_PN6')">Save</button>
-</div>
-
-<div class="card">1.5" | PN6
-<input id="upvc_1.5_PN6" placeholder="Price">
-<button onclick="savePrice('upvc_1.5_PN6')">Save</button>
-</div>
+<div class="card">½" | PN6 <input id="upvc_0.5_PN6"><button onclick="savePrice('upvc_0.5_PN6')">Save</button></div>
+<div class="card">¾" | PN6 <input id="upvc_0.75_PN6"><button onclick="savePrice('upvc_0.75_PN6')">Save</button></div>
+<div class="card">1" | PN6 <input id="upvc_1_PN6"><button onclick="savePrice('upvc_1_PN6')">Save</button></div>
+<div class="card">1.25" | PN6 <input id="upvc_1.25_PN6"><button onclick="savePrice('upvc_1.25_PN6')">Save</button></div>
+<div class="card">1.5" | PN6 <input id="upvc_1.5_PN6"><button onclick="savePrice('upvc_1.5_PN6')">Save</button></div>
 
 <hr>
 
-<!-- ================= GARDEN PIPE ================= -->
 <h3>GARDEN PIPE</h3>
-
-<div class="card">½" | TP
-<input id="garden_0.5_TP" placeholder="Price">
-<button onclick="savePrice('garden_0.5_TP')">Save</button>
-</div>
-
-<div class="card">½" | OP
-<input id="garden_0.5_OP" placeholder="Price">
-<button onclick="savePrice('garden_0.5_OP')">Save</button>
-</div>
-
-<div class="card">½" | Zebra
-<input id="garden_0.5_Zebra" placeholder="Price">
-<button onclick="savePrice('garden_0.5_Zebra')">Save</button>
-</div>
-
-<div class="card">1" | TP
-<input id="garden_1_TP" placeholder="Price">
-<button onclick="savePrice('garden_1_TP')">Save</button>
-</div>
-
-<div class="card">1" | OP
-<input id="garden_1_OP" placeholder="Price">
-<button onclick="savePrice('garden_1_OP')">Save</button>
-</div>
-
-<div class="card">1" | Zebra
-<input id="garden_1_Zebra" placeholder="Price">
-<button onclick="savePrice('garden_1_Zebra')">Save</button>
-</div>
+<div class="card">½" | TP <input id="garden_0.5_TP"><button onclick="savePrice('garden_0.5_TP')">Save</button></div>
+<div class="card">½" | OP <input id="garden_0.5_OP"><button onclick="savePrice('garden_0.5_OP')">Save</button></div>
+<div class="card">½" | Zebra <input id="garden_0.5_Zebra"><button onclick="savePrice('garden_0.5_Zebra')">Save</button></div>
+<div class="card">1" | TP <input id="garden_1_TP"><button onclick="savePrice('garden_1_TP')">Save</button></div>
+<div class="card">1" | OP <input id="garden_1_OP"><button onclick="savePrice('garden_1_OP')">Save</button></div>
+<div class="card">1" | Zebra <input id="garden_1_Zebra"><button onclick="savePrice('garden_1_Zebra')">Save</button></div>
 
 <hr>
 
-<!-- ================= SECTION PIPE ================= -->
 <h3>SECTION PIPE</h3>
-
-<div class="card">1" | PN6
-<input id="section_1_PN6" placeholder="Price">
-<button onclick="savePrice('section_1_PN6')">Save</button>
-</div>
-
-<div class="card">1.25" | PN6
-<input id="section_1.25_PN6" placeholder="Price">
-<button onclick="savePrice('section_1.25_PN6')">Save</button>
-</div>
-
-<div class="card">2" | PN6
-<input id="section_2_PN6" placeholder="Price">
-<button onclick="savePrice('section_2_PN6')">Save</button>
-</div>
-
-<div class="card">2.5" | PN6
-<input id="section_2.5_PN6" placeholder="Price">
-<button onclick="savePrice('section_2.5_PN6')">Save</button>
-</div>
-
-<div class="card">3" | PN6
-<input id="section_3_PN6" placeholder="Price">
-<button onclick="savePrice('section_3_PN6')">Save</button>
-</div>
+<div class="card">1" | PN6 <input id="section_1_PN6"><button onclick="savePrice('section_1_PN6')">Save</button></div>
+<div class="card">1.25" | PN6 <input id="section_1.25_PN6"><button onclick="savePrice('section_1.25_PN6')">Save</button></div>
+<div class="card">2" | PN6 <input id="section_2_PN6"><button onclick="savePrice('section_2_PN6')">Save</button></div>
+<div class="card">2.5" | PN6 <input id="section_2.5_PN6"><button onclick="savePrice('section_2.5_PN6')">Save</button></div>
+<div class="card">3" | PN6 <input id="section_3_PN6"><button onclick="savePrice('section_3_PN6')">Save</button></div>
 
 <hr>
 
-<!-- ================= SWR PIPE ================= -->
 <h3>SWR PIPE</h3>
+<div class="card">2.5" | PN6 <input id="swr_2.5_PN6"><button onclick="savePrice('swr_2.5_PN6')">Save</button></div>
+<div class="card">3" | PN6 <input id="swr_3_PN6"><button onclick="savePrice('swr_3_PN6')">Save</button></div>
+<div class="card">4" | PN6 <input id="swr_4_PN6"><button onclick="savePrice('swr_4_PN6')">Save</button></div>
+<div class="card">6" | PN6 <input id="swr_6_PN6"><button onclick="savePrice('swr_6_PN6')">Save</button></div>
 
-<div class="card">2.5" | PN6
-<input id="swr_2.5_PN6" placeholder="Price">
-<button onclick="savePrice('swr_2.5_PN6')">Save</button>
-</div>
+</section>
 
-<div class="card">3" | PN6
-<input id="swr_3_PN6" placeholder="Price">
-<button onclick="savePrice('swr_3_PN6')">Save</button>
-</div>
+<script>
+const PASS="1234";
 
-<div class="card">4" | PN6
-<input id="swr_4_PN6" placeholder="Price">
-<button onclick="savePrice('swr_4_PN6')">Save</button>
-</div>
+function unlockAdmin(){
+ if(document.getElementById("adminPass").value===PASS){
+  document.getElementById("adminPanel").style.display="block";
+ } else alert("Wrong Password");
+}
 
-<div class="card">6" | PN6
-<input id="swr_6_PN6" placeholder="Price">
-<button onclick="savePrice('swr_6_PN6')">Save</button>
-</div>
+function savePrice(id){
+ localStorage.setItem(id,document.getElementById(id).value);
+ alert("Saved");
+}
 
-  </div>
+function saveGST(){
+ localStorage.setItem("GST",document.getElementById("GST_RATE").value);
+ alert("GST Saved");
+}
+
+window.onload=()=>{
+ document.getElementById("GST_RATE").value=localStorage.getItem("GST")||18;
+ document.querySelectorAll("input").forEach(i=>{
+  if(localStorage.getItem(i.id)) i.value=localStorage.getItem(i.id);
+ });
+}
+</script>
+
+</body>
+</html>
