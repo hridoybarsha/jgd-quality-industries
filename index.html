@@ -1,236 +1,130 @@
-<!DOCTYPE html>
-<html lang="bn">
-<head>
-<meta charset="UTF-8">
-<title>JGD Quality Industries</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-body{margin:0;font-family:Arial;background:#f2f2f2}
-header{background:#0a3d62;color:#fff;padding:20px;text-align:center}
-nav{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;background:#1e3799;padding:10px}
-nav button{padding:10px 15px;border:none;font-weight:bold;cursor:pointer;color:#fff;background:#4a69bd;border-radius:4px}
-section{display:none;padding:20px}
-.card{background:#fff;padding:15px;margin:10px auto;max-width:420px;border-radius:6px;box-shadow:0 0 6px rgba(0,0,0,0.1)}
-input,select,button{width:100%;padding:8px;margin-top:6px;border-radius:4px;border:1px solid #ccc}
-button{background:#1e3799;color:#fff;border:none;cursor:pointer}
-footer{text-align:center;padding:15px;background:#111;color:#aaa;cursor:pointer}
-.admin{display:none;background:#fff;padding:20px;max-width:600px;margin:20px auto;box-shadow:0 0 8px rgba(0,0,0,0.2)}
-</style>
-</head>
-<body>
+<div id="adminPanel" class="admin">
 
-<header>
-<h1>JGD QUALITY INDUSTRIES</h1>
-<p>Manufacturing / Factory</p>
-<p>📞 +91 7003764905</p>
-</header>
+<h2>ADMIN PRICE CONTROL</h2>
 
-<nav>
-<button onclick="openP('upvc')">uPVC Pipe</button>
-<button onclick="openP('garden')">Garden Pipe</button>
-<button onclick="openP('section')">Section Pipe</button>
-<button onclick="openP('swr')">SWR Pipe</button>
-<button onclick="openP('dealer')">Dealer</button>
-</nav>
-
-<!-- PRODUCTS -->
-<section id="upvc"><h2>uPVC Pipe</h2></section>
-<section id="garden"><h2>Garden Pipe</h2></section>
-<section id="section"><h2>Section Pipe</h2></section>
-<section id="swr"><h2>SWR Pipe</h2></section>
-
-<section id="dealer">
-<h2>Dealer / Distributor Enquiry</h2>
+<!-- GST -->
 <div class="card">
-<input id="dName" placeholder="Name">
-<input id="dMobile" placeholder="Mobile">
-<input id="dCity" placeholder="City">
-<select id="dType">
-<option>Dealer</option>
-<option>Distributor</option>
-</select>
-<button onclick="dealerWA()">Send Enquiry</button>
-</div>
-</section>
-
-<!-- ADMIN PANELS -->
-<div id="adminUpvc" class="admin">
-<h2>Admin Panel: uPVC Pipe</h2>
-<select id="upvcSize"></select>
-<select id="upvcPN"></select>
-<input id="upvcPrice" type="number" placeholder="Price">
-<input id="upvcGST" type="number" placeholder="GST %" value="18">
-<button onclick="save('upvc')">Save uPVC Price</button>
+<b>GST (%)</b>
+<input id="GST_RATE" placeholder="GST %" value="18">
+<button onclick="saveGST()">Save GST</button>
 </div>
 
-<div id="adminGarden" class="admin">
-<h2>Admin Panel: Garden Pipe</h2>
-<select id="gardenSize"></select>
-<select id="gardenPN"></select>
-<select id="gardenMaterial"></select>
-<input id="gardenPrice" type="number" placeholder="Price">
-<input id="gardenGST" type="number" placeholder="GST %" value="18">
-<button onclick="save('garden')">Save Garden Price</button>
+<!-- ================= uPVC PIPE ================= -->
+<h3>uPVC PIPE</h3>
+
+<div class="card">½" | PN6
+<input id="upvc_0.5_PN6" placeholder="Price">
+<button onclick="savePrice('upvc_0.5_PN6')">Save</button>
 </div>
 
-<div id="adminSection" class="admin">
-<h2>Admin Panel: Section Pipe</h2>
-<select id="sectionSize"></select>
-<select id="sectionPN"></select>
-<input id="sectionPrice" type="number" placeholder="Price">
-<input id="sectionGST" type="number" placeholder="GST %" value="18">
-<button onclick="save('section')">Save Section Price</button>
+<div class="card">¾" | PN6
+<input id="upvc_0.75_PN6" placeholder="Price">
+<button onclick="savePrice('upvc_0.75_PN6')">Save</button>
 </div>
 
-<div id="adminSWR" class="admin">
-<h2>Admin Panel: SWR Pipe</h2>
-<select id="swrSize"></select>
-<select id="swrPN"></select>
-<input id="swrPrice" type="number" placeholder="Price">
-<input id="swrGST" type="number" placeholder="GST %" value="18">
-<button onclick="save('swr')">Save SWR Price</button>
+<div class="card">1" | PN6
+<input id="upvc_1_PN6" placeholder="Price">
+<button onclick="savePrice('upvc_1_PN6')">Save</button>
 </div>
 
-<footer id="adminTrigger">© JGD Quality Industries</footer>
+<div class="card">1.25" | PN6
+<input id="upvc_1.25_PN6" placeholder="Price">
+<button onclick="savePrice('upvc_1.25_PN6')">Save</button>
+</div>
 
-<script>
-const ADMIN_PASS="JGD2026";
-let clicks=0;
+<div class="card">1.5" | PN6
+<input id="upvc_1.5_PN6" placeholder="Price">
+<button onclick="savePrice('upvc_1.5_PN6')">Save</button>
+</div>
 
-/* ---------- CONFIG ---------- */
-const sizes = {
-  upvc: ['½"', '¾"', '1"', '1.25"', '1.5"'],
-  garden: ['½"', '¾"', '1"', '1.25"', '1.5"'],
-  section: ['1"', '1.25"', '2"', '2.5"', '3"'],
-  swr: ['2.5"', '3"', '4"', '6"']
-};
-const pnOptions = {
-  upvc: ['PN6','PN8','PN10','PN12.5'],
-  garden: ['PN6','PN8','PN10','PN12.5'], // এখন Garden-এও PN আছে
-  section: ['PN6','PN8','PN10','PN12.5'],
-  swr: ['PN6','PN8','PN10']
-};
-const gardenMaterials = ['TP','OP','Zebra'];
+<hr>
 
-/* ---------- PRODUCT HTML ---------- */
-function productHTML(type, hasPN=false, hasMaterial=false){
-  let sizeOpts = sizes[type].map(s=>`<option>${s}</option>`).join('');
-  let pnHTML = hasPN ? `<select id="${type}PN">${pnOptions[type].map(p=>`<option>${p}</option>`).join('')}</select>` : '';
-  let materialHTML = hasMaterial ? `<select id="${type}Material">${gardenMaterials.map(m=>`<option>${m}</option>`).join('')}</select>` : '';
-  
-  return `
-<div class="card">
-<select id="${type}Size">${sizeOpts}</select>
-${pnHTML}
-${materialHTML}
-<input id="${type}Qty" type="number" placeholder="Quantity">
-<button onclick="calc('${type}')">Get Price</button>
-<p id="${type}Out"></p>
-<button onclick="wa('${type}')">Order on WhatsApp</button>
-</div>`;
-}
+<!-- ================= GARDEN PIPE ================= -->
+<h3>GARDEN PIPE</h3>
 
-/* ---------- LOAD PRODUCTS ---------- */
-upvc.innerHTML+=productHTML('upvc',true,false);
-garden.innerHTML+=productHTML('garden',true,true); // Garden-এ এখন PN + Material
-section.innerHTML+=productHTML('section',true,false);
-swr.innerHTML+=productHTML('swr',true,false);
+<div class="card">½" | TP
+<input id="garden_0.5_TP" placeholder="Price">
+<button onclick="savePrice('garden_0.5_TP')">Save</button>
+</div>
 
-/* ---------- NAV ---------- */
-function openP(id){
-  document.querySelectorAll("section").forEach(s=>s.style.display="none");
-  document.getElementById(id).style.display="block";
-}
+<div class="card">½" | OP
+<input id="garden_0.5_OP" placeholder="Price">
+<button onclick="savePrice('garden_0.5_OP')">Save</button>
+</div>
 
-/* ---------- INIT ADMIN DROPDOWNS ---------- */
-function initAdmin(){
-  // uPVC
-  document.getElementById('upvcSize').innerHTML = sizes.upvc.map(s=>`<option>${s}</option>`).join('');
-  document.getElementById('upvcPN').innerHTML = pnOptions.upvc.map(p=>`<option>${p}</option>`).join('');
-  // Garden
-  document.getElementById('gardenSize').innerHTML = sizes.garden.map(s=>`<option>${s}</option>`).join('');
-  document.getElementById('gardenPN').innerHTML = pnOptions.garden.map(p=>`<option>${p}</option>`).join('');
-  document.getElementById('gardenMaterial').innerHTML = gardenMaterials.map(m=>`<option>${m}</option>`).join('');
-  // Section
-  document.getElementById('sectionSize').innerHTML = sizes.section.map(s=>`<option>${s}</option>`).join('');
-  document.getElementById('sectionPN').innerHTML = pnOptions.section.map(p=>`<option>${p}</option>`).join('');
-  // SWR
-  document.getElementById('swrSize').innerHTML = sizes.swr.map(s=>`<option>${s}</option>`).join('');
-  document.getElementById('swrPN').innerHTML = pnOptions.swr.map(p=>`<option>${p}</option>`).join('');
-}
-initAdmin();
+<div class="card">½" | Zebra
+<input id="garden_0.5_Zebra" placeholder="Price">
+<button onclick="savePrice('garden_0.5_Zebra')">Save</button>
+</div>
 
-/* ---------- PRICE KEY ---------- */
-function key(type,size,pn,material){
-  let k = type+"_"+size+"_"+pn;
-  if(type==='garden' && material) k+="_"+material;
-  return k;
-}
+<div class="card">1" | TP
+<input id="garden_1_TP" placeholder="Price">
+<button onclick="savePrice('garden_1_TP')">Save</button>
+</div>
 
-/* ---------- CALCULATION ---------- */
-function calc(type){
-  let size = document.getElementById(type+"Size").value;
-  let pnEl = document.getElementById(type+"PN");
-  let pn = pnEl ? pnEl.value : "NA";
-  let material = (type==='garden') ? document.getElementById('gardenMaterial').value : "";
-  let qty = +document.getElementById(type+"Qty").value || 1;
-  let priceKey = key(type,size,pn,material);
-  let price = localStorage.getItem(priceKey) || 0;
-  let gst = localStorage.getItem(type+"_GST") || 0;
-  let total = price*qty;
-  let gstAmt = total*gst/100;
-  document.getElementById(type+"Out").innerText=
-`Price: ₹${price}
-Qty: ${qty}
-Total: ₹${total}
-GST (${gst}%): ₹${gstAmt}
-Grand Total: ₹${total+gstAmt}`;
-}
+<div class="card">1" | OP
+<input id="garden_1_OP" placeholder="Price">
+<button onclick="savePrice('garden_1_OP')">Save</button>
+</div>
 
-/* ---------- ADMIN SAVE ---------- */
-function save(type){
-  let size = document.getElementById(type+"Size").value;
-  let pnEl = document.getElementById(type+"PN");
-  let pn = pnEl ? pnEl.value : "NA";
-  let material = (type==='garden') ? document.getElementById('gardenMaterial').value : "";
-  let priceKey = key(type,size,pn,material);
-  let priceInput = document.getElementById(type+"Price").value;
-  let gstInput = document.getElementById(type+"GST").value;
-  localStorage.setItem(priceKey,priceInput);
-  localStorage.setItem(type+"_GST",gstInput);
-  alert("Price Updated for "+type+"!");
-}
+<div class="card">1" | Zebra
+<input id="garden_1_Zebra" placeholder="Price">
+<button onclick="savePrice('garden_1_Zebra')">Save</button>
+</div>
 
-/* ---------- WHATSAPP ---------- */
-function wa(type){
-  let msg=`Order Details
-Product: ${type.toUpperCase()}
-${document.getElementById(type+"Out").innerText}`;
-  window.open("https://wa.me/917003764905?text="+encodeURIComponent(msg));
-}
+<hr>
 
-function dealerWA(){
-  let msg=`Dealer Enquiry
-Name: ${dName.value}
-Mobile: ${dMobile.value}
-City: ${dCity.value}
-Type: ${dType.value}`;
-  window.open("https://wa.me/917003764905?text="+encodeURIComponent(msg));
-}
+<!-- ================= SECTION PIPE ================= -->
+<h3>SECTION PIPE</h3>
 
-/* ---------- ADMIN LOGIN ---------- */
-const adminPanels = [document.getElementById('adminUpvc'),document.getElementById('adminGarden'),document.getElementById('adminSection'),document.getElementById('adminSWR')];
-document.getElementById('adminTrigger').onclick=()=>{
-  clicks++;
-  if(clicks==5){
-    let p=prompt("Admin Password");
-    if(p===ADMIN_PASS){
-      adminPanels.forEach(a=>a.style.display="block");
-    } else alert("Wrong Password");
-    clicks=0;
-  }
-}
-</script>
+<div class="card">1" | PN6
+<input id="section_1_PN6" placeholder="Price">
+<button onclick="savePrice('section_1_PN6')">Save</button>
+</div>
 
-</body>
-</html>
+<div class="card">1.25" | PN6
+<input id="section_1.25_PN6" placeholder="Price">
+<button onclick="savePrice('section_1.25_PN6')">Save</button>
+</div>
+
+<div class="card">2" | PN6
+<input id="section_2_PN6" placeholder="Price">
+<button onclick="savePrice('section_2_PN6')">Save</button>
+</div>
+
+<div class="card">2.5" | PN6
+<input id="section_2.5_PN6" placeholder="Price">
+<button onclick="savePrice('section_2.5_PN6')">Save</button>
+</div>
+
+<div class="card">3" | PN6
+<input id="section_3_PN6" placeholder="Price">
+<button onclick="savePrice('section_3_PN6')">Save</button>
+</div>
+
+<hr>
+
+<!-- ================= SWR PIPE ================= -->
+<h3>SWR PIPE</h3>
+
+<div class="card">2.5" | PN6
+<input id="swr_2.5_PN6" placeholder="Price">
+<button onclick="savePrice('swr_2.5_PN6')">Save</button>
+</div>
+
+<div class="card">3" | PN6
+<input id="swr_3_PN6" placeholder="Price">
+<button onclick="savePrice('swr_3_PN6')">Save</button>
+</div>
+
+<div class="card">4" | PN6
+<input id="swr_4_PN6" placeholder="Price">
+<button onclick="savePrice('swr_4_PN6')">Save</button>
+</div>
+
+<div class="card">6" | PN6
+<input id="swr_6_PN6" placeholder="Price">
+<button onclick="savePrice('swr_6_PN6')">Save</button>
+</div>
+
+  </div>
