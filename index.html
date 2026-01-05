@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>JGD QUALITY INDUSTRIES</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+  <h1>JGD QUALITY INDUSTRIES</h1>
+  <p>Manufacturer of uPVC Pipe | Garden Pipe | Section Pipe</p>
+</header>
+
+<nav>
+  <a href="#home">Home</a>
+  <a href="#about">About</a>
+  <a href="#products">Products</a>
+  <a href="#order">Order</a>
+  <a href="#dealer">Dealer</a>
+</nav>
+
+<section id="home" class="hero">
+  <h2>Reliable uPVC Pipe Manufacturing Company</h2>
+  <p>High Quality uPVC Garden & Section Pipes</p>
+</section>
+
+<section id="about">
+  <h2>About Us</h2>
+  <p>
+    JGD QUALITY INDUSTRIES is a manufacturing company specializing in
+    uPVC Pipe, uPVC Garden Pipe and uPVC Section Pipe with strict quality control.
+  </p>
+</section>
+
+<section id="products">
+  <h2>Our Products</h2>
+  <ul>
+    <li>uPVC Pipe</li>
+    <li>uPVC Garden Pipe</li>
+    <li>uPVC Section Pipe</li>
+  </ul>
+</section>
+
+<!-- ORDER FORM -->
+<section id="order">
+  <h2>Order / Price Inquiry</h2>
+
+  <form onsubmit="sendWhatsApp(); return false;">
+
+    <label>Product</label>
+    <select id="product" required>
+      <option value="">Select</option>
+      <option>uPVC Pipe</option>
+      <option>uPVC Garden Pipe</option>
+      <option>uPVC Section Pipe</option>
+    </select>
+
+    <label>Pipe Size</label>
+    <select id="size" onchange="calculatePrice()" required>
+      <option value="">Select</option>
+      <option value="1/2">1/2 Inch</option>
+      <option value="3/4">3/4 Inch</option>
+      <option value="1">1 Inch</option>
+      <option value="1.5">1.5 Inch</option>
+      <option value="2">2 Inch</option>
+    </select>
+
+    <label>Pressure (PN)</label>
+    <select id="pn" onchange="calculatePrice()" required>
+      <option value="">Select</option>
+      <option value="PN4">PN4</option>
+      <option value="PN6">PN6</option>
+      <option value="PN10">PN10</option>
+    </select>
+
+    <label>Quantity (Meter)</label>
+    <input type="number" id="quantity" oninput="calculatePrice()" required>
+
+    <label>Total Price</label>
+    <input type="text" id="price" readonly>
+
+    <label>Your Name</label>
+    <input type="text" id="name" required>
+
+    <label>Mobile</label>
+    <input type="text" id="mobile" required>
+
+    <button type="submit" class="btn">Send on WhatsApp</button>
+  </form>
+</section>
+
+<!-- DEALER FORM -->
+<section id="dealer">
+  <h2>Dealer / Distributor Registration</h2>
+
+  <form onsubmit="sendDealer(); return false;">
+    <input type="text" id="dname" placeholder="Name" required>
+    <input type="text" id="dcompany" placeholder="Shop / Company" required>
+    <input type="text" id="dcity" placeholder="City" required>
+    <input type="text" id="dmobile" placeholder="Mobile" required>
+    <button class="btn">Apply on WhatsApp</button>
+  </form>
+</section>
+
+<!-- ADMIN PANEL -->
+<section id="admin">
+  <h2>Admin Price Control</h2>
+  <input type="password" id="adminPass" placeholder="Password">
+  <button onclick="unlockAdmin()">Unlock</button>
+
+  <div id="adminPanel" style="display:none">
+    <select id="apSize">
+      <option value="1/2">1/2</option>
+      <option value="3/4">3/4</option>
+      <option value="1">1</option>
+      <option value="1.5">1.5</option>
+      <option value="2">2</option>
+    </select>
+
+    <select id="apPN">
+      <option value="PN4">PN4</option>
+      <option value="PN6">PN6</option>
+      <option value="PN10">PN10</option>
+    </select>
+
+    <input type="number" id="apPrice" placeholder="New Price">
+    <button onclick="updatePrice()">Update Price</button>
+  </div>
+</section>
+
+<footer>
+  © 2026 JGD QUALITY INDUSTRIES
+</footer>
+
+<script>
+let prices = JSON.parse(localStorage.getItem("prices")) || {
+  "1/2_PN4":25,"1/2_PN6":35,"1/2_PN10":50,
+  "3/4_PN4":30,"3/4_PN6":40,"3/4_PN10":55,
+  "1_PN4":50,"1_PN6":65,"1_PN10":85,
+  "1.5_PN4":80,"1.5_PN6":100,"1.5_PN10":130,
+  "2_PN4":120,"2_PN6":145,"2_PN10":180
+};
+
+function calculatePrice(){
+  let key = size.value + "_" + pn.value;
+  let rate = prices[key] || 0;
+  price.value = "₹ " + (rate * (quantity.value || 0));
+}
+
+function sendWhatsApp(){
+  let msg =
+    "Order Inquiry%0A"+
+    "Product: "+product.value+"%0A"+
+    "Size: "+size.value+"%0A"+
+    "PN: "+pn.value+"%0A"+
+    "Qty: "+quantity.value+" Meter%0A"+
+    "Price: "+price.value+"%0A"+
+    "Name: "+name.value+"%0A"+
+    "Mobile: "+mobile.value;
+
+  window.open("https://wa.me/+917003764905?text="+msg);
+}
+
+function sendDealer(){
+  let msg =
+    "Dealer Application%0A"+
+    "Name: "+dname.value+"%0A"+
+    "Company: "+dcompany.value+"%0A"+
+    "City: "+dcity.value+"%0A"+
+    "Mobile: "+dmobile.value;
+
+  window.open("https://wa.me/+917003764905?text="+msg);
+}
+
+function unlockAdmin(){
+  if(adminPass.value==="jgdadmin"){
+    adminPanel.style.display="block";
+  } else alert("Wrong Password");
+}
+
+function updatePrice(){
+  let key = apSize.value + "_" + apPN.value;
+  prices[key] = apPrice.value;
+  localStorage.setItem("prices", JSON.stringify(prices));
+  alert("Price Updated");
+}
+</script>
+
+</body>
+</html>
