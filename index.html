@@ -8,13 +8,13 @@
 body{margin:0;font-family:Arial;background:#f2f2f2}
 header{background:#0a3d62;color:#fff;padding:20px;text-align:center}
 nav{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;background:#1e3799;padding:10px}
-nav button{padding:10px 15px;border:none;font-weight:bold;cursor:pointer}
+nav button{padding:10px 15px;border:none;font-weight:bold;cursor:pointer;color:#fff;background:#4a69bd;border-radius:4px}
 section{display:none;padding:20px}
-.card{background:#fff;padding:15px;margin:10px auto;max-width:420px;border-radius:6px}
-input,select,button{width:100%;padding:8px;margin-top:6px}
-button{background:#1e3799;color:#fff;border:none}
+.card{background:#fff;padding:15px;margin:10px auto;max-width:420px;border-radius:6px;box-shadow:0 0 6px rgba(0,0,0,0.1)}
+input,select,button{width:100%;padding:8px;margin-top:6px;border-radius:4px;border:1px solid #ccc}
+button{background:#1e3799;color:#fff;border:none;cursor:pointer}
 footer{text-align:center;padding:15px;background:#111;color:#aaa;cursor:pointer}
-.admin{display:none;background:#fff;padding:20px;max-width:500px;margin:20px auto}
+.admin{display:none;background:#fff;padding:20px;max-width:500px;margin:20px auto;box-shadow:0 0 8px rgba(0,0,0,0.2)}
 </style>
 </head>
 
@@ -98,17 +98,17 @@ let clicks=0;
 
 /* ---------- SIZE CONFIG ---------- */
 function sizeOptions(type){
-if(type==="garden"||type==="upvc")
-return `<option>½"</option><option>¾"</option><option>1"</option><option>1.25"</option><option>1.5"</option>`;
-if(type==="section")
-return `<option>1"</option><option>1.25"</option><option>2"</option><option>2.5"</option><option>3"</option>`;
-if(type==="swr")
-return `<option>2.5"</option><option>3"</option><option>4"</option><option>6"</option>`;
+  if(type==="garden"||type==="upvc")
+    return `<option>½"</option><option>¾"</option><option>1"</option><option>1.25"</option><option>1.5"</option>`;
+  if(type==="section")
+    return `<option>1"</option><option>1.25"</option><option>2"</option><option>2.5"</option><option>3"</option>`;
+  if(type==="swr")
+    return `<option>2.5"</option><option>3"</option><option>4"</option><option>6"</option>`;
 }
 
 /* ---------- PRODUCT HTML ---------- */
 function productHTML(type, hasPN=true){
-return `
+  return `
 <div class="card">
 <select id="${type}Size">${sizeOptions(type)}</select>
 
@@ -137,26 +137,26 @@ swr.innerHTML+=productHTML("swr",false);
 
 /* ---------- NAV ---------- */
 function openP(id){
-document.querySelectorAll("section").forEach(s=>s.style.display="none");
-document.getElementById(id).style.display="block";
+  document.querySelectorAll("section").forEach(s=>s.style.display="none");
+  document.getElementById(id).style.display="block";
 }
 
 /* ---------- PRICE KEY ---------- */
 function key(type){
-let size=document.getElementById(type+"Size").value;
-let pnEl=document.getElementById(type+"PN");
-let pn=pnEl?pnEl.value:"NA";
-return type+"_"+size+"_"+pn;
+  let size=document.getElementById(type+"Size").value;
+  let pnEl=document.getElementById(type+"PN");
+  let pn=pnEl?pnEl.value:"NA"; // PN না থাকলে "NA"
+  return type+"_"+size+"_"+pn;
 }
 
 /* ---------- CALCULATION ---------- */
 function calc(type){
-let qty=+document.getElementById(type+"Qty").value||1;
-let price=localStorage.getItem(key(type))||0;
-let gst=localStorage.getItem(type+"_GST")||0;
-let total=price*qty;
-let gstAmt=total*gst/100;
-document.getElementById(type+"Out").innerText=
+  let qty=+document.getElementById(type+"Qty").value||1;
+  let price=localStorage.getItem(key(type))||0;
+  let gst=localStorage.getItem(type+"_GST")||0;
+  let total=price*qty;
+  let gstAmt=total*gst/100;
+  document.getElementById(type+"Out").innerText=
 `Price: ₹${price}
 Qty: ${qty}
 Total: ₹${total}
@@ -164,42 +164,40 @@ GST (${gst}%): ₹${gstAmt}
 Grand Total: ₹${total+gstAmt}`;
 }
 
-/* ---------- ADMIN SAVE ---------- */
+/* ---------- ADMIN SAVE (FIXED) ---------- */
 function save(){
-localStorage.setItem(
-aProduct.value+"_"+aSize.value+"_"+aPN.value,
-aPrice.value
-);
-localStorage.setItem(aProduct.value+"_GST",aGST.value);
-alert("Price Updated");
+  let pnValue = aPN ? aPN.value : "NA";
+  localStorage.setItem(aProduct.value + "_" + aSize.value + "_" + pnValue, aPrice.value);
+  localStorage.setItem(aProduct.value + "_GST", aGST.value);
+  alert("Price Updated Successfully!");
 }
 
 /* ---------- WHATSAPP ---------- */
 function wa(type){
-let msg=`Order Details
+  let msg=`Order Details
 Product: ${type.toUpperCase()}
 ${document.getElementById(type+"Out").innerText}`;
-window.open("https://wa.me/917003764905?text="+encodeURIComponent(msg));
+  window.open("https://wa.me/917003764905?text="+encodeURIComponent(msg));
 }
 
 function dealerWA(){
-let msg=`Dealer Enquiry
+  let msg=`Dealer Enquiry
 Name: ${dName.value}
 Mobile: ${dMobile.value}
 City: ${dCity.value}
 Type: ${dType.value}`;
-window.open("https://wa.me/917003764905?text="+encodeURIComponent(msg));
+  window.open("https://wa.me/917003764905?text="+encodeURIComponent(msg));
 }
 
 /* ---------- ADMIN LOGIN ---------- */
 adminTrigger.onclick=()=>{
-clicks++;
-if(clicks==5){
-let p=prompt("Admin Password");
-if(p===ADMIN_PASS) adminPanel.style.display="block";
-else alert("Wrong Password");
-clicks=0;
-}
+  clicks++;
+  if(clicks==5){
+    let p=prompt("Admin Password");
+    if(p===ADMIN_PASS) adminPanel.style.display="block";
+    else alert("Wrong Password");
+    clicks=0;
+  }
 }
 </script>
 
