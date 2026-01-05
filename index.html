@@ -30,7 +30,6 @@ th{background:#eee}
 <p>Manufacturer of uPVC Pipe | Garden Pipe | Section Pipe | SWR Pipe</p>
 </header>
 
-<!-- PRODUCTS BUTTONS -->
 <section>
 <h2 style="text-align:center">Our Products</h2>
 <div class="products">
@@ -41,7 +40,6 @@ th{background:#eee}
 </div>
 </section>
 
-<!-- PRODUCT LIST -->
 <section id="productList" class="hidden">
 <h2 id="listTitle"></h2>
 <table>
@@ -60,18 +58,15 @@ th{background:#eee}
 </table>
 </section>
 
-<!-- ADMIN LOGIN -->
 <div class="admin-login">
 <h3>Admin Price Control</h3>
 <input id="adminPass" placeholder="Password">
 <button onclick="unlockAdmin()">Unlock Admin Panel</button>
 </div>
 
-<!-- ADMIN PANEL -->
 <section id="adminPanel" class="admin hidden">
 
 <h2>ADMIN PRICE CONTROL</h2>
-
 <div class="card">
 <b>GST (%)</b><br>
 <input id="GST_RATE" value="18">
@@ -118,37 +113,13 @@ th{background:#eee}
 
 <script>
 const PASS="1234";
-const WHATSAPP_NUMBER="917003764905"; // এখানে তোমার WhatsApp নাম্বার বসানো
+const WHATSAPP_NUMBER="917003764905"; // এখানে নিজের WhatsApp নাম্বার বসাও (country code সহ)
 
 const products={
- upvc:[
-  ["½\"", "PN6", "upvc_0.5_PN6"],
-  ["¾\"", "PN6", "upvc_0.75_PN6"],
-  ["1\"", "PN6", "upvc_1_PN6"],
-  ["1.25\"", "PN6", "upvc_1.25_PN6"],
-  ["1.5\"", "PN6", "upvc_1.5_PN6"]
- ],
- garden:[
-  ["½\"", "TP", "garden_0.5_TP"],
-  ["½\"", "OP", "garden_0.5_OP"],
-  ["½\"", "Zebra", "garden_0.5_Zebra"],
-  ["1\"", "TP", "garden_1_TP"],
-  ["1\"", "OP", "garden_1_OP"],
-  ["1\"", "Zebra", "garden_1_Zebra"]
- ],
- section:[
-  ["1\"", "PN6", "section_1_PN6"],
-  ["1.25\"", "PN6", "section_1.25_PN6"],
-  ["2\"", "PN6", "section_2_PN6"],
-  ["2.5\"", "PN6", "section_2.5_PN6"],
-  ["3\"", "PN6", "section_3_PN6"]
- ],
- swr:[
-  ["2.5\"", "PN6", "swr_2.5_PN6"],
-  ["3\"", "PN6", "swr_3_PN6"],
-  ["4\"", "PN6", "swr_4_PN6"],
-  ["6\"", "PN6", "swr_6_PN6"]
- ]
+ upvc:[["½\"","PN6","upvc_0.5_PN6"],["¾\"","PN6","upvc_0.75_PN6"],["1\"","PN6","upvc_1_PN6"],["1.25\"","PN6","upvc_1.25_PN6"],["1.5\"","PN6","upvc_1.5_PN6"]],
+ garden:[["½\"","TP","garden_0.5_TP"],["½\"","OP","garden_0.5_OP"],["½\"","Zebra","garden_0.5_Zebra"],["1\"","TP","garden_1_TP"],["1\"","OP","garden_1_OP"],["1\"","Zebra","garden_1_Zebra"]],
+ section:[["1\"","PN6","section_1_PN6"],["1.25\"","PN6","section_1.25_PN6"],["2\"","PN6","section_2_PN6"],["2.5\"","PN6","section_2.5_PN6"],["3\"","PN6","section_3_PN6"]],
+ swr:[["2.5\"","PN6","swr_2.5_PN6"],["3\"","PN6","swr_3_PN6"],["4\"","PN6","swr_4_PN6"],["6\"","PN6","swr_6_PN6"]]
 };
 
 function showList(type){
@@ -187,9 +158,9 @@ function orderWhatsApp(id,name){
  const price=Number(localStorage.getItem(id)||0);
  const gst=Number(localStorage.getItem("GST")||18);
  const total=(price*qty*(1+gst/100)).toFixed(2);
- const msg=`I want ${name}, Quantity: ${qty}, Total Price: ₹${total}`;
- const wa=`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
- window.open(wa,"_blank");
+ const msg=`🛒 *Order from JGD Quality Industries*\nProduct: ${name}\nQuantity: ${qty}\nTotal Price (GST incl.): ₹${total}`;
+ const url=`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+ window.open(url,"_blank");
 }
 
 function unlockAdmin(){
