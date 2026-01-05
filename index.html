@@ -66,6 +66,7 @@ footer{text-align:center;padding:15px;background:#111;color:#aaa;cursor:pointer}
 <div id="adminGarden" class="admin">
 <h2>Admin Panel: Garden Pipe</h2>
 <select id="gardenSize"></select>
+<select id="gardenPN"></select>
 <select id="gardenMaterial"></select>
 <input id="gardenPrice" type="number" placeholder="Price">
 <input id="gardenGST" type="number" placeholder="GST %" value="18">
@@ -105,6 +106,7 @@ const sizes = {
 };
 const pnOptions = {
   upvc: ['PN6','PN8','PN10','PN12.5'],
+  garden: ['PN6','PN8','PN10','PN12.5'], // এখন Garden-এও PN আছে
   section: ['PN6','PN8','PN10','PN12.5'],
   swr: ['PN6','PN8','PN10']
 };
@@ -130,7 +132,7 @@ ${materialHTML}
 
 /* ---------- LOAD PRODUCTS ---------- */
 upvc.innerHTML+=productHTML('upvc',true,false);
-garden.innerHTML+=productHTML('garden',false,true);
+garden.innerHTML+=productHTML('garden',true,true); // Garden-এ এখন PN + Material
 section.innerHTML+=productHTML('section',true,false);
 swr.innerHTML+=productHTML('swr',true,false);
 
@@ -140,13 +142,14 @@ function openP(id){
   document.getElementById(id).style.display="block";
 }
 
-/* ---------- POPULATE ADMIN SELECTS ---------- */
+/* ---------- INIT ADMIN DROPDOWNS ---------- */
 function initAdmin(){
   // uPVC
   document.getElementById('upvcSize').innerHTML = sizes.upvc.map(s=>`<option>${s}</option>`).join('');
   document.getElementById('upvcPN').innerHTML = pnOptions.upvc.map(p=>`<option>${p}</option>`).join('');
   // Garden
   document.getElementById('gardenSize').innerHTML = sizes.garden.map(s=>`<option>${s}</option>`).join('');
+  document.getElementById('gardenPN').innerHTML = pnOptions.garden.map(p=>`<option>${p}</option>`).join('');
   document.getElementById('gardenMaterial').innerHTML = gardenMaterials.map(m=>`<option>${m}</option>`).join('');
   // Section
   document.getElementById('sectionSize').innerHTML = sizes.section.map(s=>`<option>${s}</option>`).join('');
@@ -169,16 +172,13 @@ function calc(type){
   let size = document.getElementById(type+"Size").value;
   let pnEl = document.getElementById(type+"PN");
   let pn = pnEl ? pnEl.value : "NA";
-  let material = "";
-  if(type==='garden') material = document.getElementById('gardenMaterial').value;
-
+  let material = (type==='garden') ? document.getElementById('gardenMaterial').value : "";
   let qty = +document.getElementById(type+"Qty").value || 1;
   let priceKey = key(type,size,pn,material);
   let price = localStorage.getItem(priceKey) || 0;
   let gst = localStorage.getItem(type+"_GST") || 0;
   let total = price*qty;
   let gstAmt = total*gst/100;
-
   document.getElementById(type+"Out").innerText=
 `Price: ₹${price}
 Qty: ${qty}
@@ -192,13 +192,10 @@ function save(type){
   let size = document.getElementById(type+"Size").value;
   let pnEl = document.getElementById(type+"PN");
   let pn = pnEl ? pnEl.value : "NA";
-  let material = "";
-  if(type==='garden') material = document.getElementById(type+"Material").value;
-
+  let material = (type==='garden') ? document.getElementById('gardenMaterial').value : "";
   let priceKey = key(type,size,pn,material);
   let priceInput = document.getElementById(type+"Price").value;
   let gstInput = document.getElementById(type+"GST").value;
-
   localStorage.setItem(priceKey,priceInput);
   localStorage.setItem(type+"_GST",gstInput);
   alert("Price Updated for "+type+"!");
