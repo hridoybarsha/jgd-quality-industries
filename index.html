@@ -2,176 +2,165 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>JGD QUALITY INDUSTRIES</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JGD Quality Industries</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body{margin:0;font-family:Arial;background:#f2f6fb;}
-header{background:#2b66e3;color:#fff;padding:30px;text-align:center;}
-section{padding:20px;}
-.products{display:flex;gap:15px;flex-wrap:wrap;justify-content:center;}
-.box{background:#fff;padding:20px;border-radius:10px;width:220px;text-align:center;box-shadow:0 4px 10px rgba(0,0,0,.1);cursor:pointer;}
-table{width:100%;border-collapse:collapse;margin-top:15px;}
-th,td{border:1px solid #ccc;padding:8px;text-align:center;}
-th{background:#eee;}
-input{padding:5px;width:70px;}
-button{padding:6px 10px;cursor:pointer;}
-.hidden{display:none;}
-.admin-login,.admin{max-width:800px;margin:30px auto;background:#fff;padding:20px;border-radius:10px;}
+body{margin:0;font-family:Arial;background:#f2f2f2}
+header{background:#0a3d62;color:#fff;padding:20px;text-align:center}
+nav{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;background:#1e3799;padding:10px}
+nav button{padding:10px 15px;border:none;font-weight:bold;cursor:pointer}
+section{display:none;padding:20px}
+.card{background:#fff;padding:15px;margin:10px auto;max-width:400px;border-radius:6px}
+input,select,button{width:100%;padding:8px;margin-top:6px}
+button{background:#1e3799;color:#fff;border:none}
+footer{text-align:center;padding:15px;background:#111;color:#aaa;cursor:pointer}
+.admin{display:none;background:#fff;padding:20px;max-width:500px;margin:20px auto}
 </style>
 </head>
+
 <body>
 
 <header>
 <h1>JGD QUALITY INDUSTRIES</h1>
-<p>Manufacturer of uPVC Pipe | Garden Pipe | Section Pipe | SWR Pipe</p>
+<p>Manufacturing / Factory</p>
+<p>📞 +91 7003764905</p>
 </header>
 
-<section>
-<h2 style="text-align:center">Our Products</h2>
-<div class="products">
-<div class="box" onclick="showList('section')">Section Pipe</div>
-<div class="box" onclick="showList('garden')">Garden Pipe</div>
-<div class="box" onclick="showList('swr')">SWR Pipe</div>
+<nav>
+<button onclick="openP('upvc')">uPVC Pipe</button>
+<button onclick="openP('garden')">Garden Pipe</button>
+<button onclick="openP('section')">Section Pipe</button>
+<button onclick="openP('swr')">SWR Pipe</button>
+<button onclick="openP('dealer')">Dealer</button>
+</nav>
+
+<!-- PRODUCT TEMPLATE -->
+<script>
+function productHTML(type, hasPN=true){
+return `
+<div class="card">
+<select id="${type}Size">
+<option>2.5 Inch</option>
+<option>3 Inch</option>
+<option>4 Inch</option>
+</select>
+${hasPN?`
+<select id="${type}PN">
+<option>PN6</option>
+<option>PN8</option>
+<option>PN10</option>
+</select>`:""}
+<input id="${type}Qty" type="number" placeholder="Quantity">
+<button onclick="calc('${type}')">Get Price</button>
+<p id="${type}Out"></p>
+<button onclick="wa('${type}')">Order on WhatsApp</button>
+</div>`;
+}
+</script>
+
+<section id="upvc"><h2>uPVC Pipe</h2></section>
+<section id="garden"><h2>Garden Pipe</h2></section>
+<section id="section"><h2>Section Pipe</h2></section>
+<section id="swr"><h2>SWR Pipe</h2></section>
+
+<section id="dealer">
+<h2>Dealer / Distributor Enquiry</h2>
+<div class="card">
+<input id="dName" placeholder="Name">
+<input id="dMobile" placeholder="Mobile">
+<input id="dCity" placeholder="City">
+<select id="dType"><option>Dealer</option><option>Distributor</option></select>
+<button onclick="dealerWA()">Send Enquiry</button>
 </div>
 </section>
 
-<section id="productList" class="hidden">
-<h2 id="productTitle">Product Price List</h2>
-<table>
-<thead>
-<tr>
-<th>Size</th>
-<th>PN</th>
-<th>Base Price</th>
-<th>Quantity</th>
-<th>Total Price</th>
-<th>Action</th>
-</tr>
-</thead>
-<tbody id="listBody"></tbody>
-</table>
-</section>
-
-<div class="admin-login">
-<h3>Admin Panel</h3>
-<input id="adminPass" placeholder="Password">
-<button onclick="unlockAdmin()">Unlock</button>
+<!-- ADMIN -->
+<div id="adminPanel" class="admin">
+<h2>Admin Price Control</h2>
+<select id="aProduct">
+<option>upvc</option><option>garden</option>
+<option>section</option><option>swr</option>
+</select>
+<select id="aSize">
+<option>2.5 Inch</option><option>3 Inch</option><option>4 Inch</option>
+</select>
+<select id="aPN">
+<option>PN6</option><option>PN8</option><option>PN10</option>
+</select>
+<input id="aPrice" type="number" placeholder="Price">
+<input id="aGST" type="number" placeholder="GST %" value="18">
+<button onclick="save()">Save</button>
 </div>
 
-<section id="adminPanel" class="admin hidden">
-<h3>GST (%)</h3>
-<input id="GST_RATE" value="18">
-<button onclick="saveGST()">Save GST</button>
-
-<hr>
-
-<h3>Set Product Prices</h3>
-<div id="adminProducts"></div>
-</section>
+<footer id="adminTrigger">© JGD Quality Industries</footer>
 
 <script>
-const WHATSAPP_NUMBER = "917003764905";
-const PASS = "1234";
+const ADMIN_PASS="JGD2026";
+let clicks=0;
 
-// Products: [Size, PN, storage_key]
-const products = {
- section:[
-  ["2.5\"", "PN6", "section_2.5_PN6"],
-  ["3\"", "PN8", "section_3_PN8"]
- ],
- garden:[
-  ["1\"", "PN4", "garden_1_PN4"],
-  ["1.5\"", "PN6", "garden_1.5_PN6"]
- ],
- swr:[
-  ["4\"", "PN8", "swr_4_PN8"]
- ]
-};
+upvc.innerHTML+=productHTML("upvc",true);
+garden.innerHTML+=productHTML("garden",false);
+section.innerHTML+=productHTML("section",false);
+swr.innerHTML+=productHTML("swr",false);
 
-// Show Product List
-function showList(type){
- document.getElementById("productList").classList.remove("hidden");
- document.getElementById("productTitle").innerText = type.toUpperCase()+" PIPE PRICE LIST";
- const body = document.getElementById("listBody");
- body.innerHTML = "";
- const gst = Number(localStorage.getItem("GST")||18);
-
- products[type].forEach(p=>{
-  const price = Number(localStorage.getItem(p[2])||0);
-  const total = (price*(1+gst/100)).toFixed(2);
-  body.innerHTML += `
-  <tr>
-   <td>${p[0]}</td>
-   <td>${p[1]}</td>
-   <td>₹${price}</td>
-   <td><input type="number" min="1" value="1" id="qty_${p[2]}" onchange="calc('${p[2]}')"></td>
-   <td id="total_${p[2]}">₹${total}</td>
-   <td><button onclick="orderWhatsApp('${p[2]}','${p[0]} ${p[1]}')">Order on WhatsApp</button></td>
-  </tr>`;
- });
+function openP(id){
+document.querySelectorAll("section").forEach(s=>s.style.display="none");
+document.getElementById(id).style.display="block";
 }
 
-// Calculate total for a product
-function calc(id){
- const qty = Number(document.getElementById("qty_"+id).value);
- const price = Number(localStorage.getItem(id)||0);
- const gst = Number(localStorage.getItem("GST")||18);
- const total = price*qty*(1+gst/100);
- document.getElementById("total_"+id).innerText = "₹"+total.toFixed(2);
+function key(type){
+let size=document.getElementById(type+"Size").value;
+let pnEl=document.getElementById(type+"PN");
+let pn=pnEl?pnEl.value:"NA";
+return type+"_"+size+"_"+pn;
 }
 
-// WhatsApp pre-filled order
-function orderWhatsApp(id,name){
- const qty = Number(document.getElementById("qty_"+id).value);
- const price = Number(localStorage.getItem(id)||0);
- const gst = Number(localStorage.getItem("GST")||18);
- const total = (price*qty*(1+gst/100)).toFixed(2);
-
- const msg = `*JGD QUALITY INDUSTRIES Order*\n\nProduct: ${name}\nQuantity: ${qty}\nPrice per unit: ₹${price}\nGST: ${gst}%\nTotal Amount: ₹${total}`;
-
- const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
- window.open(url,"_blank");
+function calc(type){
+let qty=+document.getElementById(type+"Qty").value||1;
+let price=localStorage.getItem(key(type))||0;
+let gst=localStorage.getItem(type+"_GST")||0;
+let total=price*qty;
+let gstAmt=total*gst/100;
+document.getElementById(type+"Out").innerText=
+`Price: ₹${price} | Qty:${qty}
+Total: ₹${total}
+GST(${gst}%): ₹${gstAmt}
+Grand Total: ₹${total+gstAmt}`;
 }
 
-// Admin Functions
-function unlockAdmin(){
- if(document.getElementById("adminPass").value===PASS){
-  document.getElementById("adminPanel").classList.remove("hidden");
-  loadAdminProducts();
- }else alert("Wrong Password");
+function save(){
+localStorage.setItem(
+aProduct.value+"_"+aSize.value+"_"+aPN.value,
+aPrice.value
+);
+localStorage.setItem(aProduct.value+"_GST",aGST.value);
+alert("Updated");
 }
 
-function savePrice(id){
- localStorage.setItem(id,document.getElementById(id).value);
- alert("Price Saved");
- showList('section'); // Update list if open
+function wa(type){
+let msg=`Order:
+Product:${type}
+${document.getElementById(type+"Out").innerText}`;
+window.open("https://wa.me/917003764905?text="+encodeURIComponent(msg));
 }
 
-function saveGST(){
- localStorage.setItem("GST",document.getElementById("GST_RATE").value);
- alert("GST Saved");
+function dealerWA(){
+let msg=`Dealer Enquiry
+Name:${dName.value}
+Mobile:${dMobile.value}
+City:${dCity.value}
+Type:${dType.value}`;
+window.open("https://wa.me/917003764905?text="+encodeURIComponent(msg));
 }
 
-// Load products in admin panel
-function loadAdminProducts(){
- const container = document.getElementById("adminProducts");
- container.innerHTML = "";
- for(const type in products){
-  products[type].forEach(p=>{
-   const price = localStorage.getItem(p[2])||0;
-   container.innerHTML += `${p[0]} ${p[1]} ₹ <input id="${p[2]}" value="${price}"> <button onclick="savePrice('${p[2]}')">Save</button><br><br>`;
-  });
- }
+adminTrigger.onclick=()=>{
+clicks++;
+if(clicks==5){
+let p=prompt("Admin Password");
+if(p===ADMIN_PASS) adminPanel.style.display="block";
+else alert("Wrong Password");
+clicks=0;
 }
-
-// Initialize
-window.onload=()=>{
- document.getElementById("GST_RATE").value=localStorage.getItem("GST")||18;
- for(const type in products){
-  products[type].forEach(p=>{
-   if(localStorage.getItem(p[2])) document.getElementById(p[2])?.setAttribute('value',localStorage.getItem(p[2]));
-  });
- }
 }
 </script>
 
