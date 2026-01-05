@@ -4,9 +4,24 @@
 <meta charset="UTF-8">
 <title>JGD QUALITY INDUSTRIES</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="style.css">
-</head>
+<style>
+/* General Styles */
+body{font-family:Arial;margin:0;background:#f2f2f2;}
+header{background:#0f172a;color:#fff;padding:20px;text-align:center;}
+nav{background:#1e293b;text-align:center;}
+nav a{color:#fff;padding:12px;display:inline-block;text-decoration:none;}
+section{background:#fff;margin:20px;padding:20px;border-radius:5px;}
+input,select{width:100%;padding:10px;margin:6px 0;}
+.btn{background:green;color:#fff;padding:10px;border:none;width:100%;}
+footer{background:#0f172a;color:#fff;text-align:center;padding:10px;}
 
+/* Tabs */
+.tab { overflow:hidden; border-bottom:1px solid #ccc; }
+.tab button { background:#eee; border:none; padding:10px 20px; cursor:pointer; }
+.tab button.active { background:#0f172a; color:white; }
+.tabcontent { display:none; padding:20px; background:white; margin-top:10px; border-radius:5px; }
+</style>
+</head>
 <body>
 
 <header>
@@ -18,8 +33,8 @@
   <a href="#home">Home</a>
   <a href="#about">About</a>
   <a href="#products">Products</a>
-  <a href="#order">Order</a>
   <a href="#dealer">Dealer</a>
+  <a href="#admin">Admin</a>
 </nav>
 
 <section id="home" class="hero">
@@ -35,67 +50,134 @@
   </p>
 </section>
 
+<!-- PRODUCTS SECTION WITH TABS -->
 <section id="products">
   <h2>Our Products</h2>
-  <ul>
-    <li>uPVC Pipe</li>
-    <li>uPVC Garden Pipe</li>
-    <li>uPVC Section Pipe</li>
-  </ul>
-</section>
 
-<!-- ORDER FORM -->
-<section id="order">
-  <h2>Order / Price Inquiry</h2>
+  <div class="tab">
+    <button class="tablinks" onclick="openProduct(event,'uPVC')">uPVC Pipe</button>
+    <button class="tablinks" onclick="openProduct(event,'Garden')">Garden Pipe</button>
+    <button class="tablinks" onclick="openProduct(event,'Section')">Section Pipe</button>
+  </div>
 
-  <form onsubmit="sendWhatsApp(); return false;">
+  <!-- uPVC Pipe -->
+  <div id="uPVC" class="tabcontent">
+    <h3>uPVC Pipe</h3>
+    <form onsubmit="sendWhatsApp('uPVC'); return false;">
+      <label>Pipe Size</label>
+      <select id="size_uPVC" onchange="calculatePrice('uPVC')" required>
+        <option value="">Select</option>
+        <option value="1/2">1/2 Inch</option>
+        <option value="3/4">3/4 Inch</option>
+        <option value="1">1 Inch</option>
+        <option value="1.5">1.5 Inch</option>
+        <option value="2">2 Inch</option>
+      </select>
 
-    <label>Product</label>
-    <select id="product" required>
-      <option value="">Select</option>
-      <option>uPVC Pipe</option>
-      <option>uPVC Garden Pipe</option>
-      <option>uPVC Section Pipe</option>
-    </select>
+      <label>PN</label>
+      <select id="pn_uPVC" onchange="calculatePrice('uPVC')" required>
+        <option value="">Select</option>
+        <option value="PN4">PN4</option>
+        <option value="PN6">PN6</option>
+        <option value="PN10">PN10</option>
+      </select>
 
-    <label>Pipe Size</label>
-    <select id="size" onchange="calculatePrice()" required>
-      <option value="">Select</option>
-      <option value="1/2">1/2 Inch</option>
-      <option value="3/4">3/4 Inch</option>
-      <option value="1">1 Inch</option>
-      <option value="1.5">1.5 Inch</option>
-      <option value="2">2 Inch</option>
-    </select>
+      <label>Quantity (Meter)</label>
+      <input type="number" id="qty_uPVC" oninput="calculatePrice('uPVC')" required>
 
-    <label>Pressure (PN)</label>
-    <select id="pn" onchange="calculatePrice()" required>
-      <option value="">Select</option>
-      <option value="PN4">PN4</option>
-      <option value="PN6">PN6</option>
-      <option value="PN10">PN10</option>
-    </select>
+      <label>Total Price</label>
+      <input type="text" id="price_uPVC" readonly>
 
-    <label>Quantity (Meter)</label>
-    <input type="number" id="quantity" oninput="calculatePrice()" required>
+      <label>Name</label>
+      <input type="text" id="name_uPVC" required>
 
-    <label>Total Price</label>
-    <input type="text" id="price" readonly>
+      <label>Mobile</label>
+      <input type="text" id="mobile_uPVC" required>
 
-    <label>Your Name</label>
-    <input type="text" id="name" required>
+      <button class="btn" type="submit">Send on WhatsApp</button>
+    </form>
+  </div>
 
-    <label>Mobile</label>
-    <input type="text" id="mobile" required>
+  <!-- Garden Pipe -->
+  <div id="Garden" class="tabcontent">
+    <h3>Garden Pipe</h3>
+    <form onsubmit="sendWhatsApp('Garden'); return false;">
+      <label>Pipe Size</label>
+      <select id="size_Garden" onchange="calculatePrice('Garden')" required>
+        <option value="">Select</option>
+        <option value="1/2">1/2 Inch</option>
+        <option value="3/4">3/4 Inch</option>
+        <option value="1">1 Inch</option>
+        <option value="1.5">1.5 Inch</option>
+        <option value="2">2 Inch</option>
+      </select>
 
-    <button type="submit" class="btn">Send on WhatsApp</button>
-  </form>
+      <label>PN</label>
+      <select id="pn_Garden" onchange="calculatePrice('Garden')" required>
+        <option value="">Select</option>
+        <option value="PN4">PN4</option>
+        <option value="PN6">PN6</option>
+        <option value="PN10">PN10</option>
+      </select>
+
+      <label>Quantity (Meter)</label>
+      <input type="number" id="qty_Garden" oninput="calculatePrice('Garden')" required>
+
+      <label>Total Price</label>
+      <input type="text" id="price_Garden" readonly>
+
+      <label>Name</label>
+      <input type="text" id="name_Garden" required>
+
+      <label>Mobile</label>
+      <input type="text" id="mobile_Garden" required>
+
+      <button class="btn" type="submit">Send on WhatsApp</button>
+    </form>
+  </div>
+
+  <!-- Section Pipe -->
+  <div id="Section" class="tabcontent">
+    <h3>Section Pipe</h3>
+    <form onsubmit="sendWhatsApp('Section'); return false;">
+      <label>Pipe Size</label>
+      <select id="size_Section" onchange="calculatePrice('Section')" required>
+        <option value="">Select</option>
+        <option value="1/2">1/2 Inch</option>
+        <option value="3/4">3/4 Inch</option>
+        <option value="1">1 Inch</option>
+        <option value="1.5">1.5 Inch</option>
+        <option value="2">2 Inch</option>
+      </select>
+
+      <label>PN</label>
+      <select id="pn_Section" onchange="calculatePrice('Section')" required>
+        <option value="">Select</option>
+        <option value="PN4">PN4</option>
+        <option value="PN6">PN6</option>
+        <option value="PN10">PN10</option>
+      </select>
+
+      <label>Quantity (Meter)</label>
+      <input type="number" id="qty_Section" oninput="calculatePrice('Section')" required>
+
+      <label>Total Price</label>
+      <input type="text" id="price_Section" readonly>
+
+      <label>Name</label>
+      <input type="text" id="name_Section" required>
+
+      <label>Mobile</label>
+      <input type="text" id="mobile_Section" required>
+
+      <button class="btn" type="submit">Send on WhatsApp</button>
+    </form>
+  </div>
 </section>
 
 <!-- DEALER FORM -->
 <section id="dealer">
   <h2>Dealer / Distributor Registration</h2>
-
   <form onsubmit="sendDealer(); return false;">
     <input type="text" id="dname" placeholder="Name" required>
     <input type="text" id="dcompany" placeholder="Shop / Company" required>
@@ -136,7 +218,20 @@
 </footer>
 
 <script>
-let prices = JSON.parse(localStorage.getItem("prices")) || {
+// Tabs
+function openProduct(evt, productName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for(i=0;i<tabcontent.length;i++) tabcontent[i].style.display="none";
+  tablinks = document.getElementsByClassName("tablinks");
+  for(i=0;i<tablinks.length;i++) tablinks[i].className = tablinks[i].className.replace(" active","");
+  document.getElementById(productName).style.display="block";
+  evt.currentTarget.className += " active";
+}
+document.addEventListener("DOMContentLoaded", ()=>{ document.getElementsByClassName("tablinks")[0].click(); });
+
+// Demo Prices
+let prices = {
   "1/2_PN4":25,"1/2_PN6":35,"1/2_PN10":50,
   "3/4_PN4":30,"3/4_PN6":40,"3/4_PN10":55,
   "1_PN4":50,"1_PN6":65,"1_PN10":85,
@@ -144,43 +239,39 @@ let prices = JSON.parse(localStorage.getItem("prices")) || {
   "2_PN4":120,"2_PN6":145,"2_PN10":180
 };
 
-function calculatePrice(){
-  let key = size.value + "_" + pn.value;
+// Price Calculation
+function calculatePrice(product){
+  let size = document.getElementById("size_"+product).value;
+  let pn = document.getElementById("pn_"+product).value;
+  let qty = document.getElementById("qty_"+product).value || 0;
+  let key = size + "_" + pn;
   let rate = prices[key] || 0;
-  price.value = "₹ " + (rate * (quantity.value || 0));
+  document.getElementById("price_"+product).value = "₹ " + (rate * qty);
 }
 
-function sendWhatsApp(){
-  let msg =
-    "Order Inquiry%0A"+
-    "Product: "+product.value+"%0A"+
-    "Size: "+size.value+"%0A"+
-    "PN: "+pn.value+"%0A"+
-    "Qty: "+quantity.value+" Meter%0A"+
-    "Price: "+price.value+"%0A"+
-    "Name: "+name.value+"%0A"+
-    "Mobile: "+mobile.value;
-
+// Send WhatsApp
+function sendWhatsApp(product){
+  let name = document.getElementById("name_"+product).value;
+  let mobile = document.getElementById("mobile_"+product).value;
+  let size = document.getElementById("size_"+product).value;
+  let pn = document.getElementById("pn_"+product).value;
+  let qty = document.getElementById("qty_"+product).value;
+  let total = document.getElementById("price_"+product).value;
+  let msg = `Order Inquiry%0AProduct: ${product}%0ASize: ${size}%0APN: ${pn}%0AQuantity: ${qty} Meter%0ATotal Price: ${total}%0AName: ${name}%0AMobile: ${mobile}`;
   window.open("https://wa.me/+917003764905?text="+msg);
 }
 
+// Dealer WhatsApp
 function sendDealer(){
-  let msg =
-    "Dealer Application%0A"+
-    "Name: "+dname.value+"%0A"+
-    "Company: "+dcompany.value+"%0A"+
-    "City: "+dcity.value+"%0A"+
-    "Mobile: "+dmobile.value;
-
+  let msg = `Dealer Application%0AName: ${dname.value}%0ACompany: ${dcompany.value}%0ACity: ${dcity.value}%0AMobile: ${dmobile.value}`;
   window.open("https://wa.me/+917003764905?text="+msg);
 }
 
+// Admin Panel
 function unlockAdmin(){
-  if(adminPass.value==="jgdadmin"){
-    adminPanel.style.display="block";
-  } else alert("Wrong Password");
+  if(adminPass.value==="jgdadmin"){ adminPanel.style.display="block"; }
+  else alert("Wrong Password");
 }
-
 function updatePrice(){
   let key = apSize.value + "_" + apPN.value;
   prices[key] = apPrice.value;
