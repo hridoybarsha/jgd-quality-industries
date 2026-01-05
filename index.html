@@ -2,14 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>JGD QUALITY INDUSTRIES</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JGD QUALITY INDUSTRIES</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Poppins',sans-serif;background:#f0f4f8;color:#1e293b;line-height:1.6;scroll-behavior:smooth;}
-a{text-decoration:none;color:inherit;}
-header{position:relative;width:100%;height:80vh;background:#2563eb;color:#fff;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;overflow:hidden;}
+header{position:relative;width:100%;height:70vh;background:#2563eb;color:#fff;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;overflow:hidden;}
 header h1{font-size:3rem;margin-bottom:10px;animation:fadeIn 2s;}
 header p{font-size:1.2rem;color:#e0f2fe;margin-bottom:20px;animation:fadeIn 3s;}
 header .btn{padding:15px 30px;border-radius:10px;background:#fff;color:#2563eb;font-weight:600;font-size:1rem;cursor:pointer;transition:0.3s;}
@@ -35,31 +34,14 @@ input:focus,select:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px 
 .btn{background:linear-gradient(90deg,#2563eb,#3b82f6);color:#fff;padding:14px;border:none;border-radius:10px;width:100%;font-size:1.05rem;cursor:pointer;transition:0.3s;}
 .btn:hover{transform:scale(1.05);box-shadow:0 5px 15px rgba(37,99,235,0.3);}
 
-/* Price Table */
-.price-table{width:100%;border-collapse:collapse;margin:20px 0;}
-.price-table th,.price-table td{border:1px solid #cbd5e1;padding:12px;text-align:center;}
-.price-table th{background:#e0f2fe;color:#1e3a8a;}
-
-/* Admin Panel Card */
-.card{background:#fff;border-radius:16px;box-shadow:0 8px 25px rgba(0,0,0,0.12);padding:30px;margin:25px auto;max-width:700px;transition:0.3s;}
-.card h3{text-align:center;margin-bottom:20px;color:#1e293b;font-size:1.6rem;}
-
-/* Testimonials */
-.testimonials{padding:80px 20px;text-align:center;background:#e0f2fe;}
-.testimonials h2{font-size:2.5rem;margin-bottom:40px;color:#1e3a8a;}
-.testimonial-card{background:#fff;border-radius:16px;padding:25px;margin:20px auto;max-width:500px;box-shadow:0 8px 20px rgba(0,0,0,0.1);}
-.testimonial-card p{font-style:italic;color:#475569;margin-bottom:10px;}
-.testimonial-card h4{color:#1e293b;}
-
 /* Footer */
 footer{background:#0f172a;color:#fff;text-align:center;padding:20px;margin-top:30px;font-size:0.95rem;letter-spacing:1px;}
 
 /* Animations */
 @keyframes fadeIn{0%{opacity:0;transform:translateY(20px);}100%{opacity:1;transform:translateY(0);}}
-
 @media(max-width:700px){
   .product-selector{flex-direction:column;align-items:center;}
-  section.order-section,.card{width:95%;}
+  section.order-section{width:95%;}
 }
 </style>
 </head>
@@ -70,7 +52,7 @@ footer{background:#0f172a;color:#fff;text-align:center;padding:20px;margin-top:3
   <h1>JGD QUALITY INDUSTRIES</h1>
   <p>Manufacturer of uPVC Pipe | Garden Pipe | Section Pipe</p>
   <button class="btn" onclick="scrollToProducts()">Order Now</button>
-  <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1596464716121-9d9f0f4958b0?fit=crop&w=1200&q=80');"></div>
+  <div class="hero-slide active" style="background-image:url('https://images.unsplash.com/photo-1596464716121-9d9f0f4958b0?fit=crop&w=1200&q=80');"></div>
   <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1581092334420-3d6df29c3d7e?fit=crop&w=1200&q=80');"></div>
   <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1612831455544-9aa4eacdc2d4?fit=crop&w=1200&q=80');"></div>
 </header>
@@ -97,150 +79,96 @@ footer{background:#0f172a;color:#fff;text-align:center;padding:20px;margin-top:3
 <!-- Order Sections -->
 <section class="order-section" id="uPVC">
   <h2>uPVC Pipe Order</h2>
-  <form onsubmit="sendWhatsApp('uPVC'); return false;">
-    <label>Pipe Size</label>
-    <select id="size_uPVC" onchange="calculatePrice('uPVC')" required>
+  <label>Pipe Size</label>
+  <select id="size_uPVC" onchange="calculatePrice('uPVC')">
       <option value="">Select</option>
       <option value="1/2">1/2 Inch</option>
       <option value="3/4">3/4 Inch</option>
       <option value="1">1 Inch</option>
       <option value="1.5">1.5 Inch</option>
       <option value="2">2 Inch</option>
-      <option value="2.5">2 ½ Inch</option>
+      <option value="2.5">2.5 Inch</option>
       <option value="3">3 Inch</option>
       <option value="4">4 Inch</option>
-    </select>
-    <label>PN</label>
-    <select id="pn_uPVC" onchange="calculatePrice('uPVC')" required>
+  </select>
+  <label>PN</label>
+  <select id="pn_uPVC" onchange="calculatePrice('uPVC')">
       <option value="">Select</option>
       <option value="PN4">PN4</option>
       <option value="PN6">PN6</option>
       <option value="PN10">PN10</option>
-    </select>
-    <label>Quantity (Meter)</label>
-    <input type="number" id="qty_uPVC" oninput="calculatePrice('uPVC')" required>
-    <label>Total Price</label>
-    <input type="text" id="price_uPVC" readonly>
-    <label>Name</label>
-    <input type="text" id="name_uPVC" required>
-    <label>Mobile</label>
-    <input type="text" id="mobile_uPVC" required>
-    <button class="btn" type="submit">Send on WhatsApp</button>
-  </form>
+  </select>
+  <label>Quantity (Meter)</label>
+  <input type="number" id="qty_uPVC" oninput="calculatePrice('uPVC')">
+  <label>Total Price</label>
+  <input type="text" id="price_uPVC" readonly>
+  <label>Name</label>
+  <input type="text" id="name_uPVC">
+  <label>Mobile</label>
+  <input type="text" id="mobile_uPVC">
+  <button class="btn" onclick="sendWhatsApp('uPVC')">Send on WhatsApp</button>
 </section>
 
 <section class="order-section" id="Garden">
   <h2>Garden Pipe Order</h2>
-  <form onsubmit="sendWhatsApp('Garden'); return false;">
-    <label>Pipe Size</label>
-    <select id="size_Garden" onchange="calculatePrice('Garden')" required>
+  <label>Pipe Size</label>
+  <select id="size_Garden" onchange="calculatePrice('Garden')">
       <option value="">Select</option>
       <option value="1/2">1/2 Inch</option>
       <option value="3/4">3/4 Inch</option>
       <option value="1">1 Inch</option>
       <option value="1.5">1.5 Inch</option>
       <option value="2">2 Inch</option>
-    </select>
-    <label>PN</label>
-    <select id="pn_Garden" onchange="calculatePrice('Garden')" required>
+  </select>
+  <label>PN</label>
+  <select id="pn_Garden" onchange="calculatePrice('Garden')">
       <option value="">Select</option>
       <option value="PN4">PN4</option>
       <option value="PN6">PN6</option>
       <option value="PN10">PN10</option>
-    </select>
-    <label>Quantity (Meter)</label>
-    <input type="number" id="qty_Garden" oninput="calculatePrice('Garden')" required>
-    <label>Total Price</label>
-    <input type="text" id="price_Garden" readonly>
-    <label>Name</label>
-    <input type="text" id="name_Garden" required>
-    <label>Mobile</label>
-    <input type="text" id="mobile_Garden" required>
-    <button class="btn" type="submit">Send on WhatsApp</button>
-  </form>
+  </select>
+  <label>Quantity (Meter)</label>
+  <input type="number" id="qty_Garden" oninput="calculatePrice('Garden')">
+  <label>Total Price</label>
+  <input type="text" id="price_Garden" readonly>
+  <label>Name</label>
+  <input type="text" id="name_Garden">
+  <label>Mobile</label>
+  <input type="text" id="mobile_Garden">
+  <button class="btn" onclick="sendWhatsApp('Garden')">Send on WhatsApp</button>
 </section>
 
 <section class="order-section" id="Section">
   <h2>Section Pipe Order</h2>
-  <form onsubmit="sendWhatsApp('Section'); return false;">
-    <label>Pipe Size</label>
-    <select id="size_Section" onchange="calculatePrice('Section')" required>
+  <label>Pipe Size</label>
+  <select id="size_Section" onchange="calculatePrice('Section')">
       <option value="">Select</option>
       <option value="1/2">1/2 Inch</option>
       <option value="3/4">3/4 Inch</option>
       <option value="1">1 Inch</option>
       <option value="1.5">1.5 Inch</option>
       <option value="2">2 Inch</option>
-    </select>
-    <label>PN</label>
-    <select id="pn_Section" onchange="calculatePrice('Section')" required>
+  </select>
+  <label>PN</label>
+  <select id="pn_Section" onchange="calculatePrice('Section')">
       <option value="">Select</option>
       <option value="PN4">PN4</option>
       <option value="PN6">PN6</option>
       <option value="PN10">PN10</option>
-    </select>
-    <label>Quantity (Meter)</label>
-    <input type="number" id="qty_Section" oninput="calculatePrice('Section')" required>
-    <label>Total Price</label>
-    <input type="text" id="price_Section" readonly>
-    <label>Name</label>
-    <input type="text" id="name_Section" required>
-    <label>Mobile</label>
-    <input type="text" id="mobile_Section" required>
-    <button class="btn" type="submit">Send on WhatsApp</button>
-  </form>
-</section>
-
-<!-- Admin Panel -->
-<div class="card">
-  <h3>Admin Price Control</h3>
-  <input type="password" id="adminPass" placeholder="Password">
-  <button class="btn" onclick="unlockAdmin()">Unlock Admin Panel</button>
-  <div id="adminPanel" style="display:none;margin-top:20px;">
-    <label>Product</label>
-    <select id="apProduct">
-      <option value="uPVC">uPVC Pipe</option>
-      <option value="Garden">Garden Pipe</option>
-      <option value="Section">Section Pipe</option>
-    </select>
-    <label>Size</label>
-    <select id="apSize">
-      <option value="1/2">1/2</option>
-      <option value="3/4">3/4</option>
-      <option value="1">1</option>
-      <option value="1.5">1.5</option>
-      <option value="2">2</option>
-      <option value="2.5">2.5</option>
-      <option value="3">3</option>
-      <option value="4">4</option>
-    </select>
-    <label>PN</label>
-    <select id="apPN">
-      <option value="PN4">PN4</option>
-      <option value="PN6">PN6</option>
-      <option value="PN10">PN10</option>
-    </select>
-    <label>New Price (₹)</label>
-    <input type="number" id="apPrice" placeholder="Enter New Price">
-    <button class="btn" onclick="updatePrice()">Update Price</button>
-  </div>
-</div>
-
-<!-- Testimonials -->
-<section class="testimonials">
-  <h2>What Our Clients Say</h2>
-  <div class="testimonial-card">
-    <p>"Excellent quality Section Pipes. Delivery was super fast!"</p>
-    <h4>- Ramesh Kumar</h4>
-  </div>
-  <div class="testimonial-card">
-    <p>"JGD's Garden Pipes made our landscaping project effortless."</p>
-    <h4>- Priya Sen</h4>
-  </div>
+  </select>
+  <label>Quantity (Meter)</label>
+  <input type="number" id="qty_Section" oninput="calculatePrice('Section')">
+  <label>Total Price</label>
+  <input type="text" id="price_Section" readonly>
+  <label>Name</label>
+  <input type="text" id="name_Section">
+  <label>Mobile</label>
+  <input type="text" id="mobile_Section">
+  <button class="btn" onclick="sendWhatsApp('Section')">Send on WhatsApp</button>
 </section>
 
 <footer>
-  © 2026 JGD QUALITY INDUSTRIES | Contact: +917003764905
+© 2026 JGD QUALITY INDUSTRIES | Contact: +917003764905
 </footer>
 
 <script>
@@ -249,11 +177,9 @@ let slides=document.querySelectorAll('.hero-slide');let currentSlide=0;
 function showSlide(){slides.forEach(s=>s.classList.remove('active'));slides[currentSlide].classList.add('active');currentSlide=(currentSlide+1)%slides.length;}
 showSlide();setInterval(showSlide,5000);
 
-// Scroll to products
+// Scroll
 function scrollToProducts(){document.getElementById('products').scrollIntoView({behavior:'smooth'});}
-
-// Show Section
-function showSection(id){['uPVC','Garden','Section'].forEach(s=>document.getElementById(s).classList.remove('active'));document.getElementById(id).classList.add('active');}
+function showSection(id){['uPVC','Garden','Section'].forEach(s=>document.getElementById(s).style.display='none');document.getElementById(id).style.display='block';}
 
 // Prices
 let prices = {
@@ -267,37 +193,27 @@ let prices = {
   "4_PN4":350,"4_PN6":420,"4_PN10":500
 };
 
-// Admin Panel
-function unlockAdmin(){
-  let pass=document.getElementById("adminPass").value;
-  if(pass==="1234"){document.getElementById("adminPanel").style.display="block";alert("Admin Panel Unlocked");}
-  else{alert("Wrong Password!");}
-}
-function updatePrice(){
-  let product=document.getElementById("apProduct").value;
-  let size=document.getElementById("apSize").value;
-  let pn=document.getElementById("apPN").value;
-  let newPrice=document.getElementById("apPrice").value;
-  if(newPrice && !isNaN(newPrice)){
-    prices[size+"_"+pn]=Number(newPrice);
-    alert(`Price Updated: ${product} | Size: ${size} | ${pn} = ₹${newPrice}`);
-  }else{alert("Enter valid price");}
-}
-
-// Calculate Price
 function calculatePrice(product){
   let size=document.getElementById("size_"+product).value;
   let pn=document.getElementById("pn_"+product).value;
-  let qty=document.getElementById("qty_"+product).value||0;
+  let qty=parseFloat(document.getElementById("qty_"+product).value)||0;
   let key=size+"_"+pn;
   let rate=prices[key]||0;
   document.getElementById("price_"+product).value="₹ "+(rate*qty);
 }
 
-// WhatsApp
 function sendWhatsApp(product){
   let name=document.getElementById("name_"+product).value;
   let mobile=document.getElementById("mobile_"+product).value;
   let size=document.getElementById("size_"+product).value;
   let pn=document.getElementById("pn_"+product).value;
-  let qty=document.getElementById
+  let qty=document.getElementById("qty_"+product).value;
+  let total=document.getElementById("price_"+product).value;
+  if(!name||!mobile||!size||!pn||!qty){alert("Please fill all fields"); return;}
+  let msg=`Order Inquiry%0AProduct: ${product}%0ASize: ${size}%0APN: ${pn}%0AQuantity: ${qty}%0ATotal Price: ${total}%0AName: ${name}%0AMobile: ${mobile}`;
+  window.open("https://wa.me/+917003764905?text="+msg);
+}
+</script>
+
+</body>
+</html>
