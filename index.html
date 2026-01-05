@@ -14,7 +14,7 @@ section{display:none;padding:20px}
 input,select,button{width:100%;padding:8px;margin-top:6px;border-radius:4px;border:1px solid #ccc}
 button{background:#1e3799;color:#fff;border:none;cursor:pointer}
 footer{text-align:center;padding:15px;background:#111;color:#aaa;cursor:pointer}
-.admin{display:none;background:#fff;padding:20px;max-width:500px;margin:20px auto;box-shadow:0 0 8px rgba(0,0,0,0.2)}
+.admin{display:none;background:#fff;padding:20px;max-width:550px;margin:20px auto;box-shadow:0 0 8px rgba(0,0,0,0.2)}
 </style>
 </head>
 
@@ -65,25 +65,9 @@ footer{text-align:center;padding:15px;background:#111;color:#aaa;cursor:pointer}
 <option value="swr">SWR</option>
 </select>
 
-<select id="aSize">
-<option>½"</option>
-<option>¾"</option>
-<option>1"</option>
-<option>1.25"</option>
-<option>1.5"</option>
-<option>2"</option>
-<option>2.5"</option>
-<option>3"</option>
-<option>4"</option>
-<option>6"</option>
-</select>
-
-<select id="aPN">
-<option>PN6</option>
-<option>PN8</option>
-<option>PN10</option>
-<option>PN12.5</option>
-</select>
+<select id="aSize"></select>
+<select id="aPN"></select>
+<select id="aMaterial"></select> <!-- Garden Material Dropdown -->
 
 <input id="aPrice" type="number" placeholder="Price">
 <input id="aGST" type="number" placeholder="GST %" value="18">
@@ -97,34 +81,30 @@ const ADMIN_PASS="JGD2026";
 let clicks=0;
 
 /* ---------- SIZE CONFIG ---------- */
-function sizeOptions(type){
-  if(type==="garden"||type==="upvc")
-    return `<option>½"</option><option>¾"</option><option>1"</option><option>1.25"</option><option>1.5"</option>`;
-  if(type==="section")
-    return `<option>1"</option><option>1.25"</option><option>2"</option><option>2.5"</option><option>3"</option>`;
-  if(type==="swr")
-    return `<option>2.5"</option><option>3"</option><option>4"</option><option>6"</option>`;
-}
+const sizes = {
+  upvc: ['½"', '¾"', '1"', '1.25"', '1.5"'],
+  garden: ['½"', '¾"', '1"', '1.25"', '1.5"'],
+  section: ['1"', '1.25"', '2"', '2.5"', '3"'],
+  swr: ['2.5"', '3"', '4"', '6"']
+};
+
+const pnOptions = ['PN6','PN8','PN10','PN12.5'];
+const gardenMaterials = ['TP','OP','Zebra'];
 
 /* ---------- PRODUCT HTML ---------- */
 function productHTML(type, hasPN=true){
+  let sizeOpts = sizes[type].map(s=>`<option>${s}</option>`).join('');
+  let pnHTML = hasPN ? `<select id="${type}PN">${pnOptions.map(p=>`<option>${p}</option>`).join('')}</select>` : '';
+  let materialHTML = type==='garden' ? `<select id="${type}Material">${gardenMaterials.map(m=>`<option>${m}</option>`).join('')}</select>` : '';
+  
   return `
 <div class="card">
-<select id="${type}Size">${sizeOptions(type)}</select>
-
-${hasPN?`
-<select id="${type}PN">
-<option>PN6</option>
-<option>PN8</option>
-<option>PN10</option>
-<option>PN12.5</option>
-</select>`:""}
-
+<select id="${type}Size">${sizeOpts}</select>
+${pnHTML}
+${materialHTML}
 <input id="${type}Qty" type="number" placeholder="Quantity">
-
 <button onclick="calc('${type}')">Get Price</button>
 <p id="${type}Out"></p>
-
 <button onclick="wa('${type}')">Order on WhatsApp</button>
 </div>`;
 }
@@ -141,21 +121,63 @@ function openP(id){
   document.getElementById(id).style.display="block";
 }
 
+/* ---------- ADMIN PANEL DYNAMIC SIZE/PN/MATERIAL ---------- */
+const aProduct = document.getElementById('aProduct');
+const aSize = document.getElementById('aSize');
+const aPN = document.getElementById('aPN');
+const aMaterial = document.getElementById('aMaterial');
+
+function updateAdminFields(){
+  // Size options
+  aSize.innerHTML = sizes[aProduct.value].map(s=>`<option>${s}</option>`).join('');
+  
+  // PN options
+  if(aProduct.value==='upvc'){
+    aPN.style.display = 'block';
+    aPN.innerHTML = pnOptions.map(p=>`<option>${p}</option>`).join('');
+  } else {
+    aPN.style.display = 'none';
+    aPN.innerHTML = '';
+  }
+
+  // Garden Material
+  if(aProduct.value==='garden'){
+    aMaterial.style.display='block';
+    aMaterial.innerHTML = gardenMaterials.map(m=>`<option>${m}</option>`).join('');
+  } else {
+    aMaterial.style.display='none';
+    aMaterial.innerHTML='';
+  }
+}
+aProduct.addEventListener('change', updateAdminFields);
+updateAdminFields();
+
 /* ---------- PRICE KEY ---------- */
-function key(type){
-  let size=document.getElementById(type+"Size").value;
-  let pnEl=document.getElementById(type+"PN");
-  let pn=pnEl?pnEl.value:"NA"; // PN না থাকলে "NA"
-  return type+"_"+size+"_"+pn;
+function key(type,size,pn,material){
+  let k = type+"_"+size+"_"+pn;
+  if(type==='garden' && material) k+="_"+material;
+  return k;
 }
 
 /* ---------- CALCULATION ---------- */
 function calc(type){
-  let qty=+document.getElementById(type+"Qty").value||1;
-  let price=localStorage.getItem(key(type))||0;
-  let gst=localStorage.getItem(type+"_GST")||0;
-  let total=price*qty;
-  let gstAmt=total*gst/100;
+  let size = document.getElementById(type+"Size").value;
+  let pnEl = document.getElementById(type+"PN");
+  let pn = pnEl ? pnEl.value : "NA";
+
+  let material = "";
+  if(type==='garden'){
+    material = document.getElementById('gardenMaterial').value;
+  }
+
+  let qty = +document.getElementById(type+"Qty").value || 1;
+
+  let priceKey = type==='garden' ? key(type,size,pn,material) : key(type,size,pn);
+  let price = localStorage.getItem(priceKey) || 0;
+  let gst = localStorage.getItem(type+"_GST") || 0;
+  let total = price * qty;
+  let gstAmt = total * gst / 100;
+
   document.getElementById(type+"Out").innerText=
 `Price: ₹${price}
 Qty: ${qty}
@@ -164,11 +186,15 @@ GST (${gst}%): ₹${gstAmt}
 Grand Total: ₹${total+gstAmt}`;
 }
 
-/* ---------- ADMIN SAVE (FIXED) ---------- */
+/* ---------- ADMIN SAVE ---------- */
 function save(){
-  let pnValue = aPN ? aPN.value : "NA";
-  localStorage.setItem(aProduct.value + "_" + aSize.value + "_" + pnValue, aPrice.value);
-  localStorage.setItem(aProduct.value + "_GST", aGST.value);
+  let size = aSize.value;
+  let pn = aPN.value || "NA";
+  let material = aMaterial.value || "";
+  let priceKey = aProduct.value==='garden' ? key(aProduct.value,size,pn,material) : key(aProduct.value,size,pn);
+
+  localStorage.setItem(priceKey, aPrice.value);
+  localStorage.setItem(aProduct.value+"_GST", aGST.value);
   alert("Price Updated Successfully!");
 }
 
@@ -190,7 +216,8 @@ Type: ${dType.value}`;
 }
 
 /* ---------- ADMIN LOGIN ---------- */
-adminTrigger.onclick=()=>{
+const adminPanel = document.getElementById('adminPanel');
+document.getElementById('adminTrigger').onclick=()=>{
   clicks++;
   if(clicks==5){
     let p=prompt("Admin Password");
