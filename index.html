@@ -1,45 +1,49 @@
- let qty = +qtyEl.value || 0;
- let gst = 18;
+<script>
+function calculate() {
+  let price = parseFloat(document.getElementById("price").value) || 0;
+  let qty = +document.getElementById("qty").value || 0;
 
- let subtotal = price * qty;
- let gstAmt = subtotal * gst / 100;
- let total = subtotal + gstAmt;
+  // GST LocalStorage থেকে নেওয়া, না থাকলে 18%
+  let gst = parseFloat(localStorage.getItem("gst")) || 18;
 
- totalEl.innerText =
-  `Subtotal: ${subtotal}
-GST: ${gstAmt.toFixed(2)}
-Total: ${total.toFixed(2)}`;
+  let subtotal = price * qty;
+  let gstAmt = subtotal * gst / 100;
+  let total = subtotal + gstAmt;
 
- return {subtotal,gstAmt,total};
+  const totalEl = document.getElementById("total");
+  totalEl.innerText =
+    `Subtotal: ₹${subtotal}
+GST: ₹${gstAmt.toFixed(2)}
+Total: ₹${total.toFixed(2)}`;
+
+  return {subtotal, gstAmt, total};
 }
 
-const priceEl=document.getElementById("price");
-const qtyEl=document.getElementById("qty");
-const totalEl=document.getElementById("total");
+const priceEl = document.getElementById("price");
+const qtyEl = document.getElementById("qty");
 
-priceEl.oninput=qtyEl.oninput=calculate;
+priceEl.oninput = qtyEl.oninput = calculate;
 
-function orderWhatsApp(){
- let data = calculate();
- let msg =
+function orderWhatsApp() {
+  const data = calculate();
+  const category = document.getElementById("category").value;
+  const product = document.getElementById("product").value;
+
+  const msg =
 `*New Order*
-Company: JGD QUALITY 
-Category: ${category.value}
-Product: ${product.value}
-Price: ${price.value}
-Quantity: ${qty.value}
-Subtotal: ${data.subtotal}
-GST (18%): ${data.gstAmt.toFixed(2)}
-Total: ${data.total.toFixed(2)}`;
+Company: JGD QUALITY
+Category: ${category}
+Product: ${product}
+Price: ₹${priceEl.value}
+Quantity: ${qtyEl.value}
+Subtotal: ₹${data.subtotal}
+GST (${localStorage.getItem("gst") || 18}%): ₹${data.gstAmt.toFixed(2)}
+Total: ₹${data.total.toFixed(2)}`;
 
- window.open(
- "https://wa.me/7003764905?text="+encodeURIComponent(msg),
- "_blank"
- );
+  // Country code সহ WhatsApp link
+  window.open(
+    "https://wa.me/917003764905?text=" + encodeURIComponent(msg),
+    "_blank"
+  );
 }
 </script>
-
-</body>
-
-</html>
-
