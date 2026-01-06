@@ -1,73 +1,45 @@
-<!DOCTYPE html>
-<html lang="bn">
-<head>
-<meta charset="UTF-8">
-<title>JGD QUALITY ইন্ডাস্ট্রিস</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-body{margin:0;font-family:Arial;background:#f2f6fb}
-header{background:#0a4b9c;color:#fff;padding:25px;text-align:center}
-section{padding:20px}
-.products{display:flex;flex-wrap:wrap;gap:15px}
-.product{background:#fff;padding:15px;border-radius:10px;flex:1 1 200px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
-.product h3{margin:0 0 10px}
-.product p{margin:5px 0;font-weight:bold}
-.product button{width:100%;padding:8px;background:#25D366;color:#fff;border:none;border-radius:6px;cursor:pointer}
-footer{background:#0a4b9c;color:#fff;text-align:center;padding:10px;margin-top:20px}
-a{color:#fff;text-decoration:underline;}
-</style>
-</head>
-<body>
+ let qty = +qtyEl.value || 0;
+ let gst = 18;
 
-<header>
-<h1>JGD QUALITY ইন্ডাস্ট্রিস</h1>
-<p>Pipe & Plastic Products</p>
-<p><a href="admin.html">Admin Login</a></p>
-</header>
+ let subtotal = price * qty;
+ let gstAmt = subtotal * gst / 100;
+ let total = subtotal + gstAmt;
 
-<section class="products">
-<div class="product"><h3>½" PN6</h3><p>Price: ₹<span id="price_upvc_05">--</span></p><button onclick="orderClick('upvc_05','½\" PN6')">Order</button></div>
-<div class="product"><h3>¾" PN6</h3><p>Price: ₹<span id="price_upvc_075">--</span></p><button onclick="orderClick('upvc_075','¾\" PN6')">Order</button></div>
-<div class="product"><h3>1" PN6</h3><p>Price: ₹<span id="price_upvc_1">--</span></p><button onclick="orderClick('upvc_1','1\" PN6')">Order</button></div>
-<div class="product"><h3>1.25" PN6</h3><p>Price: ₹<span id="price_s_125">--</span></p><button onclick="orderClick('s_125','1.25\" PN6 Section')">Order</button></div>
-<div class="product"><h3>1.5" PN6</h3><p>Price: ₹<span id="price_upvc_15">--</span></p><button onclick="orderClick('upvc_15','1.5\" PN6')">Order</button></div>
+ totalEl.innerText =
+  `Subtotal: ${subtotal}
+GST: ${gstAmt.toFixed(2)}
+Total: ${total.toFixed(2)}`;
 
-<div class="product"><h3>½" TP</h3><p>Price: ₹<span id="price_g_05_tp">--</span></p><button onclick="orderClick('g_05_tp','½\" TP')">Order</button></div>
-<div class="product"><h3>½" OP</h3><p>Price: ₹<span id="price_g_05_op">--</span></p><button onclick="orderClick('g_05_op','½\" OP')">Order</button></div>
-<div class="product"><h3>1" TP</h3><p>Price: ₹<span id="price_g_1_tp">--</span></p><button onclick="orderClick('g_1_tp','1\" TP')">Order</button></div>
-<!-- Add other products similarly -->
-</section>
-
-<footer>
-© 2026 JGD QUALITY ইন্ডাস্ট্রিস
-</footer>
-
-<script>
-function getPrice(id){return localStorage.getItem(id)||0;}
-function getGST(){return localStorage.getItem("gst")||18;}
-function showPrices(){document.querySelectorAll("[id^='price_']").forEach(span=>{let key=span.id.replace("price_","");span.innerText=getPrice(key)||"--";});}
-function calcTotal(price,qty){let gst=getGST();let subtotal=price*qty;let gstAmt=subtotal*gst/100;return {subtotal:subtotal,gstAmt:gstAmt,total:subtotal+gstAmt};}
-
-// WhatsApp Order
-function orderClick(id,name){
-  let price=parseFloat(getPrice(id));
-  if(price==0){alert("Price not set");return;}
-  let qty=prompt("Enter Quantity:");
-  if(!qty||qty<=0)return;
-  let data=calcTotal(price,qty);
-  let msg=`*JGD QUALITY ইন্ডাস্ট্রিস*\nProduct: ${name}\nPrice: ₹${price}\nQuantity: ${qty}\nSubtotal: ₹${data.subtotal}\nGST (${getGST()}%): ₹${data.gstAmt.toFixed(2)}\nTotal: ₹${data.total.toFixed(2)}`;
-  
-  let mobileLink="https://wa.me/917003764905?text="+encodeURIComponent(msg);
-  let desktopLink="https://web.whatsapp.com/send?phone=917003764905&text="+encodeURIComponent(msg);
-  
-  if(/Mobi|Android/i.test(navigator.userAgent)){
-    window.location.href = mobileLink;
-  } else {
-    window.open(desktopLink,'_blank');
-  }
+ return {subtotal,gstAmt,total};
 }
 
-window.onload=()=>{showPrices();}
+const priceEl=document.getElementById("price");
+const qtyEl=document.getElementById("qty");
+const totalEl=document.getElementById("total");
+
+priceEl.oninput=qtyEl.oninput=calculate;
+
+function orderWhatsApp(){
+ let data = calculate();
+ let msg =
+`*New Order*
+Company: JGD QUALITY 
+Category: ${category.value}
+Product: ${product.value}
+Price: ${price.value}
+Quantity: ${qty.value}
+Subtotal: ${data.subtotal}
+GST (18%): ${data.gstAmt.toFixed(2)}
+Total: ${data.total.toFixed(2)}`;
+
+ window.open(
+ "https://wa.me/7003764905?text="+encodeURIComponent(msg),
+ "_blank"
+ );
+}
 </script>
+
 </body>
+
 </html>
+
