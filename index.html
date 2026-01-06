@@ -2,144 +2,212 @@
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
-<title>JGD QUALITY INDUSTRIES</title>
+<title>JGD QUALITY ইন্ডাস্ট্রিস</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
 body{margin:0;font-family:Arial;background:#f2f6fb}
-header{background:#0a4b9c;color:#fff;padding:20px;text-align:center}
-section{padding:15px}
-.box{
- background:#fff;padding:15px;border-radius:10px;
- box-shadow:0 2px 8px rgba(0,0,0,.1);
- margin-bottom:15px
+header{background:#0a4b9c;color:#fff;padding:25px;text-align:center}
+section{padding:20px}
+.products{display:flex;flex-wrap:wrap;gap:15px}
+.product{background:#fff;padding:15px;border-radius:10px;flex:1 1 200px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.product h3{margin:0 0 10px}
+.product p{margin:5px 0;font-weight:bold}
+.product input{width:100%;padding:6px;margin:5px 0}
+.product button{width:100%;padding:8px;background:#25D366;color:#fff;border:none;border-radius:6px;cursor:pointer}
+.total{margin-top:10px;font-weight:bold;font-size:16px}
+footer{background:#0a4b9c;color:#fff;text-align:center;padding:10px;margin-top:20px}
+
+/* Lock Screen */
+#lockScreen{
+ position:fixed;top:0;left:0;
+ width:100%;height:100%;
+ background:#f2f6fb;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ z-index:9999;
 }
-label{display:block;margin-top:8px;font-weight:bold}
-input,select{
- width:100%;padding:8px;margin-top:4px
-}
-button{
- width:100%;padding:12px;margin-top:15px;
- border:none;border-radius:6px;
- background:#25D366;color:#fff;
- font-size:16px;cursor:pointer
-}
-.total{margin-top:10px;font-weight:bold}
-footer{background:#0a4b9c;color:#fff;text-align:center;padding:10px}
+#lockScreen input{width:100%;padding:8px;margin:10px 0}
+#lockScreen button{padding:8px 15px;width:100%}
+#lockScreen h3{margin:0 0 10px}
+#lockScreen p{color:red;margin:0}
 </style>
 </head>
 
 <body>
 
 <header>
-<h1>JGD QUALITY INDUSTRIES</h1>
+<h1>JGD QUALITY ইন্ডাস্ট্রিস</h1>
 <p>Pipe & Plastic Products</p>
 </header>
 
-<section>
-
-<div class="box">
-<label>Category</label>
-<select id="category">
-<option>PN6 PIPE</option>
-<option>GARDEN PIPE</option>
-<option>SECTION PIPE</option>
-<option>SWR PIPE</option>
-</select>
-
-<label>Product / Size</label>
-<select id="product">
-<option>1/2" PN6</option>
-<option>3/4" PN6</option>
-<option>1" PN6</option>
-<option>1.25" PN6</option>
-<option>1.5" PN6</option>
-
-<option>1/2" TP</option>
-<option>1/2" OP</option>
-<option>1" Zebra</option>
-<option>1" TP</option>
-<option>1" OP</option>
-<option>1" Zebra</option>
-
-<option>1" PN6 (Section)</option>
-<option>1.25" PN6 (Section)</option>
-<option>2" PN6 (Section)</option>
-<option>2.5" PN6 (Section)</option>
-<option>3" PN6 (Section)</option>
-
-<option>2.5" PN6 (SWR)</option>
-<option>3" PN6 (SWR)</option>
-<option>4" PN6 (SWR)</option>
-<option>6" PN6 (SWR)</option>
-</select>
-
-<label>Price ()</label>
-<input type="number" id="price" placeholder="Enter price">
-
-<label>Quantity</label>
-<input type="number" id="qty" value="1">
-
-<label>GST (%)</label>
-<input type="number" id="gst" value="18" readonly>
-
-<div class="total" id="total">Total: 0</div>
-
-<button onclick="orderWhatsApp()">Order on WhatsApp</button>
+<!-- 🔐 ADMIN LOCK SCREEN -->
+<div id="lockScreen">
+  <div style="background:#fff;padding:20px;border-radius:8px;width:280px;text-align:center">
+    <h3>Admin Login</h3>
+    <input type="password" id="adminPass" placeholder="Enter Password">
+    <button onclick="unlockAdmin()">Login</button>
+    <p id="err"></p>
+  </div>
 </div>
 
+<!-- 🔹 ADMIN PANEL -->
+<section id="adminPanel" style="display:none;padding:20px;background:#e8e8e8;margin:20px;border-radius:10px;">
+<h2>ADMIN PRICE CONTROL</h2>
+
+<div class="row">
+<span>GST (%)</span>
+<input id="gst" type="number">
+<button onclick="saveGST()">Save GST</button>
+</div>
+
+<h2>uPVC PIPE</h2>
+<div class="row"><span>½" | PN6</span><input id="upvc_05"><button onclick="save('upvc_05')">Save</button></div>
+<div class="row"><span>¾" | PN6</span><input id="upvc_075"><button onclick="save('upvc_075')">Save</button></div>
+<div class="row"><span>1" | PN6</span><input id="upvc_1"><button onclick="save('upvc_1')">Save</button></div>
+<div class="row"><span>1.25" | PN6</span><input id="upvc_125"><button onclick="save('upvc_125')">Save</button></div>
+<div class="row"><span>1.5" | PN6</span><input id="upvc_15"><button onclick="save('upvc_15')">Save</button></div>
+
+<hr>
+
+<h2>GARDEN PIPE</h2>
+<div class="row"><span>½" | TP</span><input id="g_05_tp"><button onclick="save('g_05_tp')">Save</button></div>
+<div class="row"><span>½" | OP</span><input id="g_05_op"><button onclick="save('g_05_op')">Save</button></div>
+<div class="row"><span>½" | Zebra</span><input id="g_05_z"><button onclick="save('g_05_z')">Save</button></div>
+<div class="row"><span>1" | TP</span><input id="g_1_tp"><button onclick="save('g_1_tp')">Save</button></div>
+<div class="row"><span>1" | OP</span><input id="g_1_op"><button onclick="save('g_1_op')">Save</button></div>
+<div class="row"><span>1" | Zebra</span><input id="g_1_z"><button onclick="save('g_1_z')">Save</button></div>
+
+<hr>
+
+<h2>SECTION PIPE</h2>
+<div class="row"><span>1" | PN6</span><input id="s_1"><button onclick="save('s_1')">Save</button></div>
+<div class="row"><span>1.25" | PN6</span><input id="s_125"><button onclick="save('s_125')">Save</button></div>
+<div class="row"><span>2" | PN6</span><input id="s_2"><button onclick="save('s_2')">Save</button></div>
+<div class="row"><span>2.5" | PN6</span><input id="s_25"><button onclick="save('s_25')">Save</button></div>
+<div class="row"><span>3" | PN6</span><input id="s_3"><button onclick="save('s_3')">Save</button></div>
+
+<hr>
+
+<h2>SWR PIPE</h2>
+<div class="row"><span>2.5" | PN6</span><input id="swr_25"><button onclick="save('swr_25')">Save</button></div>
+<div class="row"><span>3" | PN6</span><input id="swr_3"><button onclick="save('swr_3')">Save</button></div>
+<div class="row"><span>4" | PN6</span><input id="swr_4"><button onclick="save('swr_4')">Save</button></div>
+<div class="row"><span>6" | PN6</span><input id="swr_6"><button onclick="save('swr_6')">Save</button></div>
+
+<button onclick="logout()">Logout</button>
+</section>
+
+<!-- 🔹 FRONT PAGE PRODUCTS -->
+<section class="products">
+
+<div class="product">
+<h3>½" PN6 Pipe</h3>
+<p>Price: ₹<span id="price_upvc_05">--</span></p>
+<button onclick="order('upvc_05','½&quot; PN6 Pipe')">Order</button>
+</div>
+
+<div class="product">
+<h3>¾" PN6 Pipe</h3>
+<p>Price: ₹<span id="price_upvc_075">--</span></p>
+<button onclick="order('upvc_075','¾&quot; PN6 Pipe')">Order</button>
+</div>
+
+<div class="product">
+<h3>1" PN6 Pipe</h3>
+<p>Price: ₹<span id="price_upvc_1">--</span></p>
+<button onclick="order('upvc_1','1&quot; PN6 Pipe')">Order</button>
+</div>
+
+<!-- Add more products in same format -->
 </section>
 
 <footer>
- 2026 JGD QUALITY INDUSTRIES
+© 2026 JGD QUALITY ইন্ডাস্ট্রিস
 </footer>
 
 <script>
-function calculate(){
- let price = +priceEl.value || 0;
- let qty = +qtyEl.value || 0;
- let gst = 18;
+/* 🔐 ADMIN LOCK */
+const ADMIN_PASSWORD = "1234"; // Change your password here
 
- let subtotal = price * qty;
- let gstAmt = subtotal * gst / 100;
- let total = subtotal + gstAmt;
-
- totalEl.innerText =
-  `Subtotal: ${subtotal}
-GST: ${gstAmt.toFixed(2)}
-Total: ${total.toFixed(2)}`;
-
- return {subtotal,gstAmt,total};
+function unlockAdmin(){
+  const pass = document.getElementById("adminPass").value;
+  if(pass===ADMIN_PASSWORD){
+    localStorage.setItem("adminUnlocked","yes");
+    document.getElementById("lockScreen").style.display="none";
+    document.getElementById("adminPanel").style.display="block";
+    loadPrices();
+  }else{
+    document.getElementById("err").innerText="Wrong Password!";
+  }
 }
 
-const priceEl=document.getElementById("price");
-const qtyEl=document.getElementById("qty");
-const totalEl=document.getElementById("total");
+function logout(){
+  localStorage.removeItem("adminUnlocked");
+  location.reload();
+}
 
-priceEl.oninput=qtyEl.oninput=calculate;
+/* 🔹 SAVE PRICE */
+function save(id){
+  const val = document.getElementById(id).value;
+  localStorage.setItem(id,val);
+  alert("Saved");
+  showPrices();
+}
 
-function orderWhatsApp(){
- let data = calculate();
- let msg =
-`*New Order*
-Company: JGD QUALITY 
-Category: ${category.value}
-Product: ${product.value}
-Price: ${price.value}
-Quantity: ${qty.value}
-Subtotal: ${data.subtotal}
-GST (18%): ${data.gstAmt.toFixed(2)}
-Total: ${data.total.toFixed(2)}`;
+function saveGST(){
+  const val = document.getElementById("gst").value;
+  localStorage.setItem("gst",val);
+  alert("GST Saved");
+}
 
- window.open(
- "https://wa.me/7003764905?text="+encodeURIComponent(msg),
- "_blank"
- );
+/* 🔹 AUTO LOAD PRICES */
+function getPrice(id){ return localStorage.getItem(id)||0; }
+function getGST(){ return localStorage.getItem("gst")||18; }
+function showPrices(){
+  document.querySelectorAll("[id^='price_']").forEach(span=>{
+    let key = span.id.replace("price_","");
+    span.innerText = getPrice(key) || "--";
+  });
+}
+
+function loadPrices(){
+  document.querySelectorAll("input").forEach(i=>{
+    if(localStorage.getItem(i.id)){
+      i.value = localStorage.getItem(i.id);
+    }
+  });
+  showPrices();
+}
+
+/* 🔹 WHATSAPP ORDER */
+function calcTotal(price, qty){
+  let gst = getGST();
+  let subtotal = price*qty;
+  let gstAmt = subtotal*gst/100;
+  return {subtotal:subtotal,gstAmt:gstAmt,total:subtotal+gstAmt};
+}
+
+function order(id,name){
+  let price=parseFloat(getPrice(id));
+  if(price==0){alert("Price not set by Admin"); return;}
+  let qty = prompt("Enter Quantity:");
+  if(!qty || qty<=0) return;
+  let data = calcTotal(price,qty);
+  let msg = `*JGD QUALITY ইন্ডাস্ট্রিস*\nProduct: ${name}\nPrice: ₹${price}\nQuantity: ${qty}\nSubtotal: ₹${data.subtotal}\nGST (${getGST()}%): ₹${data.gstAmt.toFixed(2)}\nTotal: ₹${data.total.toFixed(2)}`;
+  window.open("https://wa.me/917003764905?text="+encodeURIComponent(msg));
+}
+
+/* 🔹 ON PAGE LOAD */
+window.onload = ()=>{
+  if(localStorage.getItem("adminUnlocked")==="yes"){
+    document.getElementById("lockScreen").style.display="none";
+    document.getElementById("adminPanel").style.display="block";
+    loadPrices();
+  }
+  showPrices();
 }
 </script>
 
 </body>
-
 </html>
-
-
