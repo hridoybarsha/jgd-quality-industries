@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Price Control</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{font-family:Arial;margin:15px}
+h1{margin-bottom:10px}
+h2{margin-top:25px}
+.row{display:flex;align-items:center;margin:6px 0}
+.row span{width:120px}
+input{padding:6px;width:120px}
+button{margin-left:5px;padding:6px}
+hr{margin:20px 0}
+
+/* Lock Screen */
+#lockScreen{
+ position:fixed;top:0;left:0;
+ width:100%;height:100%;
+ background:#f2f6fb;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ z-index:9999;
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🔐 ADMIN LOCK -->
+<div id="lockScreen">
+  <div style="background:#fff;padding:20px;border-radius:8px;width:280px;text-align:center">
+    <h3>Admin Login</h3>
+    <input type="password" id="adminPass" placeholder="Enter Password"
+      style="width:100%;padding:8px;margin:10px 0">
+    <button onclick="unlockAdmin()">Login</button>
+    <p id="err" style="color:red"></p>
+  </div>
+</div>
+
+<h1>ADMIN PRICE CONTROL</h1>
+
+<div class="row">
+<span>GST (%)</span>
+<input id="gst" type="number">
+<button onclick="saveGST()">Save GST</button>
+</div>
+
+<hr>
+
+<h2>uPVC PIPE</h2>
+<div class="row"><span>½" | PN6</span><input id="upvc_05"><button onclick="save('upvc_05')">Save</button></div>
+<div class="row"><span>¾" | PN6</span><input id="upvc_075"><button onclick="save('upvc_075')">Save</button></div>
+<div class="row"><span>1" | PN6</span><input id="upvc_1"><button onclick="save('upvc_1')">Save</button></div>
+<div class="row"><span>1.25" | PN6</span><input id="upvc_125"><button onclick="save('upvc_125')">Save</button></div>
+<div class="row"><span>1.5" | PN6</span><input id="upvc_15"><button onclick="save('upvc_15')">Save</button></div>
+
+<hr>
+
+<h2>GARDEN PIPE</h2>
+<div class="row"><span>½" | TP</span><input id="g_05_tp"><button onclick="save('g_05_tp')">Save</button></div>
+<div class="row"><span>½" | OP</span><input id="g_05_op"><button onclick="save('g_05_op')">Save</button></div>
+<div class="row"><span>½" | Zebra</span><input id="g_05_z"><button onclick="save('g_05_z')">Save</button></div>
+<div class="row"><span>1" | TP</span><input id="g_1_tp"><button onclick="save('g_1_tp')">Save</button></div>
+<div class="row"><span>1" | OP</span><input id="g_1_op"><button onclick="save('g_1_op')">Save</button></div>
+<div class="row"><span>1" | Zebra</span><input id="g_1_z"><button onclick="save('g_1_z')">Save</button></div>
+
+<hr>
+
+<h2>SECTION PIPE</h2>
+<div class="row"><span>1" | PN6</span><input id="s_1"><button onclick="save('s_1')">Save</button></div>
+<div class="row"><span>1.25" | PN6</span><input id="s_125"><button onclick="save('s_125')">Save</button></div>
+<div class="row"><span>2" | PN6</span><input id="s_2"><button onclick="save('s_2')">Save</button></div>
+<div class="row"><span>2.5" | PN6</span><input id="s_25"><button onclick="save('s_25')">Save</button></div>
+<div class="row"><span>3" | PN6</span><input id="s_3"><button onclick="save('s_3')">Save</button></div>
+
+<hr>
+
+<h2>SWR PIPE</h2>
+<div class="row"><span>2.5" | PN6</span><input id="swr_25"><button onclick="save('swr_25')">Save</button></div>
+<div class="row"><span>3" | PN6</span><input id="swr_3"><button onclick="save('swr_3')">Save</button></div>
+<div class="row"><span>4" | PN6</span><input id="swr_4"><button onclick="save('swr_4')">Save</button></div>
+<div class="row"><span>6" | PN6</span><input id="swr_6"><button onclick="save('swr_6')">Save</button></div>
+
+<hr>
+
+<button onclick="logout()">Logout</button>
+
+<script>
+/* 🔐 PASSWORD */
+const ADMIN_PASSWORD = "1234"; // 🔴 এখানে নিজের পাসওয়ার্ড দাও
+
+function unlockAdmin(){
+  if(adminPass.value === ADMIN_PASSWORD){
+    localStorage.setItem("adminUnlocked","yes");
+    lockScreen.style.display="none";
+  }else{
+    err.innerText="Wrong Password!";
+  }
+}
+
+function logout(){
+  localStorage.removeItem("adminUnlocked");
+  location.reload();
+}
+
+/* 💾 SAVE LOGIC */
+function save(id){
+  localStorage.setItem(id, document.getElementById(id).value);
+  alert("Saved");
+}
+
+function saveGST(){
+  localStorage.setItem("gst", gst.value);
+  alert("GST Saved");
+}
+
+/* 🔄 LOAD SAVED DATA */
+window.onload = ()=>{
+  if(localStorage.getItem("adminUnlocked")==="yes"){
+    lockScreen.style.display="none";
+  }
+  document.querySelectorAll("input").forEach(i=>{
+    if(localStorage.getItem(i.id)){
+      i.value = localStorage.getItem(i.id);
+    }
+  });
+}
+</script>
+
+</body>
+</html>
