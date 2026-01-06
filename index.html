@@ -2,7 +2,7 @@
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
-<title>JGD QUALITY </title>
+<title>JGD QUALITY INDUSTRIES</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -32,7 +32,7 @@ footer{background:#0a4b9c;color:#fff;text-align:center;padding:10px}
 <body>
 
 <header>
-<h1>JGD QUALITY </h1>
+<h1>JGD QUALITY INDUSTRIES</h1>
 <p>Pipe & Plastic Products</p>
 </header>
 
@@ -74,7 +74,7 @@ footer{background:#0a4b9c;color:#fff;text-align:center;padding:10px}
 <option>6" PN6 (SWR)</option>
 </select>
 
-<label>Price ()</label>
+<label>Price ()</label>
 <input type="number" id="price" placeholder="Enter price">
 
 <label>Quantity</label>
@@ -83,7 +83,7 @@ footer{background:#0a4b9c;color:#fff;text-align:center;padding:10px}
 <label>GST (%)</label>
 <input type="number" id="gst" value="18" readonly>
 
-<div class="total" id="total">Total: 0</div>
+<div class="total" id="total">Total: 0</div>
 
 <button onclick="orderWhatsApp()">Order on WhatsApp</button>
 </div>
@@ -91,7 +91,7 @@ footer{background:#0a4b9c;color:#fff;text-align:center;padding:10px}
 </section>
 
 <footer>
- 2026 JGD QUALITY 
+ 2026 JGD QUALITY INDUSTRIES
 </footer>
 
 <script>
@@ -105,9 +105,9 @@ function calculate(){
  let total = subtotal + gstAmt;
 
  totalEl.innerText =
-  `Subtotal: ${subtotal}
-GST: ${gstAmt.toFixed(2)}
-Total: ${total.toFixed(2)}`;
+  `Subtotal: ${subtotal}
+GST: ${gstAmt.toFixed(2)}
+Total: ${total.toFixed(2)}`;
 
  return {subtotal,gstAmt,total};
 }
@@ -125,11 +125,11 @@ function orderWhatsApp(){
 Company: JGD QUALITY 
 Category: ${category.value}
 Product: ${product.value}
-Price: ${price.value}
+Price: ${price.value}
 Quantity: ${qty.value}
-Subtotal: ${data.subtotal}
-GST (18%): ${data.gstAmt.toFixed(2)}
-Total: ${data.total.toFixed(2)}`;
+Subtotal: ${data.subtotal}
+GST (18%): ${data.gstAmt.toFixed(2)}
+Total: ${data.total.toFixed(2)}`;
 
  window.open(
  "https://wa.me/7003764905?text="+encodeURIComponent(msg),
@@ -141,4 +141,5 @@ Total: ${data.total.toFixed(2)}`;
 </body>
 
 </html>
+
 
