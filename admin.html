@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<title>Admin Panel - JGD QUALITY </title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{margin:0;font-family:Arial;background:#f2f6fb;padding:20px}
+h2{color:#0a4b9c;}
+.row{display:flex;align-items:center;margin:6px 0}
+.row span{width:140px}
+.row input{flex:1;padding:6px;margin-left:5px}
+.row button{padding:6px;margin-left:5px}
+button{cursor:pointer}
+#lockScreen{
+ position:fixed;top:0;left:0;width:100%;height:100%;
+ background:#f2f6fb;display:flex;align-items:center;justify-content:center;
+ z-index:9999;
+}
+#lockScreen div{background:#fff;padding:20px;border-radius:8px;width:280px;text-align:center;}
+#lockScreen input{width:100%;padding:8px;margin:10px 0;}
+#lockScreen button{width:100%;padding:8px;}
+#lockScreen p{color:red;margin:0;}
+#adminContent{display:none;}
+</style>
+</head>
+<body>
+
+<div id="lockScreen">
+  <div>
+    <h3>Admin Login</h3>
+    <input type="password" id="adminPass" placeholder="Enter Password">
+    <button onclick="unlockAdmin()">Login</button>
+    <p id="err"></p>
+  </div>
+</div>
+
+<div id="adminContent">
+<h2>ADMIN PANEL</h2>
+<div class="row"><span>GST (%)</span><input id="gst" type="number" placeholder="18"><button onclick="saveGST()">Save GST</button></div>
+
+<h3>Products Prices</h3>
+<div class="row"><span>Example Product</span><input id="prod1"><button onclick="save('prod1')">Save</button></div>
+<div class="row"><span>Another Product</span><input id="prod2"><button onclick="save('prod2')">Save</button></div>
+
+<button onclick="logout()">Logout</button>
+<button onclick="goBack()">Back to Front Page</button>
+</div>
+
+<script>
+const ADMIN_PASSWORD="1234";
+
+function unlockAdmin(){
+  const pass=document.getElementById("adminPass").value;
+  if(pass===ADMIN_PASSWORD){
+    localStorage.setItem("adminUnlocked","yes");
+    document.getElementById("lockScreen").style.display="none";
+    document.getElementById("adminContent").style.display="block";
+    loadPrices();
+  }else{
+    document.getElementById("err").innerText="Wrong Password!";
+  }
+}
+
+function logout(){
+  localStorage.removeItem("adminUnlocked");
+  location.reload();
+}
+
+function save(id){
+  const val=document.getElementById(id).value;
+  localStorage.setItem(id,val);
+  alert("Saved");
+}
+
+function saveGST(){
+  const val=document.getElementById("gst").value;
+  localStorage.setItem("gst",val);
+  alert("GST Saved");
+}
+
+function goBack(){
+  window.location.href="index.html";
+}
+
+function loadPrices(){
+  document.querySelectorAll("input").forEach(i=>{
+    if(localStorage.getItem(i.id)){
+      i.value=localStorage.getItem(i.id);
+    }
+  });
+}
+
+window.onload=()=>{
+  if(localStorage.getItem("adminUnlocked")==="yes"){
+    document.getElementById("lockScreen").style.display="none";
+    document.getElementById("adminContent").style.display="block";
+    loadPrices();
+  }
+}
+</script>
+
+</body>
+</html>
