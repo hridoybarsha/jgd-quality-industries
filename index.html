@@ -147,7 +147,7 @@ function showPrices(){document.querySelectorAll("[id^='price_']").forEach(span=>
 function loadPrices(){document.querySelectorAll("input").forEach(i=>{if(localStorage.getItem(i.id)){i.value=localStorage.getItem(i.id);}});showPrices();}
 
 function calcTotal(price,qty){let gst=getGST();let subtotal=price*qty;let gstAmt=subtotal*gst/100;return {subtotal:subtotal,gstAmt:gstAmt,total:subtotal+gstAmt};}
-function order(id,name){let price=parseFloat(getPrice(id));if(price==0){alert("Price not set");return;}let qty=prompt("Enter Quantity:");if(!qty||qty<=0)return;let data=calcTotal(price,qty);let msg=`*JGD QUALITY ইন্ডাস্ট্রিস*\nProduct: ${name}\nPrice: ₹${price}\nQuantity: ${qty}\nSubtotal: ₹${data.subtotal}\nGST (${getGST()}%): ₹${data.gstAmt.toFixed(2)}\nTotal: ₹${data.total.toFixed(2)}`;window.open("https://wa.me/917003764905?text="+encodeURIComponent(msg));}
+function order(id,name){let price=parseFloat(getPrice(id));if(price==0){alert("Price not set");return;}let qty=prompt("Enter Quantity:");if(!qty||qty<=0)return;let data=calcTotal(price,qty);let msg=`*JGD QUALITY ইন্ডাস্ট্রিস*\nProduct: ${name}\nPrice: ₹${price}\nQuantity: ${qty}\nSubtotal: ₹${data.subtotal}\nGST (${getGST()}%): ₹${data.gstAmt.toFixed(2)}\nTotal: ₹${data.total.toFixed(2)}`;window.open("https://wa.me/7003764905?text="+encodeURIComponent(msg));}
 
 window.onload=()=>{
 if(localStorage.getItem("adminUnlocked")==="yes"){document.getElementById("lockScreen").style.display="none";document.getElementById("adminPanel").style.display="block";loadPrices();}
@@ -156,3 +156,4 @@ showPrices();
 </script>
 </body>
 </html>
+
