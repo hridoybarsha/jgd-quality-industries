@@ -91,7 +91,7 @@ footer{background:#0a4b9c;color:#fff;text-align:center;padding:10px;margin-top:2
 
 <!-- 🔹 FRONT PAGE PRODUCTS -->
 <section class="products">
-<!-- uPVC -->
+<!-- Products -->
 <div class="product"><h3>½" PN6</h3><p>Price: ₹<span id="price_upvc_05">--</span></p><button onclick="order('upvc_05','½\" PN6')">Order</button></div>
 <div class="product"><h3>¾" PN6</h3><p>Price: ₹<span id="price_upvc_075">--</span></p><button onclick="order('upvc_075','¾\" PN6')">Order</button></div>
 <div class="product"><h3>1" PN6</h3><p>Price: ₹<span id="price_upvc_1">--</span></p><button onclick="order('upvc_1','1\" PN6')">Order</button></div>
@@ -124,7 +124,7 @@ footer{background:#0a4b9c;color:#fff;text-align:center;padding:10px;margin-top:2
 </footer>
 
 <script>
-const ADMIN_PASSWORD="1234"; // Change password
+const ADMIN_PASSWORD="1234";
 
 function unlockAdmin(){
   const pass=document.getElementById("adminPass").value;
@@ -147,7 +147,25 @@ function showPrices(){document.querySelectorAll("[id^='price_']").forEach(span=>
 function loadPrices(){document.querySelectorAll("input").forEach(i=>{if(localStorage.getItem(i.id)){i.value=localStorage.getItem(i.id);}});showPrices();}
 
 function calcTotal(price,qty){let gst=getGST();let subtotal=price*qty;let gstAmt=subtotal*gst/100;return {subtotal:subtotal,gstAmt:gstAmt,total:subtotal+gstAmt};}
-function order(id,name){let price=parseFloat(getPrice(id));if(price==0){alert("Price not set");return;}let qty=prompt("Enter Quantity:");if(!qty||qty<=0)return;let data=calcTotal(price,qty);let msg=`*JGD QUALITY ইন্ডাস্ট্রিস*\nProduct: ${name}\nPrice: ₹${price}\nQuantity: ${qty}\nSubtotal: ₹${data.subtotal}\nGST (${getGST()}%): ₹${data.gstAmt.toFixed(2)}\nTotal: ₹${data.total.toFixed(2)}`;window.open("https://wa.me/7003764905?text="+encodeURIComponent(msg));}
+
+// WhatsApp Order Mobile/Desktop Compatible
+function order(id,name){
+  let price=parseFloat(getPrice(id));
+  if(price==0){alert("Price not set");return;}
+  let qty=prompt("Enter Quantity:");
+  if(!qty||qty<=0)return;
+  let data=calcTotal(price,qty);
+  let msg=`*JGD QUALITY ইন্ডাস্ট্রিস*\nProduct: ${name}\nPrice: ₹${price}\nQuantity: ${qty}\nSubtotal: ₹${data.subtotal}\nGST (${getGST()}%): ₹${data.gstAmt.toFixed(2)}\nTotal: ₹${data.total.toFixed(2)}`;
+  
+  let mobileLink="https://wa.me/917003764905?text="+encodeURIComponent(msg);
+  let desktopLink="https://web.whatsapp.com/send?phone=917003764905&text="+encodeURIComponent(msg);
+  
+  if(/Mobi|Android/i.test(navigator.userAgent)){
+    window.open(mobileLink,'_blank');
+  } else {
+    window.open(desktopLink,'_blank');
+  }
+}
 
 window.onload=()=>{
 if(localStorage.getItem("adminUnlocked")==="yes"){document.getElementById("lockScreen").style.display="none";document.getElementById("adminPanel").style.display="block";loadPrices();}
@@ -156,4 +174,3 @@ showPrices();
 </script>
 </body>
 </html>
-
