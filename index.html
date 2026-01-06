@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<title>JGD QUALITY </title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{margin:0;font-family:Arial;background:#f2f6fb}
+header{background:#0a4b9c;color:#fff;padding:20px;text-align:center}
+section{padding:15px}
+.box{
+ background:#fff;padding:15px;border-radius:10px;
+ box-shadow:0 2px 8px rgba(0,0,0,.1);
+ margin-bottom:15px
+}
+label{display:block;margin-top:8px;font-weight:bold}
+input,select{
+ width:100%;padding:8px;margin-top:4px
+}
+button{
+ width:100%;padding:12px;margin-top:15px;
+ border:none;border-radius:6px;
+ background:#25D366;color:#fff;
+ font-size:16px;cursor:pointer
+}
+.total{margin-top:10px;font-weight:bold}
+footer{background:#0a4b9c;color:#fff;text-align:center;padding:10px}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>JGD QUALITY </h1>
+<p>Pipe & Plastic Products</p>
+</header>
+
+<section>
+
+<div class="box">
+<label>Category</label>
+<select id="category">
+<option>PN6 PIPE</option>
+<option>GARDEN PIPE</option>
+<option>SECTION PIPE</option>
+<option>SWR PIPE</option>
+</select>
+
+<label>Product / Size</label>
+<select id="product">
+<option>1/2" PN6</option>
+<option>3/4" PN6</option>
+<option>1" PN6</option>
+<option>1.25" PN6</option>
+<option>1.5" PN6</option>
+
+<option>1/2" TP</option>
+<option>1/2" OP</option>
+<option>1" Zebra</option>
+<option>1" TP</option>
+<option>1" OP</option>
+<option>1" Zebra</option>
+
+<option>1" PN6 (Section)</option>
+<option>1.25" PN6 (Section)</option>
+<option>2" PN6 (Section)</option>
+<option>2.5" PN6 (Section)</option>
+<option>3" PN6 (Section)</option>
+
+<option>2.5" PN6 (SWR)</option>
+<option>3" PN6 (SWR)</option>
+<option>4" PN6 (SWR)</option>
+<option>6" PN6 (SWR)</option>
+</select>
+
+<label>Price ()</label>
+<input type="number" id="price" placeholder="Enter price">
+
+<label>Quantity</label>
+<input type="number" id="qty" value="1">
+
+<label>GST (%)</label>
+<input type="number" id="gst" value="18" readonly>
+
+<div class="total" id="total">Total: 0</div>
+
+<button onclick="orderWhatsApp()">Order on WhatsApp</button>
+</div>
+
+</section>
+
+<footer>
+ 2026 JGD QUALITY 
+</footer>
+
+<script>
+function calculate(){
+ let price = +priceEl.value || 0;
+ let qty = +qtyEl.value || 0;
+ let gst = 18;
+
+ let subtotal = price * qty;
+ let gstAmt = subtotal * gst / 100;
+ let total = subtotal + gstAmt;
+
+ totalEl.innerText =
+  `Subtotal: ${subtotal}
+GST: ${gstAmt.toFixed(2)}
+Total: ${total.toFixed(2)}`;
+
+ return {subtotal,gstAmt,total};
+}
+
+const priceEl=document.getElementById("price");
+const qtyEl=document.getElementById("qty");
+const totalEl=document.getElementById("total");
+
+priceEl.oninput=qtyEl.oninput=calculate;
+
+function orderWhatsApp(){
+ let data = calculate();
+ let msg =
+`*New Order*
+Company: JGD QUALITY 
+Category: ${category.value}
+Product: ${product.value}
+Price: ${price.value}
+Quantity: ${qty.value}
+Subtotal: ${data.subtotal}
+GST (18%): ${data.gstAmt.toFixed(2)}
+Total: ${data.total.toFixed(2)}`;
+
+ window.open(
+ "https://wa.me/91917003764905?text="+encodeURIComponent(msg),
+ "_blank"
+ );
+}
+</script>
+
+</body>
+</html>
