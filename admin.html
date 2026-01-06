@@ -2,101 +2,142 @@
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
-<title>Admin Panel - JGD QUALITY </title>
+<title>JGD QUALITY ইন্ডাস্ট্রিস</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body{margin:0;font-family:Arial;background:#f2f6fb;padding:20px}
-h2{color:#0a4b9c;}
-.row{display:flex;align-items:center;margin:6px 0}
-.row span{width:140px}
-.row input{flex:1;padding:6px;margin-left:5px}
-.row button{padding:6px;margin-left:5px}
-button{cursor:pointer}
-#lockScreen{
- position:fixed;top:0;left:0;width:100%;height:100%;
- background:#f2f6fb;display:flex;align-items:center;justify-content:center;
- z-index:9999;
-}
-#lockScreen div{background:#fff;padding:20px;border-radius:8px;width:280px;text-align:center;}
-#lockScreen input{width:100%;padding:8px;margin:10px 0;}
-#lockScreen button{width:100%;padding:8px;}
-#lockScreen p{color:red;margin:0;}
-#adminContent{display:none;}
+header{background:#0a4b9c;color:#fff;padding:20px;text-align:center}
+section{margin-top:20px}
+label{font-weight:bold}
+select,input{padding:8px;margin:6px 0;width:100%}
+button{padding:12px;margin-top:12px;background:#25D366;color:#fff;border:none;border-radius:6px;cursor:pointer;width:100%}
+#total{margin-top:10px;font-weight:bold;white-space:pre-line}
 </style>
 </head>
 <body>
 
-<div id="lockScreen">
-  <div>
-    <h3>Admin Login</h3>
-    <input type="password" id="adminPass" placeholder="Enter Password">
-    <button onclick="unlockAdmin()">Login</button>
-    <p id="err"></p>
-  </div>
-</div>
+<header>
+<h1>JGD QUALITY ইন্ডাস্ট্রিস</h1>
+</header>
 
-<div id="adminContent">
-<h2>ADMIN PANEL</h2>
-<div class="row"><span>GST (%)</span><input id="gst" type="number" placeholder="18"><button onclick="saveGST()">Save GST</button></div>
+<section>
 
-<h3>Products Prices</h3>
-<div class="row"><span>Example Product</span><input id="prod1"><button onclick="save('prod1')">Save</button></div>
-<div class="row"><span>Another Product</span><input id="prod2"><button onclick="save('prod2')">Save</button></div>
+<label>Category</label>
+<select id="category" onchange="loadProducts()">
+  <option value="">-- Select Category --</option>
+</select>
 
-<button onclick="logout()">Logout</button>
-<button onclick="goBack()">Back to Front Page</button>
-</div>
+<label>Product Size</label>
+<select id="product" onchange="setPrice()">
+  <option value="">-- Select Size --</option>
+</select>
+
+<label>Price (₹)</label>
+<input id="price" type="number" readonly>
+
+<label>Quantity</label>
+<input id="qty" type="number" min="1" placeholder="Enter Quantity">
+
+<div id="total">Subtotal: ₹0
+GST: ₹0
+Total: ₹0</div>
+
+<button onclick="orderWhatsApp()">Order via WhatsApp</button>
+</section>
 
 <script>
-const ADMIN_PASSWORD="1234";
+// 🔒 FINAL PRODUCT LIST (AS YOU GAVE)
+const PRODUCTS = {
+  "UPVC PIPE": {
+    '½"': 0, '¾"': 0, '1"': 0, '1.1/4"': 0, '1.1/2"': 0,
+    '2"': 0, '2.1/2"': 0, '3"': 0, '4"': 0, '6"': 0
+  },
+  "SWR PIPE": {
+    '2.1/2"': 0, '3"': 0, '4"': 0, '6"': 0
+  },
+  "GARDEN PIPE": {
+    '½"': 0, '¾"': 0, '1"': 0, '1.25"': 0
+  },
+  "SECTION PIPE": {
+    '1"': 0, '1.25"': 0, '2"': 0, '2.5"': 0, '3"': 0
+  }
+};
 
-function unlockAdmin(){
-  const pass=document.getElementById("adminPass").value;
-  if(pass===ADMIN_PASSWORD){
-    localStorage.setItem("adminUnlocked","yes");
-    document.getElementById("lockScreen").style.display="none";
-    document.getElementById("adminContent").style.display="block";
-    loadPrices();
-  }else{
-    document.getElementById("err").innerText="Wrong Password!";
+const catEl=document.getElementById("category");
+const prodEl=document.getElementById("product");
+const priceEl=document.getElementById("price");
+const qtyEl=document.getElementById("qty");
+
+// Load categories
+for(let c in PRODUCTS){
+  let o=document.createElement("option");
+  o.value=c;o.textContent=c;
+  catEl.appendChild(o);
+}
+
+function loadProducts(){
+  prodEl.innerHTML='<option value="">-- Select Size --</option>';
+  priceEl.value=""; qtyEl.value="";
+  calculate();
+  if(!catEl.value) return;
+
+  for(let s in PRODUCTS[catEl.value]){
+    let o=document.createElement("option");
+    o.value=s;o.textContent=s;
+    prodEl.appendChild(o);
   }
 }
 
-function logout(){
-  localStorage.removeItem("adminUnlocked");
-  location.reload();
-}
-
-function save(id){
-  const val=document.getElementById(id).value;
-  localStorage.setItem(id,val);
-  alert("Saved");
-}
-
-function saveGST(){
-  const val=document.getElementById("gst").value;
-  localStorage.setItem("gst",val);
-  alert("GST Saved");
-}
-
-function goBack(){
-  window.location.href="index.html";
-}
-
-function loadPrices(){
-  document.querySelectorAll("input").forEach(i=>{
-    if(localStorage.getItem(i.id)){
-      i.value=localStorage.getItem(i.id);
-    }
-  });
-}
-
-window.onload=()=>{
-  if(localStorage.getItem("adminUnlocked")==="yes"){
-    document.getElementById("lockScreen").style.display="none";
-    document.getElementById("adminContent").style.display="block";
-    loadPrices();
+function setPrice(){
+  if(catEl.value && prodEl.value){
+    priceEl.value = PRODUCTS[catEl.value][prodEl.value];
   }
+  calculate();
+}
+
+function calculate(){
+  let price=parseFloat(priceEl.value)||0;
+  let qty=parseInt(qtyEl.value)||0;
+  let gst=parseFloat(localStorage.getItem("gst"))||18;
+
+  let subtotal=price*qty;
+  let gstAmt=subtotal*gst/100;
+  let total=subtotal+gstAmt;
+
+  document.getElementById("total").innerText=
+`Subtotal: ₹${subtotal}
+GST (${gst}%): ₹${gstAmt.toFixed(2)}
+Total: ₹${total.toFixed(2)}`;
+
+  return {subtotal,gstAmt,total};
+}
+
+qtyEl.addEventListener("input",calculate);
+
+// WhatsApp Order
+function orderWhatsApp(){
+  if(!catEl.value||!prodEl.value||!qtyEl.value||qtyEl.value<=0){
+    alert("সব অপশন ঠিকভাবে সিলেক্ট করুন");
+    return;
+  }
+  const d=calculate();
+
+  const msg=
+`*NEW ORDER*
+Company: JGD QUALITY INDUSTRIES
+
+Category: ${catEl.value}
+Size: ${prodEl.value}
+Price: ₹${priceEl.value}
+Quantity: ${qtyEl.value}
+
+Subtotal: ₹${d.subtotal}
+GST: ₹${d.gstAmt.toFixed(2)}
+TOTAL: ₹${d.total.toFixed(2)}`;
+
+  window.location.href=
+  "https://api.whatsapp.com/send?phone=917003764905&text="+
+  encodeURIComponent(msg);
 }
 </script>
 
