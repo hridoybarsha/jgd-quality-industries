@@ -24,8 +24,8 @@ hr{margin:20px 0}
 <h1>JGD QUALITY ইন্ডাস্ট্রিস</h1>
 </header>
 
-<!-- ================= CUSTOMER SECTION ================= -->
-<section id="orderSection">
+<!-- ================= CUSTOMER ================= -->
+<section>
 <label>Category</label>
 <select id="category" onchange="loadProducts()">
 <option value="">-- Select Category --</option>
@@ -34,6 +34,14 @@ hr{margin:20px 0}
 <label>Product Size</label>
 <select id="product" onchange="setPrice()">
 <option value="">-- Select Size --</option>
+</select>
+
+<label>Type</label>
+<select id="type" onchange="setPrice()">
+<option value="">-- Select Type --</option>
+<option value="TP">TP</option>
+<option value="OP">OP</option>
+<option value="Zebra">Zebra</option>
 </select>
 
 <label>Price (₹)</label>
@@ -47,7 +55,6 @@ GST: ₹0
 Total: ₹0</div>
 
 <button class="orderBtn" onclick="orderWhatsApp()">Order via WhatsApp</button>
-
 <button class="adminBtn" onclick="openAdmin()">Admin Panel</button>
 </section>
 
@@ -61,91 +68,114 @@ Total: ₹0</div>
 <label>Size</label>
 <select id="adminSize" onchange="loadAdminPrice()"></select>
 
+<label>Type</label>
+<select id="adminType" onchange="loadAdminPrice()">
+<option value="TP">TP</option>
+<option value="OP">OP</option>
+<option value="Zebra">Zebra</option>
+</select>
+
 <label>Price (₹)</label>
 <input id="adminPrice" type="number">
 
 <label>GST (%)</label>
 <input id="adminGST" type="number">
 
-<button class="adminBtn" onclick="saveAdminData()">Save</button>
+<button class="adminBtn" onclick="saveAdminData()">Save Price</button>
 <button onclick="closeAdmin()">Close Admin</button>
 <p id="msg"></p>
+
+<hr>
+
+<h4>🔑 Change Admin Password</h4>
+<label>Old Password</label>
+<input type="password" id="oldPass">
+
+<label>New Password</label>
+<input type="password" id="newPass">
+
+<label>Confirm New Password</label>
+<input type="password" id="confirmPass">
+
+<button class="adminBtn" onclick="changePassword()">Change Password</button>
+<p id="passMsg"></p>
 </section>
 
 <script>
-/* ================= PRODUCT LIST ================= */
+/* ================= DATA ================= */
 const PRODUCTS = {
-  "UPVC PIPE": ['½"','¾"','1"','1.1/4"','1.1/2"','2"','2.1/2"','3"','4"','6"'],
-  "SWR PIPE": ['2.1/2"','3"','4"','6"'],
-  "GARDEN PIPE": ['½"','¾"','1"','1.25"'],
-  "SECTION PIPE": ['1"','1.25"','2"','2.5"','3"']
+ "UPVC PIPE": ['½"','¾"','1"','1.1/4"','1.1/2"','2"','2.1/2"','3"','4"','6"'],
+ "SWR PIPE": ['2.1/2"','3"','4"','6"'],
+ "GARDEN PIPE": ['½"','¾"','1"','1.25"'],
+ "SECTION PIPE": ['1"','1.25"','2"','2.5"','3"']
 };
 
 const catEl = document.getElementById("category");
 const prodEl = document.getElementById("product");
+const typeEl = document.getElementById("type");
 const priceEl = document.getElementById("price");
 const qtyEl = document.getElementById("qty");
 
-/* Load customer categories */
+/* Load Categories */
 for(let c in PRODUCTS){
-  let o=document.createElement("option");
-  o.value=c;o.textContent=c;
-  catEl.appendChild(o);
+ let o=document.createElement("option");
+ o.value=c;o.textContent=c;
+ catEl.appendChild(o);
 }
 
-/* CUSTOMER FUNCTIONS */
+/* CUSTOMER */
 function loadProducts(){
-  prodEl.innerHTML='<option value="">-- Select Size --</option>';
-  priceEl.value=""; qtyEl.value="";
-  calculate();
-  if(!catEl.value) return;
-  PRODUCTS[catEl.value].forEach(s=>{
-    let o=document.createElement("option");
-    o.value=s;o.textContent=s;
-    prodEl.appendChild(o);
-  });
+ prodEl.innerHTML='<option value="">-- Select Size --</option>';
+ typeEl.value=""; priceEl.value=""; qtyEl.value="";
+ calculate();
+ if(!catEl.value) return;
+ PRODUCTS[catEl.value].forEach(s=>{
+  let o=document.createElement("option");
+  o.value=s;o.textContent=s;
+  prodEl.appendChild(o);
+ });
 }
 
 function setPrice(){
-  if(catEl.value && prodEl.value){
-    let key = catEl.value+"_"+prodEl.value;
-    priceEl.value = localStorage.getItem(key) || 0;
-  }
-  calculate();
+ if(catEl.value && prodEl.value && typeEl.value){
+  let key=catEl.value+"_"+prodEl.value+"_"+typeEl.value;
+  priceEl.value=localStorage.getItem(key)||0;
+ }
+ calculate();
 }
 
 function calculate(){
-  let price=parseFloat(priceEl.value)||0;
-  let qty=parseInt(qtyEl.value)||0;
-  let gst=parseFloat(localStorage.getItem("gst"))||18;
+ let price=parseFloat(priceEl.value)||0;
+ let qty=parseInt(qtyEl.value)||0;
+ let gst=parseFloat(localStorage.getItem("gst"))||18;
 
-  let subtotal=price*qty;
-  let gstAmt=subtotal*gst/100;
-  let total=subtotal+gstAmt;
+ let subtotal=price*qty;
+ let gstAmt=subtotal*gst/100;
+ let total=subtotal+gstAmt;
 
-  document.getElementById("total").innerText=
+ document.getElementById("total").innerText=
 `Subtotal: ₹${subtotal}
 GST (${gst}%): ₹${gstAmt.toFixed(2)}
 Total: ₹${total.toFixed(2)}`;
 
-  return {subtotal,gstAmt,total};
+ return {subtotal,gstAmt,total};
 }
+qtyEl.oninput=calculate;
 
-qtyEl.addEventListener("input",calculate);
-
-/* WHATSAPP ORDER */
+/* WhatsApp */
 function orderWhatsApp(){
-  if(!catEl.value||!prodEl.value||!qtyEl.value||qtyEl.value<=0){
-    alert("সব অপশন ঠিকভাবে সিলেক্ট করুন");
-    return;
-  }
-  const d=calculate();
-  const msg=
+ if(!catEl.value||!prodEl.value||!typeEl.value||!qtyEl.value){
+  alert("সব অপশন সিলেক্ট করুন"); return;
+ }
+ const d=calculate();
+ const msg=
 `*NEW ORDER*
 Company: JGD QUALITY INDUSTRIES
 
 Category: ${catEl.value}
 Size: ${prodEl.value}
+Type: ${typeEl.value}
+
 Price: ₹${priceEl.value}
 Quantity: ${qtyEl.value}
 
@@ -153,60 +183,78 @@ Subtotal: ₹${d.subtotal}
 GST: ₹${d.gstAmt.toFixed(2)}
 TOTAL: ₹${d.total.toFixed(2)}`;
 
-  window.location.href=
-  "https://api.whatsapp.com/send?phone=917003764905&text="+
-  encodeURIComponent(msg);
+ window.location.href=
+ "https://api.whatsapp.com/send?phone=917003764905&text="+
+ encodeURIComponent(msg);
 }
 
 /* ================= ADMIN ================= */
 function openAdmin(){
-  const pass = prompt("Enter Admin Password");
-  if(pass!=="1234"){alert("Wrong Password");return;}
-  document.getElementById("adminPanel").style.display="block";
-  loadAdmin();
+ let saved=localStorage.getItem("adminPass")||"1234";
+ let p=prompt("Enter Admin Password");
+ if(p!==saved){alert("Wrong Password");return;}
+ document.getElementById("adminPanel").style.display="block";
+ loadAdmin();
 }
 
 function closeAdmin(){
-  document.getElementById("adminPanel").style.display="none";
+ document.getElementById("adminPanel").style.display="none";
 }
 
 const aCat=document.getElementById("adminCat");
 const aSize=document.getElementById("adminSize");
+const aType=document.getElementById("adminType");
 const aPrice=document.getElementById("adminPrice");
 const aGST=document.getElementById("adminGST");
 
 function loadAdmin(){
-  aCat.innerHTML="";
-  for(let c in PRODUCTS){
-    let o=document.createElement("option");
-    o.value=c;o.textContent=c;
-    aCat.appendChild(o);
-  }
-  loadAdminSizes();
+ aCat.innerHTML="";
+ for(let c in PRODUCTS){
+  let o=document.createElement("option");
+  o.value=c;o.textContent=c;
+  aCat.appendChild(o);
+ }
+ loadAdminSizes();
 }
 
 function loadAdminSizes(){
-  aSize.innerHTML="";
-  PRODUCTS[aCat.value].forEach(s=>{
-    let o=document.createElement("option");
-    o.value=s;o.textContent=s;
-    aSize.appendChild(o);
-  });
-  loadAdminPrice();
+ aSize.innerHTML="";
+ PRODUCTS[aCat.value].forEach(s=>{
+  let o=document.createElement("option");
+  o.value=s;o.textContent=s;
+  aSize.appendChild(o);
+ });
+ loadAdminPrice();
 }
 
 function loadAdminPrice(){
-  let key=aCat.value+"_"+aSize.value;
-  aPrice.value=localStorage.getItem(key)||"";
-  aGST.value=localStorage.getItem("gst")||18;
+ let key=aCat.value+"_"+aSize.value+"_"+aType.value;
+ aPrice.value=localStorage.getItem(key)||"";
+ aGST.value=localStorage.getItem("gst")||18;
 }
 
 function saveAdminData(){
-  let key=aCat.value+"_"+aSize.value;
-  localStorage.setItem(key,aPrice.value);
-  localStorage.setItem("gst",aGST.value);
-  document.getElementById("msg").innerText="✅ Saved Successfully";
-  setPrice(); // refresh customer price
+ let key=aCat.value+"_"+aSize.value+"_"+aType.value;
+ localStorage.setItem(key,aPrice.value);
+ localStorage.setItem("gst",aGST.value);
+ document.getElementById("msg").innerText="✅ Price Saved";
+ setPrice();
+}
+
+/* Password Change */
+function changePassword(){
+ let saved=localStorage.getItem("adminPass")||"1234";
+ let o=document.getElementById("oldPass").value;
+ let n=document.getElementById("newPass").value;
+ let c=document.getElementById("confirmPass").value;
+
+ if(o!==saved){passMsg.innerText="❌ Old password wrong";return;}
+ if(n.length<4){passMsg.innerText="❌ Minimum 4 digit";return;}
+ if(n!==c){passMsg.innerText="❌ Not matched";return;}
+
+ localStorage.setItem("adminPass",n);
+ passMsg.innerText="✅ Password Changed";
+ oldPass.value=newPass.value=confirmPass.value="";
 }
 </script>
 
