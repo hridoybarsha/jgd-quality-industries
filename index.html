@@ -1,18 +1,52 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<title>JGD QUALITY ইন্ডাস্ট্রিস</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{margin:0;font-family:Arial;background:#f2f6fb;padding:20px}
+header{background:#0a4b9c;color:#fff;padding:20px;text-align:center}
+section{margin-top:20px}
+input, select{padding:6px;margin:5px;width:100%}
+button{padding:8px;margin-top:10px;background:#25D366;color:#fff;border:none;border-radius:5px;cursor:pointer;width:100%}
+#total{margin-top:10px;font-weight:bold;white-space:pre-line}
+</style>
+</head>
+<body>
+
+<header>
+<h1>JGD QUALITY ইন্ডাস্ট্রিস</h1>
+<p><a href="admin.html" style="color:#fff;text-decoration:underline;">Admin Login</a></p>
+</header>
+
+<section>
+<label>Category</label>
+<input id="category" type="text" placeholder="Enter Category">
+<label>Product</label>
+<input id="product" type="text" placeholder="Enter Product Name">
+<label>Price (₹)</label>
+<input id="price" type="number" placeholder="0">
+<label>Quantity</label>
+<input id="qty" type="number" placeholder="0">
+<div id="total">Subtotal: ₹0
+GST: ₹0
+Total: ₹0</div>
+<button onclick="orderWhatsApp()">Order via WhatsApp</button>
+</section>
+
 <script>
 function calculate() {
   let price = parseFloat(document.getElementById("price").value) || 0;
   let qty = +document.getElementById("qty").value || 0;
-
-  // GST LocalStorage থেকে নেওয়া, না থাকলে 18%
   let gst = parseFloat(localStorage.getItem("gst")) || 18;
 
   let subtotal = price * qty;
   let gstAmt = subtotal * gst / 100;
   let total = subtotal + gstAmt;
 
-  const totalEl = document.getElementById("total");
-  totalEl.innerText =
-    `Subtotal: ₹${subtotal}
+  document.getElementById("total").innerText =
+`Subtotal: ₹${subtotal}
 GST: ₹${gstAmt.toFixed(2)}
 Total: ₹${total.toFixed(2)}`;
 
@@ -21,29 +55,31 @@ Total: ₹${total.toFixed(2)}`;
 
 const priceEl = document.getElementById("price");
 const qtyEl = document.getElementById("qty");
-
 priceEl.oninput = qtyEl.oninput = calculate;
 
 function orderWhatsApp() {
   const data = calculate();
-  const category = document.getElementById("category").value;
-  const product = document.getElementById("product").value;
+  const category = document.getElementById("category").value || "-";
+  const product = document.getElementById("product").value || "-";
 
-  const msg =
-`*New Order*
+  const msg = `*New Order*
 Company: JGD QUALITY
 Category: ${category}
 Product: ${product}
 Price: ₹${priceEl.value}
 Quantity: ${qtyEl.value}
 Subtotal: ₹${data.subtotal}
-GST (${localStorage.getItem("gst") || 18}%): ₹${data.gstAmt.toFixed(2)}
+GST (${localStorage.getItem("gst")||18}%): ₹${data.gstAmt.toFixed(2)}
 Total: ₹${data.total.toFixed(2)}`;
 
-  // Country code সহ WhatsApp link
-  window.open(
-    "https://wa.me/917003764905?text=" + encodeURIComponent(msg),
-    "_blank"
-  );
+  // Mobile/Desktop compatible
+  const waLink = /Mobi|Android/i.test(navigator.userAgent) ?
+    "https://wa.me/917003764905?text="+encodeURIComponent(msg) :
+    "https://web.whatsapp.com/send?phone=917003764905&text="+encodeURIComponent(msg);
+
+  window.open(waLink,"_blank");
 }
 </script>
+
+</body>
+</html>
