@@ -4,24 +4,24 @@
 <meta charset="UTF-8">
 <title>JGD Quality Industries</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
 body{margin:0;font-family:Segoe UI,Arial;background:#f4f7fc}
-header{background:linear-gradient(135deg,#1e4fd6,#2b66e3);color:#fff;padding:40px;text-align:center}
-section{padding:25px}
+header{background:#1e4fd6;color:#fff;padding:30px;text-align:center}
+section{padding:20px}
 h2{text-align:center;color:#1e4fd6}
-.products{display:flex;gap:20px;flex-wrap:wrap;justify-content:center}
-.box{background:#fff;padding:25px;border-radius:15px;width:260px;text-align:center;
-box-shadow:0 8px 20px rgba(0,0,0,.12);cursor:pointer;transition:.3s}
-.box:hover{transform:translateY(-5px)}
-button{padding:8px 14px;border:none;border-radius:8px;background:#1e4fd6;color:#fff;cursor:pointer}
-input,select{padding:6px;border-radius:6px;border:1px solid #ccc}
-table{width:100%;border-collapse:collapse;margin-top:15px;background:#fff}
+.products{display:flex;justify-content:center}
+.box{background:#fff;padding:20px;border-radius:12px;width:220px;text-align:center;
+box-shadow:0 6px 15px rgba(0,0,0,.12);cursor:pointer}
+table{width:100%;border-collapse:collapse;background:#fff;margin-top:15px}
 th,td{border:1px solid #ddd;padding:8px;text-align:center}
 th{background:#eef2ff}
+input,select{padding:6px;border-radius:6px;border:1px solid #ccc;width:90px}
+button{padding:6px 12px;border:none;border-radius:6px;background:#1e4fd6;color:#fff;cursor:pointer}
 .hidden{display:none}
-.admin,.admin-login,.cart{max-width:1000px;margin:30px auto;background:#fff;padding:20px;border-radius:15px}
+.admin,.admin-login,.cart{max-width:1000px;margin:25px auto;background:#fff;padding:20px;border-radius:12px}
 @media print{
-button,.admin-login,.products{display:none}
+button,.admin,.admin-login,.products{display:none}
 body{background:#fff}
 }
 </style>
@@ -31,25 +31,22 @@ body{background:#fff}
 
 <header>
 <h1>JGD QUALITY INDUSTRIES</h1>
-<p>Manufacturer of uPVC | Garden | Section | SWR Pipes</p>
+<p>Garden Pipe Price & Order System</p>
 </header>
 
 <section>
-<h2>Our Products</h2>
 <div class="products">
-<div class="box" onclick="showList('upvc')">uPVC Pipe</div>
-<div class="box" onclick="showList('garden')">Garden Pipe</div>
-<div class="box" onclick="showList('section')">Section Pipe</div>
-<div class="box" onclick="showList('swr')">SWR Pipe</div>
+<div class="box" onclick="showList()">Garden Pipe</div>
 </div>
 </section>
 
 <section id="productList" class="hidden">
-<h2 id="listTitle"></h2>
+<h2>Garden Pipe Price List</h2>
 <table>
 <thead>
 <tr>
-<th>Size</th><th>Type</th><th>Price</th><th>Qty</th><th>Total</th><th>Action</th>
+<th>Size</th><th>Type</th><th>Price</th>
+<th>Qty</th><th>Total</th><th>Action</th>
 </tr>
 </thead>
 <tbody id="listBody"></tbody>
@@ -63,8 +60,8 @@ body{background:#fff}
 <tbody id="cartBody"></tbody>
 </table>
 <h3 id="grandTotal"></h3>
-<button onclick="print()">Print / PDF Quotation</button>
-<button onclick="sendWhatsApp()">Order on WhatsApp</button>
+<button onclick="sendCartWhatsApp()">Order on WhatsApp</button>
+<button onclick="print()">Print / PDF</button>
 </div>
 
 <div class="admin-login">
@@ -75,8 +72,10 @@ body{background:#fff}
 
 <section class="admin hidden" id="adminPanel">
 <h2>Admin Control</h2>
-GST % <input id="GST_RATE" value="18">
+
+GST % <input id="GST_RATE">
 <button onclick="saveGST()">Save</button>
+
 <br><br>
 Price Mode:
 <select id="priceMode" onchange="saveMode()">
@@ -84,82 +83,120 @@ Price Mode:
 <option value="0.9">Dealer</option>
 <option value="0.8">Distributor</option>
 </select>
+
 <hr>
-<h3>Price Entry (Example)</h3>
-½" Garden TP <input id="garden_0.5_TP">
-<button onclick="savePrice('garden_0.5_TP')">Save</button>
+<h3>Garden Pipe Prices</h3>
+<div id="priceInputs"></div>
 </section>
 
 <script>
 const PASS="1234";
-const WA_NUMBER="917003764905";
+const WA="917003764905";
+
+const products=[
+["½\"","TP","garden_0.5_TP"],["½\"","OP","garden_0.5_OP"],["½\"","Zebra","garden_0.5_Zebra"],
+["¾\"","TP","garden_0.75_TP"],["¾\"","OP","garden_0.75_OP"],["¾\"","Zebra","garden_0.75_Zebra"],
+["1\"","TP","garden_1_TP"],["1\"","OP","garden_1_OP"],["1\"","Zebra","garden_1_Zebra"],
+["1.25\"","TP","garden_1.25_TP"],["1.25\"","OP","garden_1.25_OP"],["1.25\"","Zebra","garden_1.25_Zebra"]
+];
+
 let cart=[];
 
-const products={
- garden:[
-  ["½\"","TP","garden_0.5_TP"],["½\"","OP","garden_0.5_OP"],["½\"","Zebra","garden_0.5_Zebra"],
-  ["¾\"","TP","garden_0.75_TP"],["¾\"","OP","garden_0.75_OP"],["¾\"","Zebra","garden_0.75_Zebra"],
-  ["1\"","TP","garden_1_TP"],["1\"","OP","garden_1_OP"],["1\"","Zebra","garden_1_Zebra"],
-  ["1.25\"","TP","garden_1.25_TP"],["1.25\"","OP","garden_1.25_OP"],["1.25\"","Zebra","garden_1.25_Zebra"]
- ],
- upvc:[],section:[],swr:[]
-};
-
-function showList(type){
+/* ---------- PRODUCT LIST ---------- */
+function showList(){
  document.getElementById("productList").classList.remove("hidden");
- document.getElementById("listTitle").innerText=type.toUpperCase()+" PIPE";
  const gst=Number(localStorage.getItem("GST")||18);
  const mode=Number(localStorage.getItem("MODE")||1);
- let body=document.getElementById("listBody");
+ const body=document.getElementById("listBody");
  body.innerHTML="";
- products[type].forEach(p=>{
-  let base=Number(localStorage.getItem(p[2])||0);
-  let price=base*mode*(1+gst/100);
+
+ products.forEach(p=>{
+  const base=Number(localStorage.getItem(p[2])||0);
+  if(base<=0) return;
+
+  const price=base*mode*(1+gst/100);
   body.innerHTML+=`
-  <tr>
-   <td>${p[0]}</td><td>${p[1]}</td>
-   <td>₹${price.toFixed(2)}</td>
-   <td><input type="number" value="1" id="q_${p[2]}"></td>
-   <td>₹${price.toFixed(2)}</td>
-   <td><button onclick="addCart('${p[0]} ${p[1]}',${price},'${p[2]}')">Add</button></td>
-  </tr>`;
+<tr>
+<td>${p[0]}</td>
+<td>${p[1]}</td>
+<td>₹${price.toFixed(2)}</td>
+<td>
+<input type="number" min="1" value="1"
+ id="q_${p[2]}" oninput="updateTotal('${p[2]}',${price})">
+</td>
+<td id="t_${p[2]}">₹${price.toFixed(2)}</td>
+<td>
+<button onclick="addCart('${p[0]} ${p[1]}',${price},'${p[2]}')">Add</button><br><br>
+<button onclick="rowWhatsApp('${p[0]} ${p[1]}','${p[2]}',${price})">WhatsApp</button>
+</td>
+</tr>`;
  });
 }
 
+/* ---------- CALCULATION ---------- */
+function updateTotal(id,price){
+ const q=Number(document.getElementById("q_"+id).value||1);
+ document.getElementById("t_"+id).innerText="₹"+(q*price).toFixed(2);
+}
+
+/* ---------- CART (NO DUPLICATE) ---------- */
 function addCart(name,price,id){
- let q=Number(document.getElementById("q_"+id).value||1);
- cart.push({name,qty:q,total:price*q});
+ const q=Number(document.getElementById("q_"+id).value||1);
+ const found=cart.find(i=>i.id===id);
+ if(found){
+  found.qty+=q;
+  found.total=found.qty*price;
+ }else{
+  cart.push({id,name,qty:q,total:q*price});
+ }
  updateCart();
 }
 
 function updateCart(){
  document.getElementById("cartBox").classList.remove("hidden");
- let b=document.getElementById("cartBody");
- let gt=0;b.innerHTML="";
+ let gt=0,html="";
  cart.forEach(i=>{
   gt+=i.total;
-  b.innerHTML+=`<tr><td>${i.name}</td><td>${i.qty}</td><td>₹${i.total.toFixed(2)}</td></tr>`;
+  html+=`<tr><td>${i.name}</td><td>${i.qty}</td><td>₹${i.total.toFixed(2)}</td></tr>`;
  });
- document.getElementById("grandTotal").innerText="Grand Total: ₹"+gt.toFixed(2);
+ cartBody.innerHTML=html;
+ grandTotal.innerText="Grand Total: ₹"+gt.toFixed(2);
 }
 
-function sendWhatsApp(){
- let msg="Order Details:%0A";
+/* ---------- WHATSAPP ---------- */
+function rowWhatsApp(name,id,price){
+ const q=Number(document.getElementById("q_"+id).value||1);
+ const t=(q*price).toFixed(2);
+ window.open(`https://wa.me/${WA}?text=Order:%0A${name}%0AQty:${q}%0ATotal:₹${t}`,"_blank");
+}
+
+function sendCartWhatsApp(){
+ let msg="Order Summary:%0A";
  cart.forEach(i=>msg+=`${i.name} x ${i.qty} = ₹${i.total}%0A`);
- window.open(`https://wa.me/${WA_NUMBER}?text=`+msg,"_blank");
+ window.open(`https://wa.me/${WA}?text=`+msg,"_blank");
 }
 
+/* ---------- ADMIN ---------- */
 function unlockAdmin(){
  if(adminPass.value===PASS) adminPanel.classList.remove("hidden");
  else alert("Wrong Password");
 }
+
 function savePrice(id){localStorage.setItem(id,document.getElementById(id).value)}
 function saveGST(){localStorage.setItem("GST",GST_RATE.value)}
 function saveMode(){localStorage.setItem("MODE",priceMode.value)}
 
+/* ---------- INIT ---------- */
 window.onload=()=>{
  GST_RATE.value=localStorage.getItem("GST")||18;
  priceMode.value=localStorage.getItem("MODE")||1;
+
+ const box=document.getElementById("priceInputs");
+ products.forEach(p=>{
+  box.innerHTML+=`${p[0]} ${p[1]}
+  <input id="${p[2]}" value="${localStorage.getItem(p[2])||""}">
+  <button onclick="savePrice('${p[2]}')">Save</button><br><br>`;
+ });
 }
 </script>
 
