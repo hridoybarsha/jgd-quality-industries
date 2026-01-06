@@ -12,9 +12,7 @@ section{padding:20px}
 .product{background:#fff;padding:15px;border-radius:10px;flex:1 1 200px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
 .product h3{margin:0 0 10px}
 .product p{margin:5px 0;font-weight:bold}
-.product input{width:100%;padding:6px;margin:5px 0}
 .product button{width:100%;padding:8px;background:#25D366;color:#fff;border:none;border-radius:6px;cursor:pointer}
-.total{margin-top:10px;font-weight:bold;font-size:16px}
 footer{background:#0a4b9c;color:#fff;text-align:center;padding:10px;margin-top:20px}
 
 /* Lock Screen */
@@ -31,9 +29,13 @@ footer{background:#0a4b9c;color:#fff;text-align:center;padding:10px;margin-top:2
 #lockScreen button{padding:8px 15px;width:100%}
 #lockScreen h3{margin:0 0 10px}
 #lockScreen p{color:red;margin:0}
+#adminPanel{display:none;padding:20px;background:#e8e8e8;margin:20px;border-radius:10px;}
+.row{display:flex;align-items:center;margin:6px 0}
+.row span{width:140px}
+.row input{flex:1;padding:6px;margin-left:5px}
+.row button{padding:6px;margin-left:5px}
 </style>
 </head>
-
 <body>
 
 <header>
@@ -51,75 +53,70 @@ footer{background:#0a4b9c;color:#fff;text-align:center;padding:10px;margin-top:2
   </div>
 </div>
 
-<!-- 🔹 ADMIN PANEL -->
-<section id="adminPanel" style="display:none;padding:20px;background:#e8e8e8;margin:20px;border-radius:10px;">
+<!-- 🔹 ADMIN PANEL (Hidden by default) -->
+<section id="adminPanel">
 <h2>ADMIN PRICE CONTROL</h2>
+<div class="row"><span>GST (%)</span><input id="gst" type="number"><button onclick="saveGST()">Save GST</button></div>
 
-<div class="row">
-<span>GST (%)</span>
-<input id="gst" type="number">
-<button onclick="saveGST()">Save GST</button>
-</div>
+<h3>uPVC PIPE</h3>
+<div class="row"><span>½" PN6</span><input id="upvc_05"><button onclick="save('upvc_05')">Save</button></div>
+<div class="row"><span>¾" PN6</span><input id="upvc_075"><button onclick="save('upvc_075')">Save</button></div>
+<div class="row"><span>1" PN6</span><input id="upvc_1"><button onclick="save('upvc_1')">Save</button></div>
+<div class="row"><span>1.25" PN6</span><input id="upvc_125"><button onclick="save('upvc_125')">Save</button></div>
+<div class="row"><span>1.5" PN6</span><input id="upvc_15"><button onclick="save('upvc_15')">Save</button></div>
 
-<h2>uPVC PIPE</h2>
-<div class="row"><span>½" | PN6</span><input id="upvc_05"><button onclick="save('upvc_05')">Save</button></div>
-<div class="row"><span>¾" | PN6</span><input id="upvc_075"><button onclick="save('upvc_075')">Save</button></div>
-<div class="row"><span>1" | PN6</span><input id="upvc_1"><button onclick="save('upvc_1')">Save</button></div>
-<div class="row"><span>1.25" | PN6</span><input id="upvc_125"><button onclick="save('upvc_125')">Save</button></div>
-<div class="row"><span>1.5" | PN6</span><input id="upvc_15"><button onclick="save('upvc_15')">Save</button></div>
+<h3>GARDEN PIPE</h3>
+<div class="row"><span>½" TP</span><input id="g_05_tp"><button onclick="save('g_05_tp')">Save</button></div>
+<div class="row"><span>½" OP</span><input id="g_05_op"><button onclick="save('g_05_op')">Save</button></div>
+<div class="row"><span>½" Zebra</span><input id="g_05_z"><button onclick="save('g_05_z')">Save</button></div>
+<div class="row"><span>1" TP</span><input id="g_1_tp"><button onclick="save('g_1_tp')">Save</button></div>
+<div class="row"><span>1" OP</span><input id="g_1_op"><button onclick="save('g_1_op')">Save</button></div>
+<div class="row"><span>1" Zebra</span><input id="g_1_z"><button onclick="save('g_1_z')">Save</button></div>
 
-<hr>
+<h3>SECTION PIPE</h3>
+<div class="row"><span>1" PN6</span><input id="s_1"><button onclick="save('s_1')">Save</button></div>
+<div class="row"><span>1.25" PN6</span><input id="s_125"><button onclick="save('s_125')">Save</button></div>
+<div class="row"><span>2" PN6</span><input id="s_2"><button onclick="save('s_2')">Save</button></div>
+<div class="row"><span>2.5" PN6</span><input id="s_25"><button onclick="save('s_25')">Save</button></div>
+<div class="row"><span>3" PN6</span><input id="s_3"><button onclick="save('s_3')">Save</button></div>
 
-<h2>GARDEN PIPE</h2>
-<div class="row"><span>½" | TP</span><input id="g_05_tp"><button onclick="save('g_05_tp')">Save</button></div>
-<div class="row"><span>½" | OP</span><input id="g_05_op"><button onclick="save('g_05_op')">Save</button></div>
-<div class="row"><span>½" | Zebra</span><input id="g_05_z"><button onclick="save('g_05_z')">Save</button></div>
-<div class="row"><span>1" | TP</span><input id="g_1_tp"><button onclick="save('g_1_tp')">Save</button></div>
-<div class="row"><span>1" | OP</span><input id="g_1_op"><button onclick="save('g_1_op')">Save</button></div>
-<div class="row"><span>1" | Zebra</span><input id="g_1_z"><button onclick="save('g_1_z')">Save</button></div>
-
-<hr>
-
-<h2>SECTION PIPE</h2>
-<div class="row"><span>1" | PN6</span><input id="s_1"><button onclick="save('s_1')">Save</button></div>
-<div class="row"><span>1.25" | PN6</span><input id="s_125"><button onclick="save('s_125')">Save</button></div>
-<div class="row"><span>2" | PN6</span><input id="s_2"><button onclick="save('s_2')">Save</button></div>
-<div class="row"><span>2.5" | PN6</span><input id="s_25"><button onclick="save('s_25')">Save</button></div>
-<div class="row"><span>3" | PN6</span><input id="s_3"><button onclick="save('s_3')">Save</button></div>
-
-<hr>
-
-<h2>SWR PIPE</h2>
-<div class="row"><span>2.5" | PN6</span><input id="swr_25"><button onclick="save('swr_25')">Save</button></div>
-<div class="row"><span>3" | PN6</span><input id="swr_3"><button onclick="save('swr_3')">Save</button></div>
-<div class="row"><span>4" | PN6</span><input id="swr_4"><button onclick="save('swr_4')">Save</button></div>
-<div class="row"><span>6" | PN6</span><input id="swr_6"><button onclick="save('swr_6')">Save</button></div>
+<h3>SWR PIPE</h3>
+<div class="row"><span>2.5" PN6</span><input id="swr_25"><button onclick="save('swr_25')">Save</button></div>
+<div class="row"><span>3" PN6</span><input id="swr_3"><button onclick="save('swr_3')">Save</button></div>
+<div class="row"><span>4" PN6</span><input id="swr_4"><button onclick="save('swr_4')">Save</button></div>
+<div class="row"><span>6" PN6</span><input id="swr_6"><button onclick="save('swr_6')">Save</button></div>
 
 <button onclick="logout()">Logout</button>
 </section>
 
 <!-- 🔹 FRONT PAGE PRODUCTS -->
 <section class="products">
+<!-- uPVC -->
+<div class="product"><h3>½" PN6</h3><p>Price: ₹<span id="price_upvc_05">--</span></p><button onclick="order('upvc_05','½\" PN6')">Order</button></div>
+<div class="product"><h3>¾" PN6</h3><p>Price: ₹<span id="price_upvc_075">--</span></p><button onclick="order('upvc_075','¾\" PN6')">Order</button></div>
+<div class="product"><h3>1" PN6</h3><p>Price: ₹<span id="price_upvc_1">--</span></p><button onclick="order('upvc_1','1\" PN6')">Order</button></div>
+<div class="product"><h3>1.25" PN6</h3><p>Price: ₹<span id="price_s_125">--</span></p><button onclick="order('s_125','1.25\" PN6 Section')">Order</button></div>
+<div class="product"><h3>1.5" PN6</h3><p>Price: ₹<span id="price_upvc_15">--</span></p><button onclick="order('upvc_15','1.5\" PN6')">Order</button></div>
 
-<div class="product">
-<h3>½" PN6 Pipe</h3>
-<p>Price: ₹<span id="price_upvc_05">--</span></p>
-<button onclick="order('upvc_05','½&quot; PN6 Pipe')">Order</button>
-</div>
+<!-- Garden -->
+<div class="product"><h3>½" TP</h3><p>Price: ₹<span id="price_g_05_tp">--</span></p><button onclick="order('g_05_tp','½\" TP')">Order</button></div>
+<div class="product"><h3>½" OP</h3><p>Price: ₹<span id="price_g_05_op">--</span></p><button onclick="order('g_05_op','½\" OP')">Order</button></div>
+<div class="product"><h3>½" Zebra</h3><p>Price: ₹<span id="price_g_05_z">--</span></p><button onclick="order('g_05_z','½\" Zebra')">Order</button></div>
+<div class="product"><h3>1" TP</h3><p>Price: ₹<span id="price_g_1_tp">--</span></p><button onclick="order('g_1_tp','1\" TP')">Order</button></div>
+<div class="product"><h3>1" OP</h3><p>Price: ₹<span id="price_g_1_op">--</span></p><button onclick="order('g_1_op','1\" OP')">Order</button></div>
+<div class="product"><h3>1" Zebra</h3><p>Price: ₹<span id="price_g_1_z">--</span></p><button onclick="order('g_1_z','1\" Zebra')">Order</button></div>
 
-<div class="product">
-<h3>¾" PN6 Pipe</h3>
-<p>Price: ₹<span id="price_upvc_075">--</span></p>
-<button onclick="order('upvc_075','¾&quot; PN6 Pipe')">Order</button>
-</div>
+<!-- Section -->
+<div class="product"><h3>1" PN6 Section</h3><p>Price: ₹<span id="price_s_1">--</span></p><button onclick="order('s_1','1\" PN6 Section')">Order</button></div>
+<div class="product"><h3>2" PN6 Section</h3><p>Price: ₹<span id="price_s_2">--</span></p><button onclick="order('s_2','2\" PN6 Section')">Order</button></div>
+<div class="product"><h3>2.5" PN6 Section</h3><p>Price: ₹<span id="price_s_25">--</span></p><button onclick="order('s_25','2.5\" PN6 Section')">Order</button></div>
+<div class="product"><h3>3" PN6 Section</h3><p>Price: ₹<span id="price_s_3">--</span></p><button onclick="order('s_3','3\" PN6 Section')">Order</button></div>
 
-<div class="product">
-<h3>1" PN6 Pipe</h3>
-<p>Price: ₹<span id="price_upvc_1">--</span></p>
-<button onclick="order('upvc_1','1&quot; PN6 Pipe')">Order</button>
-</div>
-
-<!-- Add more products in same format -->
+<!-- SWR -->
+<div class="product"><h3>2.5" PN6 SWR</h3><p>Price: ₹<span id="price_swr_25">--</span></p><button onclick="order('swr_25','2.5\" PN6 SWR')">Order</button></div>
+<div class="product"><h3>3" PN6 SWR</h3><p>Price: ₹<span id="price_swr_3">--</span></p><button onclick="order('swr_3','3\" PN6 SWR')">Order</button></div>
+<div class="product"><h3>4" PN6 SWR</h3><p>Price: ₹<span id="price_swr_4">--</span></p><button onclick="order('swr_4','4\" PN6 SWR')">Order</button></div>
+<div class="product"><h3>6" PN6 SWR</h3><p>Price: ₹<span id="price_swr_6">--</span></p><button onclick="order('swr_6','6\" PN6 SWR')">Order</button></div>
 </section>
 
 <footer>
@@ -127,87 +124,35 @@ footer{background:#0a4b9c;color:#fff;text-align:center;padding:10px;margin-top:2
 </footer>
 
 <script>
-/* 🔐 ADMIN LOCK */
-const ADMIN_PASSWORD = "1234"; // Change your password here
+const ADMIN_PASSWORD="1234"; // Change password
 
 function unlockAdmin(){
-  const pass = document.getElementById("adminPass").value;
+  const pass=document.getElementById("adminPass").value;
   if(pass===ADMIN_PASSWORD){
     localStorage.setItem("adminUnlocked","yes");
     document.getElementById("lockScreen").style.display="none";
     document.getElementById("adminPanel").style.display="block";
     loadPrices();
-  }else{
-    document.getElementById("err").innerText="Wrong Password!";
-  }
+  }else{document.getElementById("err").innerText="Wrong Password!";}
 }
 
-function logout(){
-  localStorage.removeItem("adminUnlocked");
-  location.reload();
-}
+function logout(){localStorage.removeItem("adminUnlocked");location.reload();}
 
-/* 🔹 SAVE PRICE */
-function save(id){
-  const val = document.getElementById(id).value;
-  localStorage.setItem(id,val);
-  alert("Saved");
-  showPrices();
-}
+function save(id){const val=document.getElementById(id).value;localStorage.setItem(id,val);showPrices();alert("Saved");}
+function saveGST(){const val=document.getElementById("gst").value;localStorage.setItem("gst",val);alert("GST Saved");}
 
-function saveGST(){
-  const val = document.getElementById("gst").value;
-  localStorage.setItem("gst",val);
-  alert("GST Saved");
-}
+function getPrice(id){return localStorage.getItem(id)||0;}
+function getGST(){return localStorage.getItem("gst")||18;}
+function showPrices(){document.querySelectorAll("[id^='price_']").forEach(span=>{let key=span.id.replace("price_","");span.innerText=getPrice(key)||"--";});}
+function loadPrices(){document.querySelectorAll("input").forEach(i=>{if(localStorage.getItem(i.id)){i.value=localStorage.getItem(i.id);}});showPrices();}
 
-/* 🔹 AUTO LOAD PRICES */
-function getPrice(id){ return localStorage.getItem(id)||0; }
-function getGST(){ return localStorage.getItem("gst")||18; }
-function showPrices(){
-  document.querySelectorAll("[id^='price_']").forEach(span=>{
-    let key = span.id.replace("price_","");
-    span.innerText = getPrice(key) || "--";
-  });
-}
+function calcTotal(price,qty){let gst=getGST();let subtotal=price*qty;let gstAmt=subtotal*gst/100;return {subtotal:subtotal,gstAmt:gstAmt,total:subtotal+gstAmt};}
+function order(id,name){let price=parseFloat(getPrice(id));if(price==0){alert("Price not set");return;}let qty=prompt("Enter Quantity:");if(!qty||qty<=0)return;let data=calcTotal(price,qty);let msg=`*JGD QUALITY ইন্ডাস্ট্রিস*\nProduct: ${name}\nPrice: ₹${price}\nQuantity: ${qty}\nSubtotal: ₹${data.subtotal}\nGST (${getGST()}%): ₹${data.gstAmt.toFixed(2)}\nTotal: ₹${data.total.toFixed(2)}`;window.open("https://wa.me/917003764905?text="+encodeURIComponent(msg));}
 
-function loadPrices(){
-  document.querySelectorAll("input").forEach(i=>{
-    if(localStorage.getItem(i.id)){
-      i.value = localStorage.getItem(i.id);
-    }
-  });
-  showPrices();
-}
-
-/* 🔹 WHATSAPP ORDER */
-function calcTotal(price, qty){
-  let gst = getGST();
-  let subtotal = price*qty;
-  let gstAmt = subtotal*gst/100;
-  return {subtotal:subtotal,gstAmt:gstAmt,total:subtotal+gstAmt};
-}
-
-function order(id,name){
-  let price=parseFloat(getPrice(id));
-  if(price==0){alert("Price not set by Admin"); return;}
-  let qty = prompt("Enter Quantity:");
-  if(!qty || qty<=0) return;
-  let data = calcTotal(price,qty);
-  let msg = `*JGD QUALITY ইন্ডাস্ট্রিস*\nProduct: ${name}\nPrice: ₹${price}\nQuantity: ${qty}\nSubtotal: ₹${data.subtotal}\nGST (${getGST()}%): ₹${data.gstAmt.toFixed(2)}\nTotal: ₹${data.total.toFixed(2)}`;
-  window.open("https://wa.me/917003764905?text="+encodeURIComponent(msg));
-}
-
-/* 🔹 ON PAGE LOAD */
-window.onload = ()=>{
-  if(localStorage.getItem("adminUnlocked")==="yes"){
-    document.getElementById("lockScreen").style.display="none";
-    document.getElementById("adminPanel").style.display="block";
-    loadPrices();
-  }
-  showPrices();
+window.onload=()=>{
+if(localStorage.getItem("adminUnlocked")==="yes"){document.getElementById("lockScreen").style.display="none";document.getElementById("adminPanel").style.display="block";loadPrices();}
+showPrices();
 }
 </script>
-
 </body>
 </html>
