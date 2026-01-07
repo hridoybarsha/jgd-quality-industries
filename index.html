@@ -4,257 +4,159 @@
 <meta charset="UTF-8">
 <title>JGD QUALITY ইন্ডাস্ট্রিস</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
-body{margin:0;font-family:Arial;background:#f2f6fb;padding:20px}
-header{background:#0a4b9c;color:#fff;padding:20px;text-align:center}
-section{margin-top:20px}
-label{font-weight:bold}
-select,input{padding:8px;margin:6px 0;width:100%}
-button{padding:12px;margin-top:12px;border:none;border-radius:6px;cursor:pointer;width:100%}
-.orderBtn{background:#25D366;color:#fff}
-.adminBtn{background:#333;color:#fff}
+body{margin:0;font-family:Arial;background:#f2f6fb;padding:15px}
+header{background:#0a4b9c;color:#fff;padding:15px;text-align:center}
+section{margin-top:15px;background:#fff;padding:15px;border-radius:8px}
+label{font-weight:bold;margin-top:10px;display:block}
+select,input{width:100%;padding:8px;margin-top:5px}
+button{width:100%;padding:12px;margin-top:15px;background:#25D366;color:#fff;border:none;border-radius:6px;font-size:16px}
 #total{margin-top:10px;font-weight:bold;white-space:pre-line}
-#adminPanel{display:none;background:#fff;padding:15px;border-radius:8px;margin-top:20px}
-hr{margin:20px 0}
 </style>
 </head>
+
 <body>
 
 <header>
-<h1>JGD QUALITY ইন্ডাস্ট্রিস</h1>
+  <h2>JGD QUALITY ইন্ডাস্ট্রিস</h2>
 </header>
 
-<!-- ================= CUSTOMER ================= -->
 <section>
+
 <label>Category</label>
-<select id="category" onchange="loadProducts()">
-<option value="">-- Select Category --</option>
+<select id="category">
+  <option value="">Select Category</option>
 </select>
 
-<label>Product Size</label>
-<select id="product" onchange="setPrice()">
-<option value="">-- Select Size --</option>
+<label>Size</label>
+<select id="size">
+  <option value="">Select Size</option>
 </select>
 
 <label>Type</label>
-<select id="type" onchange="setPrice()">
-<option value="">-- Select Type --</option>
-<option value="TP">TP</option>
-<option value="OP">OP</option>
-<option value="Zebra">Zebra</option>
+<select id="type">
+  <option value="">Select Type</option>
+  <option value="TP">TP</option>
+  <option value="OP">OP</option>
+  <option value="Zebra">Zebra</option>
 </select>
 
 <label>Price (₹)</label>
-<input id="price" type="number" readonly>
+<input type="number" id="price" readonly>
 
 <label>Quantity</label>
-<input id="qty" type="number" min="1">
+<input type="number" id="qty" value="1" min="1">
 
 <div id="total">Subtotal: ₹0
 GST: ₹0
 Total: ₹0</div>
 
-<button class="orderBtn" onclick="orderWhatsApp()">Order via WhatsApp</button>
-<button class="adminBtn" onclick="openAdmin()">Admin Panel</button>
+<button onclick="orderWhatsApp()">Order via WhatsApp</button>
+
 </section>
 
-<!-- ================= ADMIN PANEL ================= -->
-<section id="adminPanel">
-<h3>🔐 Admin Panel</h3>
-
-<label>Category</label>
-<select id="adminCat" onchange="loadAdminSizes()"></select>
-
-<label>Size</label>
-<select id="adminSize" onchange="loadAdminPrice()"></select>
-
-<label>Type</label>
-<select id="adminType" onchange="loadAdminPrice()">
-<option value="TP">TP</option>
-<option value="OP">OP</option>
-<option value="Zebra">Zebra</option>
-</select>
-
-<label>Price (₹)</label>
-<input id="adminPrice" type="number">
-
-<label>GST (%)</label>
-<input id="adminGST" type="number">
-
-<button class="adminBtn" onclick="saveAdminData()">Save Price</button>
-<button onclick="closeAdmin()">Close Admin</button>
-<p id="msg"></p>
-
-<hr>
-
-<h4>🔑 Change Admin Password</h4>
-<label>Old Password</label>
-<input type="password" id="oldPass">
-
-<label>New Password</label>
-<input type="password" id="newPass">
-
-<label>Confirm New Password</label>
-<input type="password" id="confirmPass">
-
-<button class="adminBtn" onclick="changePassword()">Change Password</button>
-<p id="passMsg"></p>
-</section>
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
-/* ================= DATA ================= */
-const PRODUCTS = {
- "UPVC PIPE": ['½"','¾"','1"','1.1/4"','1.1/2"','2"','2.1/2"','3"','4"','6"'],
- "SWR PIPE": ['2.1/2"','3"','4"','6"'],
- "GARDEN PIPE": ['½"','¾"','1"','1.25"'],
- "SECTION PIPE": ['1"','1.25"','2"','2.5"','3"']
+// 🔥 Firebase Config
+const firebaseConfig = {
+  apiKey: "AIzaSyAEiXc3TvBaYg7LZjqjjZSXhTFPzo4eQ9I",
+  authDomain: "jgd-quality.firebaseapp.com",
+  projectId: "jgd-quality",
+  storageBucket: "jgd-quality.firebasestorage.app",
+  messagingSenderId: "545706431350",
+  appId: "1:545706431350:web:ee429e4f7aa2ab8b372057"
 };
 
-const catEl = document.getElementById("category");
-const prodEl = document.getElementById("product");
-const typeEl = document.getElementById("type");
-const priceEl = document.getElementById("price");
-const qtyEl = document.getElementById("qty");
+// Init Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-/* Load Categories */
-for(let c in PRODUCTS){
- let o=document.createElement("option");
- o.value=c;o.textContent=c;
- catEl.appendChild(o);
+// Global
+let products = [];
+
+// Load Products
+db.collection("products").where("active","==",true).get()
+.then(snapshot=>{
+  snapshot.forEach(doc=>{
+    products.push(doc.data());
+  });
+  loadCategories();
+});
+
+// Load Category
+function loadCategories(){
+  let cats=[...new Set(products.map(p=>p.category))];
+  category.innerHTML='<option value="">Select Category</option>';
+  cats.forEach(c=>{
+    category.innerHTML+=`<option value="${c}">${c}</option>`;
+  });
 }
 
-/* CUSTOMER */
-function loadProducts(){
- prodEl.innerHTML='<option value="">-- Select Size --</option>';
- typeEl.value=""; priceEl.value=""; qtyEl.value="";
- calculate();
- if(!catEl.value) return;
- PRODUCTS[catEl.value].forEach(s=>{
-  let o=document.createElement("option");
-  o.value=s;o.textContent=s;
-  prodEl.appendChild(o);
- });
+// Category → Size
+category.onchange=()=>{
+  let sizes=products.filter(p=>p.category===category.value).map(p=>p.size);
+  size.innerHTML='<option value="">Select Size</option>';
+  [...new Set(sizes)].forEach(s=>{
+    size.innerHTML+=`<option value="${s}">${s}</option>`;
+  });
+  price.value="";
+};
+
+// Size / Type → Price
+function loadPrice(){
+  let p=products.find(p=>
+    p.category===category.value &&
+    p.size===size.value &&
+    p.type===type.value
+  );
+  if(p){
+    price.value=p.price;
+    calculate();
+  }
 }
 
-function setPrice(){
- if(catEl.value && prodEl.value && typeEl.value){
-  let key=catEl.value+"_"+prodEl.value+"_"+typeEl.value;
-  priceEl.value=localStorage.getItem(key)||0;
- }
- calculate();
-}
+size.onchange=loadPrice;
+type.onchange=loadPrice;
+qty.oninput=calculate;
 
+// Calculation
 function calculate(){
- let price=parseFloat(priceEl.value)||0;
- let qty=parseInt(qtyEl.value)||0;
- let gst=parseFloat(localStorage.getItem("gst"))||18;
+  let sub=price.value*qty.value||0;
+  let gst=sub*0.18;
+  let total=sub+gst;
+  document.getElementById("total").innerText=
+`Subtotal: ₹${sub}
+GST: ₹${gst.toFixed(2)}
+Total: ₹${total.toFixed(2)}`;
+}
 
- let subtotal=price*qty;
- let gstAmt=subtotal*gst/100;
- let total=subtotal+gstAmt;
+// WhatsApp Order
+function orderWhatsApp(){
+  if(!price.value){alert("Select product properly");return;}
+  let sub=price.value*qty.value;
+  let gst=sub*0.18;
+  let total=sub+gst;
 
- document.getElementById("total").innerText=
-`Subtotal: ₹${subtotal}
-GST (${gst}%): ₹${gstAmt.toFixed(2)}
+  let msg=
+`*New Order*
+Company: JGD QUALITY
+Category: ${category.value}
+Size: ${size.value}
+Type: ${type.value}
+Price: ₹${price.value}
+Quantity: ${qty.value}
+Subtotal: ₹${sub}
+GST: ₹${gst.toFixed(2)}
 Total: ₹${total.toFixed(2)}`;
 
- return {subtotal,gstAmt,total};
-}
-qtyEl.oninput=calculate;
-
-/* WhatsApp */
-function orderWhatsApp(){
- if(!catEl.value||!prodEl.value||!typeEl.value||!qtyEl.value){
-  alert("সব অপশন সিলেক্ট করুন"); return;
- }
- const d=calculate();
- const msg=
-`*NEW ORDER*
-Company: JGD QUALITY INDUSTRIES
-
-Category: ${catEl.value}
-Size: ${prodEl.value}
-Type: ${typeEl.value}
-
-Price: ₹${priceEl.value}
-Quantity: ${qtyEl.value}
-
-Subtotal: ₹${d.subtotal}
-GST: ₹${d.gstAmt.toFixed(2)}
-TOTAL: ₹${d.total.toFixed(2)}`;
-
- window.location.href=
- "https://api.whatsapp.com/send?phone=917003764905&text="+
- encodeURIComponent(msg);
-}
-
-/* ================= ADMIN ================= */
-function openAdmin(){
- let saved=localStorage.getItem("adminPass")||"1234";
- let p=prompt("Enter Admin Password");
- if(p!==saved){alert("Wrong Password");return;}
- document.getElementById("adminPanel").style.display="block";
- loadAdmin();
-}
-
-function closeAdmin(){
- document.getElementById("adminPanel").style.display="none";
-}
-
-const aCat=document.getElementById("adminCat");
-const aSize=document.getElementById("adminSize");
-const aType=document.getElementById("adminType");
-const aPrice=document.getElementById("adminPrice");
-const aGST=document.getElementById("adminGST");
-
-function loadAdmin(){
- aCat.innerHTML="";
- for(let c in PRODUCTS){
-  let o=document.createElement("option");
-  o.value=c;o.textContent=c;
-  aCat.appendChild(o);
- }
- loadAdminSizes();
-}
-
-function loadAdminSizes(){
- aSize.innerHTML="";
- PRODUCTS[aCat.value].forEach(s=>{
-  let o=document.createElement("option");
-  o.value=s;o.textContent=s;
-  aSize.appendChild(o);
- });
- loadAdminPrice();
-}
-
-function loadAdminPrice(){
- let key=aCat.value+"_"+aSize.value+"_"+aType.value;
- aPrice.value=localStorage.getItem(key)||"";
- aGST.value=localStorage.getItem("gst")||18;
-}
-
-function saveAdminData(){
- let key=aCat.value+"_"+aSize.value+"_"+aType.value;
- localStorage.setItem(key,aPrice.value);
- localStorage.setItem("gst",aGST.value);
- document.getElementById("msg").innerText="✅ Price Saved";
- setPrice();
-}
-
-/* Password Change */
-function changePassword(){
- let saved=localStorage.getItem("adminPass")||"1234";
- let o=document.getElementById("oldPass").value;
- let n=document.getElementById("newPass").value;
- let c=document.getElementById("confirmPass").value;
-
- if(o!==saved){passMsg.innerText="❌ Old password wrong";return;}
- if(n.length<4){passMsg.innerText="❌ Minimum 4 digit";return;}
- if(n!==c){passMsg.innerText="❌ Not matched";return;}
-
- localStorage.setItem("adminPass",n);
- passMsg.innerText="✅ Password Changed";
- oldPass.value=newPass.value=confirmPass.value="";
+  window.open(
+    "https://wa.me/917003764905?text="+encodeURIComponent(msg),
+    "_blank"
+  );
 }
 </script>
 
