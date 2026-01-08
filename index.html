@@ -4,156 +4,251 @@
 <meta charset="UTF-8">
 <title>JGD QUALITY ইন্ডাস্ট্রিস</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
 body{margin:0;font-family:Arial;background:#f2f6fb;padding:15px}
 header{background:#0a4b9c;color:#fff;padding:15px;text-align:center}
 section{margin-top:15px;background:#fff;padding:15px;border-radius:8px}
 label{font-weight:bold;margin-top:10px;display:block}
 select,input{width:100%;padding:8px;margin-top:5px}
-button{width:100%;padding:12px;margin-top:15px;background:#25D366;color:#fff;border:none;border-radius:6px;font-size:16px}
+button{width:100%;padding:12px;margin-top:15px;border:none;border-radius:6px;font-size:16px;cursor:pointer}
 #total{margin-top:10px;font-weight:bold;white-space:pre-line}
-#loginPanel,#adminPanel{margin-top:20px;padding:15px;background:#fff;border-radius:8px}
-#adminPanel{display:none;}
+button.order{background:#25D366;color:#fff;}
+button.update{background:#0a4b9c;color:#fff;}
+button.logout{background:#dc3545;color:#fff;}
 </style>
 </head>
 <body>
 
-<header><h2>JGD QUALITY ইন্ডাস্ট্রিস</h2></header>
+<header>
+  <h2>JGD QUALITY ইন্ডাস্ট্রিস</h2>
+</header>
 
-<section id="loginPanel">
-<h3>Admin Login</h3>
-<label>Email</label><input type="email" id="loginEmail">
-<label>Password</label><input type="password" id="loginPass">
-<button onclick="adminLogin()">Login</button>
-</section>
-
-<section id="adminPanel">
-<h3>Admin Panel</h3>
-<label>Category</label><select id="adminCategory"><option value="">Select</option></select>
-<label>Type</label><select id="adminType"><option value="">Select</option></select>
-<label>Size</label><select id="adminSize"><option value="">Select</option></select>
-<label>Price</label><input type="number" id="adminPrice">
-<label>Stock</label><input type="number" id="adminStock">
-<button onclick="updateProduct()">Update</button>
-<button style="background:red;color:#fff" onclick="logoutAdmin()">Logout</button>
-</section>
-
-<section>
+<section id="userSection">
 <h3>User Order</h3>
-<label>Category</label><select id="category"><option value="">Select Category</option></select>
-<label>Type</label><select id="type"><option value="">Select Type</option></select>
-<label>Size</label><select id="size"><option value="">Select Size</option></select>
-<label>Price (₹)</label><input type="number" id="price" readonly>
-<label>Quantity</label><input type="number" id="qty" value="1" min="1">
+
+<label>Category</label>
+<select id="category"><option value="">Select</option></select>
+
+<label>Type</label>
+<select id="type">
+  <option value="">Select</option>
+  <option value="TP">TP</option>
+  <option value="OP">OP</option>
+  <option value="Zebra">Zebra</option>
+</select>
+
+<label>Size</label>
+<select id="size"><option value="">Select</option></select>
+
+<label>Price (₹)</label>
+<input type="number" id="price" readonly>
+
+<label>Quantity</label>
+<input type="number" id="qty" value="1" min="1">
+
 <div id="total">Subtotal: ₹0
 GST: ₹0
 Total: ₹0</div>
-<button onclick="orderWhatsApp()">Order via WhatsApp</button>
+
+<button class="order" onclick="orderWhatsApp()">Order via WhatsApp</button>
 </section>
 
+<section id="adminLogin">
+<h3>Admin Login</h3>
+<input type="email" id="adminEmail" placeholder="Email">
+<input type="password" id="adminPass" placeholder="Password">
+<button onclick="adminLogin()">Login</button>
+</section>
+
+<section id="adminPanel" style="display:none">
+<h3>Admin Panel</h3>
+
+<label>Category</label>
+<select id="adminCategory"><option value="">Select</option></select>
+
+<label>Type</label>
+<select id="adminType">
+  <option value="">Select</option>
+  <option value="TP">TP</option>
+  <option value="OP">OP</option>
+  <option value="Zebra">Zebra</option>
+</select>
+
+<label>Size</label>
+<select id="adminSize"><option value="">Select</option></select>
+
+<label>Price (₹)</label>
+<input type="number" id="adminPrice">
+
+<label>Stock</label>
+<input type="number" id="adminStock">
+
+<button class="update" onclick="updateProduct()">Update</button>
+<button class="logout" onclick="logoutAdmin()">Logout</button>
+</section>
+
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
 <script>
-// Firebase Config
+// 🔑 Firebase Config (Your API Key included)
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyAEiXc3TvBaYg7LZjqjjZSXhTFPzo4eQ9I",
+  authDomain: "jgd-quality.firebaseapp.com",
+  projectId: "jgd-quality",
+  storageBucket: "jgd-quality.appspot.com",
+  messagingSenderId: "545706431350",
+  appId: "1:545706431350:web:ee429e4f7aa2ab8b372057"
 };
+
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
 
+// GLOBAL
 let products = [];
 
 // Load products
 function loadProducts(){
-  db.collection("products").where("active","==",true).get().then(snap=>{
-    products = [];
-    snap.forEach(doc=>products.push({...doc.data(),id:doc.id}));
-    loadUserDropdown();
-    loadAdminDropdown();
+  db.collection("products").get().then(snapshot=>{
+    products=[];
+    snapshot.forEach(doc=>products.push({...doc.data(), id:doc.id}));
+    loadUserCategories();
+    loadAdminCategories();
   });
 }
 
-// User Dropdowns
-function loadUserDropdown(){
-  const cats=[...new Set(products.map(p=>p.category))];
-  category.innerHTML='<option value="">Select Category</option>';
-  cats.forEach(c=>category.innerHTML+=`<option value="${c}">${c}</option>`);
-}
-category.onchange = ()=>{
-  const types=[...new Set(products.filter(p=>p.category===category.value).map(p=>p.type))];
-  type.innerHTML='<option value="">Select Type</option>'; types.forEach(t=>type.innerHTML+=`<option value="${t}">${t}</option>`);
-  size.innerHTML='<option value="">Select Size</option>'; price.value="";
-}
-type.onchange = ()=>{
-  const sizes=[...new Set(products.filter(p=>p.category===category.value && p.type===type.value).map(p=>p.size))];
-  size.innerHTML='<option value="">Select Size</option>'; sizes.forEach(s=>size.innerHTML+=`<option value="${s}">${s}</option>`);
-}
-size.onchange=loadPrice;
-function loadPrice(){
-  const p = products.find(p=>p.category===category.value && p.type===type.value && p.size===size.value);
-  if(p){price.value=p.price;calculate();}
-}
-qty.oninput=calculate;
-function calculate(){
-  const sub=price.value*qty.value||0;
-  const gst=sub*0.18;
-  const total=sub+gst;
-  totalDiv=document.getElementById("total");
-  totalDiv.innerText=`Subtotal: ₹${sub}\nGST: ₹${gst.toFixed(2)}\nTotal: ₹${total.toFixed(2)}`;
-}
-function orderWhatsApp(){
-  const p = products.find(p=>p.category===category.value && p.type===type.value && p.size===size.value);
-  if(!p){alert("Select product properly"); return;}
-  if(qty.value>p.stock){alert("Stock exceeded"); return;}
-  const sub=p.price*qty.value;
-  const gst=sub*0.18;
-  const total=sub+gst;
-  const msg=`*New Order*\nCompany: JGD QUALITY\nCategory: ${category.value}\nType: ${type.value}\nSize: ${size.value}\nPrice: ₹${p.price}\nQuantity: ${qty.value}\nSubtotal: ₹${sub}\nGST: ₹${gst.toFixed(2)}\nTotal: ₹${total.toFixed(2)}`;
-  window.open("https://wa.me/917003764905?text="+encodeURIComponent(msg),"_blank");
+// User: Categories
+function loadUserCategories(){
+  let cats=[...new Set(products.map(p=>p.category))];
+  const catSelect = document.getElementById("category");
+  catSelect.innerHTML='<option value="">Select</option>';
+  cats.forEach(c=>catSelect.innerHTML+=`<option value="${c}">${c}</option>`);
 }
 
-// Admin
-function loadAdminDropdown(){
-  const cats=[...new Set(products.map(p=>p.category))];
-  adminCategory.innerHTML='<option value="">Select</option>'; cats.forEach(c=>adminCategory.innerHTML+=`<option value="${c}">${c}</option>`);
+// Admin: Categories
+function loadAdminCategories(){
+  let cats=[...new Set(products.map(p=>p.category))];
+  const catSelect = document.getElementById("adminCategory");
+  catSelect.innerHTML='<option value="">Select</option>';
+  cats.forEach(c=>catSelect.innerHTML+=`<option value="${c}">${c}</option>`);
 }
-adminCategory.onchange = ()=>{
-  const types=[...new Set(products.filter(p=>p.category===adminCategory.value).map(p=>p.type))];
-  adminType.innerHTML='<option value="">Select</option>'; types.forEach(t=>adminType.innerHTML+=`<option value="${t}">${t}</option>`);
-  adminSize.innerHTML='<option value="">Select</option>'; adminPrice.value=""; adminStock.value="";
+
+// User dropdowns
+document.getElementById("category").onchange=()=>{
+  let sizes=products.filter(p=>p.category===category.value && p.type===type.value).map(p=>p.size);
+  let sizeSelect=document.getElementById("size");
+  sizeSelect.innerHTML='<option value="">Select</option>';
+  [...new Set(sizes)].forEach(s=>sizeSelect.innerHTML+=`<option value="${s}">${s}</option>`);
+  document.getElementById("price").value="";
+};
+
+document.getElementById("type").onchange=()=>{
+  let sizes=products.filter(p=>p.category===category.value && p.type===type.value).map(p=>p.size);
+  let sizeSelect=document.getElementById("size");
+  sizeSelect.innerHTML='<option value="">Select</option>';
+  [...new Set(sizes)].forEach(s=>sizeSelect.innerHTML+=`<option value="${s}">${s}</option>`);
+  document.getElementById("price").value="";
+};
+
+document.getElementById("size").onchange=()=>loadPrice();
+function loadPrice(){
+  let p=products.find(p=>p.category===category.value && p.size===size.value && p.type===type.value);
+  if(p) document.getElementById("price").value=p.price;
+  calculate();
 }
-adminType.onchange = ()=>{
-  const sizes=[...new Set(products.filter(p=>p.category===adminCategory.value && p.type===adminType.value).map(p=>p.size))];
-  adminSize.innerHTML='<option value="">Select</option>'; sizes.forEach(s=>adminSize.innerHTML+=`<option value="${s}">${s}</option>`);
+
+document.getElementById("qty").oninput=calculate;
+
+function calculate(){
+  let price=document.getElementById("price").value||0;
+  let qty=document.getElementById("qty").value||1;
+  let sub=price*qty;
+  let gst=sub*0.18;
+  let total=sub+gst;
+  document.getElementById("total").innerText=
+`Subtotal: ₹${sub}
+GST: ₹${gst.toFixed(2)}
+Total: ₹${total.toFixed(2)}`;
 }
-adminSize.onchange = ()=>{
-  const p = products.find(p=>p.category===adminCategory.value && p.type===adminType.value && p.size===adminSize.value);
-  if(p){adminPrice.value=p.price; adminStock.value=p.stock;}
-}
-function updateProduct(){
-  const p = products.find(p=>p.category===adminCategory.value && p.type===adminType.value && p.size===adminSize.value);
-  if(!p){alert("Select product"); return;}
-  db.collection("products").doc(p.id).update({price:Number(adminPrice.value),stock:Number(adminStock.value)})
-  .then(()=>{alert("Updated"); loadProducts();});
+
+// WhatsApp Order
+function orderWhatsApp(){
+  let price=document.getElementById("price").value;
+  if(!price){alert("Select product properly"); return;}
+  let qty=document.getElementById("qty").value||1;
+  let sub=price*qty;
+  let gst=sub*0.18;
+  let total=sub+gst;
+  let msg=`*New Order*
+Company: JGD QUALITY
+Category: ${category.value}
+Size: ${size.value}
+Type: ${type.value}
+Price: ₹${price}
+Quantity: ${qty}
+Subtotal: ₹${sub}
+GST: ₹${gst.toFixed(2)}
+Total: ₹${total.toFixed(2)}`;
+  window.open("https://wa.me/917003764905?text="+encodeURIComponent(msg),"_blank");
 }
 
 // Admin Login
 function adminLogin(){
-  const email=document.getElementById("loginEmail").value;
-  const pass=document.getElementById("loginPass").value;
+  const email=document.getElementById("adminEmail").value;
+  const pass=document.getElementById("adminPass").value;
   auth.signInWithEmailAndPassword(email,pass)
-  .then(()=>{loginPanel.style.display="none"; adminPanel.style.display="block"; loadProducts();})
-  .catch(err=>alert("Login Error ❌ "+err.message));
+  .then(()=>{
+    document.getElementById("adminLogin").style.display="none";
+    document.getElementById("adminPanel").style.display="block";
+    loadProducts();
+  })
+  .catch(e=>alert("Login Error ❌\n"+e.message));
 }
-function logoutAdmin(){auth.signOut(); adminPanel.style.display="none"; loginPanel.style.display="block";}
+
+// Admin Logout
+function logoutAdmin(){
+  auth.signOut().then(()=>{
+    document.getElementById("adminPanel").style.display="none";
+    document.getElementById("adminLogin").style.display="block";
+  });
+}
+
+// Admin dropdowns
+document.getElementById("adminCategory").onchange=updateAdminSizeOptions;
+document.getElementById("adminType").onchange=updateAdminSizeOptions;
+function updateAdminSizeOptions(){
+  let sizes=products.filter(p=>p.category===adminCategory.value && p.type===adminType.value).map(p=>p.size);
+  let sizeSelect=document.getElementById("adminSize");
+  sizeSelect.innerHTML='<option value="">Select</option>';
+  [...new Set(sizes)].forEach(s=>sizeSelect.innerHTML+=`<option value="${s}">${s}</option>`);
+  document.getElementById("adminPrice").value="";
+  document.getElementById("adminStock").value="";
+}
+
+// Admin: Load price/stock
+document.getElementById("adminSize").onchange=()=> {
+  let p=products.find(p=>p.category===adminCategory.value && p.type===adminType.value && p.size===adminSize.value);
+  if(p){
+    document.getElementById("adminPrice").value=p.price;
+    document.getElementById("adminStock").value=p.stock;
+  }
+}
+
+// Admin Update
+function updateProduct(){
+  let p=products.find(p=>p.category===adminCategory.value && p.type===adminType.value && p.size===adminSize.value);
+  if(!p){alert("Select valid product"); return;}
+  db.collection("products").doc(p.id).update({
+    price:Number(document.getElementById("adminPrice").value),
+    stock:Number(document.getElementById("adminStock").value)
+  }).then(()=>{alert("Updated ✅"); loadProducts(); });
+}
+
+// INIT
 loadProducts();
 </script>
 
