@@ -87,15 +87,36 @@ hr{margin:20px 0}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
 <script>
+/* 🔥 FIREBASE INIT */
 firebase.initializeApp({
  apiKey:"AIzaSyAEiXc3TvBaYg7LZjqjjZSXhTFPzo4eQ9I",
  authDomain:"jgd-quality.firebaseapp.com",
  projectId:"jgd-quality"
 });
 
-const db=firebase.firestore();
-const auth=firebase.auth();
+const db   = firebase.firestore();
+const auth = firebase.auth();
 
+/* 🔴 EXACT DOM FIX */
+const loginSection = document.getElementById("loginSection");
+const adminPanel  = document.getElementById("adminPanel");
+const emailInput  = document.getElementById("email");
+const passInput   = document.getElementById("password");
+
+const category = document.getElementById("category");
+const type     = document.getElementById("type");
+const size     = document.getElementById("size");
+const price    = document.getElementById("price");
+const qty      = document.getElementById("qty");
+const totalDiv = document.getElementById("total");
+
+const aCategory = document.getElementById("aCategory");
+const aType     = document.getElementById("aType");
+const aSize     = document.getElementById("aSize");
+const aPrice    = document.getElementById("aPrice");
+const aStock    = document.getElementById("aStock");
+
+/* DATA */
 let products=[],current=null,adminDoc=null,adminIndex=null;
 
 /* LOAD PRODUCTS */
@@ -125,9 +146,10 @@ type.onchange=()=>{
  current=products.find(p=>p.category===category.value && p.type===type.value);
  if(!current)return;
  current.size.forEach(s=>{
-  if(s.stock>0)
+  if(s.stock>0){
    size.innerHTML+=`<option value="${s.size}" data-price="${s.price}" data-stock="${s.stock}">
    ${s.size} (Stock:${s.stock})</option>`;
+  }
  });
 };
 
@@ -147,10 +169,9 @@ function calc(){
  let total=sub+gst;
  totalDiv.innerText=`Subtotal: ₹${sub}\nGST: ₹${gst.toFixed(2)}\nTotal: ₹${total.toFixed(2)}`;
 }
-const totalDiv=document.getElementById("total");
 
 function placeOrder(){
- if(!price.value)return alert("Product select করুন");
+ if(!price.value){alert("Product select করুন");return;}
 
  let sub=price.value*qty.value;
  let gst=sub*0.18;
@@ -173,20 +194,39 @@ function placeOrder(){
  ));
 }
 
-/* ADMIN */
+/* 🔐 ADMIN LOGIN – EXACT FIX */
 function adminLogin(){
- auth.signInWithEmailAndPassword(email.value,password.value)
+ auth.signInWithEmailAndPassword(
+  emailInput.value.trim(),
+  passInput.value.trim()
+ )
  .then(()=>{
   loginSection.style.display="none";
   adminPanel.style.display="block";
   loadAdmin();
+ })
+ .catch(err=>{
+  alert("LOGIN ERROR ❌\n"+err.message);
  });
 }
+
+/* AUTO LOGIN FIX */
+auth.onAuthStateChanged(user=>{
+ if(user){
+  loginSection.style.display="none";
+  adminPanel.style.display="block";
+  loadAdmin();
+ }else{
+  loginSection.style.display="block";
+  adminPanel.style.display="none";
+ }
+});
 
 function logout(){
  auth.signOut().then(()=>location.reload());
 }
 
+/* ADMIN PANEL */
 function loadAdmin(){
  aCategory.innerHTML='<option>Select</option>';
  [...new Set(products.map(p=>p.category))]
@@ -215,7 +255,7 @@ function updateProduct(){
  adminDoc.size[adminIndex].price=Number(aPrice.value);
  adminDoc.size[adminIndex].stock=Number(aStock.value);
  db.collection("products").doc(adminDoc.id).update({size:adminDoc.size})
- .then(()=>alert("Updated Successfully"));
+ .then(()=>alert("Updated Successfully ✅"));
 }
 </script>
 
