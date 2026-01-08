@@ -29,17 +29,17 @@ button{width:100%;padding:12px;margin-top:15px;background:#25D366;color:#fff;bor
   <option value="">Select Category</option>
 </select>
 
-<label>Size</label>
-<select id="size">
-  <option value="">Select Size</option>
-</select>
-
 <label>Type</label>
 <select id="type">
   <option value="">Select Type</option>
   <option value="TP">TP</option>
   <option value="OP">OP</option>
   <option value="Zebra">Zebra</option>
+</select>
+
+<label>Size</label>
+<select id="size">
+  <option value="">Select Size</option>
 </select>
 
 <label>Price (₹)</label>
@@ -71,12 +71,11 @@ const firebaseConfig = {
   appId: "1:545706431350:web:ee429e4f7aa2ab8b372057"
 };
 
-// Init Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// Global
 let products = [];
+let currentProduct = null;
 
 // Load Products
 db.collection("products").where("active","==",true).get()
@@ -87,48 +86,56 @@ db.collection("products").where("active","==",true).get()
   loadCategories();
 });
 
-// Load Category
+// Load Categories
 function loadCategories(){
-  let cats=[...new Set(products.map(p=>p.category))];
-  category.innerHTML='<option value="">Select Category</option>';
+  const cats = [...new Set(products.map(p => p.category))];
+  category.innerHTML = '<option value="">Select Category</option>';
   cats.forEach(c=>{
-    category.innerHTML+=`<option value="${c}">${c}</option>`;
+    category.innerHTML += `<option value="${c}">${c}</option>`;
   });
 }
 
-// Category → Size
-category.onchange=()=>{
-  let sizes=products.filter(p=>p.category===category.value).map(p=>p.size);
-  size.innerHTML='<option value="">Select Size</option>';
-  [...new Set(sizes)].forEach(s=>{
-    size.innerHTML+=`<option value="${s}">${s}</option>`;
+// Category / Type change
+category.onchange = loadSizes;
+type.onchange = loadSizes;
+
+// Load Sizes
+function loadSizes(){
+  size.innerHTML = '<option value="">Select Size</option>';
+  price.value = "";
+  calculate();
+
+  currentProduct = products.find(p =>
+    p.category === category.value &&
+    p.type === type.value
+  );
+
+  if(!currentProduct) return;
+
+  currentProduct.size.forEach(s=>{
+    size.innerHTML += `
+      <option value="${s.label}" data-price="${s.price}">
+        ${s.label}
+      </option>`;
   });
-  price.value="";
+}
+
+// Size select → Price
+size.onchange = () => {
+  const opt = size.selectedOptions[0];
+  if(!opt) return;
+  price.value = opt.dataset.price || "";
+  calculate();
 };
 
-// Size / Type → Price
-function loadPrice(){
-  let p=products.find(p=>
-    p.category===category.value &&
-    p.size===size.value &&
-    p.type===type.value
-  );
-  if(p){
-    price.value=p.price;
-    calculate();
-  }
-}
-
-size.onchange=loadPrice;
-type.onchange=loadPrice;
-qty.oninput=calculate;
+qty.oninput = calculate;
 
 // Calculation
 function calculate(){
-  let sub=price.value*qty.value||0;
-  let gst=sub*0.18;
-  let total=sub+gst;
-  document.getElementById("total").innerText=
+  const sub = (price.value * qty.value) || 0;
+  const gst = sub * 0.18;
+  const total = sub + gst;
+  document.getElementById("total").innerText =
 `Subtotal: ₹${sub}
 GST: ₹${gst.toFixed(2)}
 Total: ₹${total.toFixed(2)}`;
@@ -136,17 +143,21 @@ Total: ₹${total.toFixed(2)}`;
 
 // WhatsApp Order
 function orderWhatsApp(){
-  if(!price.value){alert("Select product properly");return;}
-  let sub=price.value*qty.value;
-  let gst=sub*0.18;
-  let total=sub+gst;
+  if(!price.value){
+    alert("Select product properly");
+    return;
+  }
 
-  let msg=
+  const sub = price.value * qty.value;
+  const gst = sub * 0.18;
+  const total = sub + gst;
+
+  const msg =
 `*New Order*
 Company: JGD QUALITY
 Category: ${category.value}
-Size: ${size.value}
 Type: ${type.value}
+Size: ${size.value}
 Price: ₹${price.value}
 Quantity: ${qty.value}
 Subtotal: ₹${sub}
@@ -154,7 +165,7 @@ GST: ₹${gst.toFixed(2)}
 Total: ₹${total.toFixed(2)}`;
 
   window.open(
-    "https://wa.me/917003764905?text="+encodeURIComponent(msg),
+    "https://wa.me/917003764905?text=" + encodeURIComponent(msg),
     "_blank"
   );
 }
