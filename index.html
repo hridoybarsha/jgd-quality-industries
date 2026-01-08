@@ -2,16 +2,19 @@
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
-<title>JGD QUALITY ইন্ডাস্ট্রিস</title>
+<title>JGD QUALITY SYSTEM</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body{margin:0;font-family:Arial;background:#f2f6fb;padding:15px}
+body{font-family:Arial;background:#f2f6fb;padding:15px}
 header{background:#0a4b9c;color:#fff;padding:15px;text-align:center}
-section{background:#fff;padding:15px;border-radius:8px}
-label{font-weight:bold;display:block;margin-top:10px}
-select,input{width:100%;padding:8px;margin-top:5px}
-button{width:100%;padding:12px;margin-top:15px;background:#25D366;color:#fff;border:none;border-radius:6px;font-size:16px}
-#total{margin-top:10px;font-weight:bold;white-space:pre-line}
+section{background:#fff;padding:15px;border-radius:8px;margin-top:15px}
+label{font-weight:bold;margin-top:10px;display:block}
+select,input,button{width:100%;padding:8px;margin-top:5px}
+button{background:#25D366;color:#fff;border:none;border-radius:5px}
+.adminBtn{background:#0a4b9c}
+.logout{background:#e53935}
+#total{white-space:pre-line;font-weight:bold;margin-top:10px}
+hr{margin:20px 0}
 </style>
 </head>
 
@@ -19,9 +22,12 @@ button{width:100%;padding:12px;margin-top:15px;background:#25D366;color:#fff;bor
 
 <header>
 <h2>JGD QUALITY ইন্ডাস্ট্রিস</h2>
+<p>SYSTEM STATUS: LIVE & READY ✅</p>
 </header>
 
+<!-- USER ORDER -->
 <section>
+<h3>User Order</h3>
 
 <label>Category</label>
 <select id="category"></select>
@@ -32,115 +38,184 @@ button{width:100%;padding:12px;margin-top:15px;background:#25D366;color:#fff;bor
 <label>Size</label>
 <select id="size"></select>
 
-<label>Price (₹)</label>
+<label>Price</label>
 <input id="price" readonly>
 
 <label>Quantity</label>
 <input type="number" id="qty" value="1" min="1">
 
 <div id="total"></div>
-
-<button onclick="orderWhatsApp()">Order via WhatsApp</button>
-
+<button onclick="placeOrder()">Order via WhatsApp</button>
 </section>
 
+<hr>
+
+<!-- ADMIN LOGIN -->
+<section id="loginSection">
+<h3>Admin Login</h3>
+<input id="email" placeholder="Admin Email">
+<input id="password" type="password" placeholder="Password">
+<button class="adminBtn" onclick="adminLogin()">Login</button>
+</section>
+
+<!-- ADMIN PANEL -->
+<section id="adminPanel" style="display:none">
+<h3>Admin Panel</h3>
+
+<label>Category</label>
+<select id="aCategory"></select>
+
+<label>Type</label>
+<select id="aType"></select>
+
+<label>Size</label>
+<select id="aSize"></select>
+
+<label>Price</label>
+<input id="aPrice">
+
+<label>Stock</label>
+<input id="aStock">
+
+<button class="adminBtn" onclick="updateProduct()">Update</button>
+<button class="logout" onclick="logout()">Logout</button>
+</section>
+
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyAEiXc3TvBaYg7LZjqjjZSXhTFPzo4eQ9I",
-  authDomain: "jgd-quality.firebaseapp.com",
-  projectId: "jgd-quality"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-let products=[], currentProduct=null;
-
-db.collection("products").where("active","==",true).get().then(s=>{
-  s.forEach(d=>products.push(d.data()));
-  loadCategories();
+firebase.initializeApp({
+ apiKey:"AIzaSyAEiXc3TvBaYg7LZjqjjZSXhTFPzo4eQ9I",
+ authDomain:"jgd-quality.firebaseapp.com",
+ projectId:"jgd-quality"
 });
 
+const db=firebase.firestore();
+const auth=firebase.auth();
+
+let products=[],current=null,adminDoc=null,adminIndex=null;
+
+/* LOAD PRODUCTS */
+db.collection("products").where("active","==",true).get().then(s=>{
+ s.forEach(d=>products.push({id:d.id,...d.data()}));
+ loadCategories();
+});
+
+/* USER SIDE */
 function loadCategories(){
-  category.innerHTML='<option value="">Select Category</option>';
-  [...new Set(products.map(p=>p.category))].forEach(c=>{
-    category.innerHTML+=`<option>${c}</option>`;
-  });
+ category.innerHTML='<option value="">Select</option>';
+ [...new Set(products.map(p=>p.category))]
+ .forEach(c=>category.innerHTML+=`<option>${c}</option>`);
 }
 
 category.onchange=()=>{
-  type.innerHTML='<option value="">Select Type</option>';
-  size.innerHTML='<option value="">Select Size</option>';
-  price.value="";
-  calculate();
-
-  let types=products.filter(p=>p.category===category.value).map(p=>p.type);
-  [...new Set(types)].forEach(t=>{
-    type.innerHTML+=`<option>${t}</option>`;
-  });
+ type.innerHTML='<option>Select</option>';
+ size.innerHTML='<option>Select</option>';
+ price.value="";calc();
+ [...new Set(products.filter(p=>p.category===category.value).map(p=>p.type))]
+ .forEach(t=>type.innerHTML+=`<option>${t}</option>`);
 };
 
 type.onchange=()=>{
-  size.innerHTML='<option value="">Select Size</option>';
-  price.value="";
-  calculate();
-
-  currentProduct=products.find(p=>p.category===category.value && p.type===type.value);
-  if(!currentProduct)return;
-
-  currentProduct.size.forEach(s=>{
-    if(s.stock>0){
-      size.innerHTML+=`
-      <option value="${s.size}" data-price="${s.price}" data-stock="${s.stock}">
-        ${s.size} (Stock: ${s.stock})
-      </option>`;
-    }else{
-      size.innerHTML+=`<option disabled>${s.size} (Out)</option>`;
-    }
-  });
+ size.innerHTML='<option>Select</option>';
+ price.value="";calc();
+ current=products.find(p=>p.category===category.value && p.type===type.value);
+ if(!current)return;
+ current.size.forEach(s=>{
+  if(s.stock>0)
+   size.innerHTML+=`<option value="${s.size}" data-price="${s.price}" data-stock="${s.stock}">
+   ${s.size} (Stock:${s.stock})</option>`;
+ });
 };
 
 size.onchange=()=>{
-  let o=size.selectedOptions[0];
-  price.value=o.dataset.price;
-  qty.max=o.dataset.stock;
-  qty.value=1;
-  calculate();
+ let o=size.selectedOptions[0];
+ price.value=o.dataset.price;
+ qty.max=o.dataset.stock;
+ qty.value=1;
+ calc();
 };
 
-qty.oninput=calculate;
+qty.oninput=calc;
 
-function calculate(){
-  let sub=price.value*qty.value||0;
-  let gst=sub*0.18;
-  let total=sub+gst;
-  totalDiv.innerText=
-`Subtotal: ₹${sub}
-GST: ₹${gst.toFixed(2)}
-Total: ₹${total.toFixed(2)}`;
+function calc(){
+ let sub=price.value*qty.value||0;
+ let gst=sub*0.18;
+ let total=sub+gst;
+ totalDiv.innerText=`Subtotal: ₹${sub}\nGST: ₹${gst.toFixed(2)}\nTotal: ₹${total.toFixed(2)}`;
 }
-
 const totalDiv=document.getElementById("total");
 
-function orderWhatsApp(){
-  if(!price.value)return alert("Select product properly");
+function placeOrder(){
+ if(!price.value)return alert("Product select করুন");
 
-  let sub=price.value*qty.value;
-  let gst=sub*0.18;
-  let total=sub+gst;
+ let sub=price.value*qty.value;
+ let gst=sub*0.18;
+ let total=sub+gst;
 
-  let msg=`*New Order*
-Category: ${category.value}
-Type: ${type.value}
-Size: ${size.value}
-Price: ₹${price.value}
-Qty: ${qty.value}
-Total: ₹${total.toFixed(2)}`;
+ db.collection("orders").add({
+  category:category.value,
+  type:type.value,
+  size:size.value,
+  qty:Number(qty.value),
+  total:Number(total.toFixed(2)),
+  createdAt:firebase.firestore.FieldValue.serverTimestamp()
+ });
 
-  window.open("https://wa.me/917003764905?text="+encodeURIComponent(msg));
+ let newSizes=current.size.map(s=>s.size===size.value?{...s,stock:s.stock-qty.value}:s);
+ db.collection("products").doc(current.id).update({size:newSizes});
+
+ window.open("https://wa.me/917003764905?text="+encodeURIComponent(
+  `New Order\n${category.value} ${type.value}\nSize:${size.value}\nQty:${qty.value}\nTotal:₹${total.toFixed(2)}`
+ ));
+}
+
+/* ADMIN */
+function adminLogin(){
+ auth.signInWithEmailAndPassword(email.value,password.value)
+ .then(()=>{
+  loginSection.style.display="none";
+  adminPanel.style.display="block";
+  loadAdmin();
+ });
+}
+
+function logout(){
+ auth.signOut().then(()=>location.reload());
+}
+
+function loadAdmin(){
+ aCategory.innerHTML='<option>Select</option>';
+ [...new Set(products.map(p=>p.category))]
+ .forEach(c=>aCategory.innerHTML+=`<option>${c}</option>`);
+}
+
+aCategory.onchange=()=>{
+ aType.innerHTML='<option>Select</option>';
+ [...new Set(products.filter(p=>p.category===aCategory.value).map(p=>p.type))]
+ .forEach(t=>aType.innerHTML+=`<option>${t}</option>`);
+};
+
+aType.onchange=()=>{
+ aSize.innerHTML='<option>Select</option>';
+ adminDoc=products.find(p=>p.category===aCategory.value && p.type===aType.value);
+ adminDoc.size.forEach((s,i)=>aSize.innerHTML+=`<option value="${i}">${s.size}</option>`);
+};
+
+aSize.onchange=()=>{
+ adminIndex=aSize.value;
+ aPrice.value=adminDoc.size[adminIndex].price;
+ aStock.value=adminDoc.size[adminIndex].stock;
+};
+
+function updateProduct(){
+ adminDoc.size[adminIndex].price=Number(aPrice.value);
+ adminDoc.size[adminIndex].stock=Number(aStock.value);
+ db.collection("products").doc(adminDoc.id).update({size:adminDoc.size})
+ .then(()=>alert("Updated Successfully"));
 }
 </script>
 
