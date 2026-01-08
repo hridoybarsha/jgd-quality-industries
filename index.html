@@ -1,256 +1,255 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
 <meta charset="UTF-8">
+<title>JGD QUALITY ржЗржирзНржбрж╛рж╕рзНржЯрзНрж░рж┐рж╕</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JGD QUALITY Industries</title>
 
-<!-- ================= CSS ================= -->
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f2f4f7;
-  margin: 0;
-  padding: 0;
-}
-
-/* HEADER */
-.header {
-  background: #0d47a1;
-  color: #fff;
-  padding: 18px;
-  text-align: center;
-  font-size: 22px;
-  font-weight: bold;
-}
-
-/* CARD */
-.card {
-  background: #fff;
-  margin: 15px;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-label {
-  font-weight: bold;
-  display: block;
-  margin-top: 10px;
-}
-
-select, input {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 16px;
-}
-
-/* BUTTON */
-.order-btn {
-  margin-top: 15px;
-  width: 100%;
-  padding: 12px;
-  background: #25d366;
-  border: none;
-  border-radius: 8px;
-  font-size: 18px;
-  color: white;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-
-.order-btn:active {
-  transform: scale(0.98);
-}
-
-/* TOTAL */
-.total-box {
-  margin-top: 10px;
-  font-size: 16px;
-}
-
-/* LOADER */
-#loader {
-  position: fixed;
-  inset: 0;
-  background: white;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
-
-.spinner {
-  width: 45px;
-  height: 45px;
-  border: 4px solid #ddd;
-  border-top: 4px solid #0d47a1;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  100% { transform: rotate(360deg); }
-}
-
-/* ANIMATION */
-.fade-in {
-  animation: fade 0.4s ease-in-out;
-}
-@keyframes fade {
-  from {opacity: 0; transform: translateY(6px);}
-  to {opacity: 1; transform: translateY(0);}
-}
-
-.price-animate {
-  animation: pop 0.3s ease;
-}
-@keyframes pop {
-  50% {transform: scale(1.1);}
-}
+body{margin:0;font-family:Arial;background:#f2f6fb;padding:15px}
+header{background:#0a4b9c;color:#fff;padding:15px;text-align:center}
+section{margin-top:15px;background:#fff;padding:15px;border-radius:8px}
+label{font-weight:bold;margin-top:10px;display:block}
+select,input{width:100%;padding:8px;margin-top:5px}
+button{width:100%;padding:12px;margin-top:15px;border:none;border-radius:6px;font-size:16px;cursor:pointer}
+#total{margin-top:10px;font-weight:bold;white-space:pre-line}
+button.order{background:#25D366;color:#fff;}
+button.update{background:#0a4b9c;color:#fff;}
+button.logout{background:#dc3545;color:#fff;}
 </style>
 </head>
-
 <body>
 
-<!-- ================= LOADER ================= -->
-<div id="loader">
-  <div class="spinner"></div>
-  <p>Loading...</p>
-</div>
+<header>
+  <h2>JGD QUALITY ржЗржирзНржбрж╛рж╕рзНржЯрзНрж░рж┐рж╕</h2>
+</header>
 
-<!-- ================= HEADER ================= -->
-<div class="header">
-  JGD QUALITY ইন্ডাস্ট্রিজ
-</div>
+<section id="userSection">
+<h3>User Order</h3>
 
-<!-- ================= USER ORDER ================= -->
-<div class="card">
-  <h3>User Order</h3>
+<label>Category</label>
+<select id="category"><option value="">Select</option></select>
 
-  <label>Category</label>
-  <select id="category">
-    <option value="" disabled selected>Section</option>
-  </select>
+<label>Type</label>
+<select id="type">
+  <option value="">Select</option>
+  <option value="TP">TP</option>
+  <option value="OP">OP</option>
+  <option value="Zebra">Zebra</option>
+</select>
 
-  <label>Type</label>
-  <select id="type">
-    <option value="" disabled selected>Type Section</option>
-  </select>
+<label>Size</label>
+<select id="size"><option value="">Select</option></select>
 
-  <label>Size</label>
-  <select id="size">
-    <option value="" disabled selected>Select Size</option>
-  </select>
+<label>Price (тВ╣)</label>
+<input type="number" id="price" readonly>
 
-  <label>Price (₹)</label>
-  <input type="number" id="price" readonly>
+<label>Quantity</label>
+<input type="number" id="qty" value="1" min="1">
 
-  <label>Quantity</label>
-  <input type="number" id="qty" value="1" min="1">
+<div id="total">Subtotal: тВ╣0
+GST: тВ╣0
+Total: тВ╣0</div>
 
-  <div class="total-box">
-    Subtotal: ₹<span id="subtotal">0</span><br>
-    GST: ₹<span id="gst">0</span><br>
-    <b>Total: ₹<span id="total">0</span></b>
-  </div>
+<button class="order" onclick="orderWhatsApp()">Order via WhatsApp</button>
+</section>
 
-  <button class="order-btn" onclick="orderNow()">Order via WhatsApp</button>
-</div>
+<section id="adminLogin">
+<h3>Admin Login</h3>
+<input type="email" id="adminEmail" placeholder="Email">
+<input type="password" id="adminPass" placeholder="Password">
+<button onclick="adminLogin()">Login</button>
+</section>
 
-<!-- ================= JS ================= -->
+<section id="adminPanel" style="display:none">
+<h3>Admin Panel</h3>
+
+<label>Category</label>
+<select id="adminCategory"><option value="">Select</option></select>
+
+<label>Type</label>
+<select id="adminType">
+  <option value="">Select</option>
+  <option value="TP">TP</option>
+  <option value="OP">OP</option>
+  <option value="Zebra">Zebra</option>
+</select>
+
+<label>Size</label>
+<select id="adminSize"><option value="">Select</option></select>
+
+<label>Price (тВ╣)</label>
+<input type="number" id="adminPrice">
+
+<label>Stock</label>
+<input type="number" id="adminStock">
+
+<button class="update" onclick="updateProduct()">Update</button>
+<button class="logout" onclick="logoutAdmin()">Logout</button>
+</section>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
 <script>
-/* PAGE LOAD */
-window.addEventListener("load", () => {
-  document.getElementById("loader").style.display = "none";
-});
+// ЁЯФС Firebase Config (Your API Key included)
+const firebaseConfig = {
+  apiKey: "AIzaSyAEiXc3TvBaYg7LZjqjjZSXhTFPzo4eQ9I",
+  authDomain: "jgd-quality.firebaseapp.com",
+  projectId: "jgd-quality",
+  storageBucket: "jgd-quality.appspot.com",
+  messagingSenderId: "545706431350",
+  appId: "1:545706431350:web:ee429e4f7aa2ab8b372057"
+};
 
-/* DEMO DATA (Firebase আসবে এখানে) */
-const products = [
-  {category:"GARDEN PIPE", type:"OP", size:"1/2", price:100},
-  {category:"GARDEN PIPE", type:"TP", size:"3/4", price:120},
-  {category:"WATER LEVEL PIPE", type:"OP", size:"1/2", price:80}
-];
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
 
-/* LOAD CATEGORY */
-function loadCategory(){
-  const cat = document.getElementById("category");
-  cat.innerHTML = '<option value="" disabled selected>Section</option>';
-  [...new Set(products.map(p=>p.category))].forEach(c=>{
-    cat.innerHTML += `<option>${c}</option>`;
+// GLOBAL
+let products = [];
+
+// Load products
+function loadProducts(){
+  db.collection("products").get().then(snapshot=>{
+    products=[];
+    snapshot.forEach(doc=>products.push({...doc.data(), id:doc.id}));
+    loadUserCategories();
+    loadAdminCategories();
   });
 }
-loadCategory();
 
-/* CATEGORY CHANGE */
-category.onchange = () => {
-  type.innerHTML='<option disabled selected>Type Section</option>';
-  size.innerHTML='<option disabled selected>Select Size</option>';
-  products.filter(p=>p.category===category.value)
-    .map(p=>p.type)
-    .filter((v,i,a)=>a.indexOf(v)===i)
-    .forEach(t=>{
-      type.innerHTML+=`<option>${t}</option>`;
-    });
-  animate("type");
+// User: Categories
+function loadUserCategories(){
+  let cats=[...new Set(products.map(p=>p.category))];
+  const catSelect = document.getElementById("category");
+  catSelect.innerHTML='<option value="">Select</option>';
+  cats.forEach(c=>catSelect.innerHTML+=`<option value="${c}">${c}</option>`);
+}
+
+// Admin: Categories
+function loadAdminCategories(){
+  let cats=[...new Set(products.map(p=>p.category))];
+  const catSelect = document.getElementById("adminCategory");
+  catSelect.innerHTML='<option value="">Select</option>';
+  cats.forEach(c=>catSelect.innerHTML+=`<option value="${c}">${c}</option>`);
+}
+
+// User dropdowns
+document.getElementById("category").onchange=()=>{
+  let sizes=products.filter(p=>p.category===category.value && p.type===type.value).map(p=>p.size);
+  let sizeSelect=document.getElementById("size");
+  sizeSelect.innerHTML='<option value="">Select</option>';
+  [...new Set(sizes)].forEach(s=>sizeSelect.innerHTML+=`<option value="${s}">${s}</option>`);
+  document.getElementById("price").value="";
 };
 
-/* TYPE CHANGE */
-type.onchange = () => {
-  size.innerHTML='<option disabled selected>Select Size</option>';
-  products.filter(p=>p.category===category.value && p.type===type.value)
-    .forEach(s=>{
-      size.innerHTML+=`<option>${s.size}</option>`;
-    });
-  animate("size");
+document.getElementById("type").onchange=()=>{
+  let sizes=products.filter(p=>p.category===category.value && p.type===type.value).map(p=>p.size);
+  let sizeSelect=document.getElementById("size");
+  sizeSelect.innerHTML='<option value="">Select</option>';
+  [...new Set(sizes)].forEach(s=>sizeSelect.innerHTML+=`<option value="${s}">${s}</option>`);
+  document.getElementById("price").value="";
 };
 
-/* SIZE CHANGE */
-size.onchange = () => {
-  const p = products.find(p=>p.category===category.value && p.type===type.value && p.size===size.value);
-  price.value = p.price;
-  calc();
-};
-
-/* CALCULATION */
-qty.oninput = calc;
-function calc(){
-  let sub = price.value * qty.value;
-  let gst = Math.round(sub * 0.18);
-  let total = sub + gst;
-  subtotal.innerText=sub;
-  gstSpan.innerText=gst;
-  totalSpan.innerText=total;
-  animatePrice("total");
+document.getElementById("size").onchange=()=>loadPrice();
+function loadPrice(){
+  let p=products.find(p=>p.category===category.value && p.size===size.value && p.type===type.value);
+  if(p) document.getElementById("price").value=p.price;
+  calculate();
 }
 
-/* ANIMATIONS */
-function animate(id){
-  const e=document.getElementById(id);
-  e.classList.remove("fade-in");
-  void e.offsetWidth;
-  e.classList.add("fade-in");
-}
-function animatePrice(id){
-  const e=document.getElementById(id);
-  e.classList.remove("price-animate");
-  void e.offsetWidth;
-  e.classList.add("price-animate");
+document.getElementById("qty").oninput=calculate;
+
+function calculate(){
+  let price=document.getElementById("price").value||0;
+  let qty=document.getElementById("qty").value||1;
+  let sub=price*qty;
+  let gst=sub*0.18;
+  let total=sub+gst;
+  document.getElementById("total").innerText=
+`Subtotal: тВ╣${sub}
+GST: тВ╣${gst.toFixed(2)}
+Total: тВ╣${total.toFixed(2)}`;
 }
 
-/* WHATSAPP */
-function orderNow(){
-  alert("WhatsApp order ready (next step)");
+// WhatsApp Order
+function orderWhatsApp(){
+  let price=document.getElementById("price").value;
+  if(!price){alert("Select product properly"); return;}
+  let qty=document.getElementById("qty").value||1;
+  let sub=price*qty;
+  let gst=sub*0.18;
+  let total=sub+gst;
+  let msg=`*New Order*
+Company: JGD QUALITY
+Category: ${category.value}
+Size: ${size.value}
+Type: ${type.value}
+Price: тВ╣${price}
+Quantity: ${qty}
+Subtotal: тВ╣${sub}
+GST: тВ╣${gst.toFixed(2)}
+Total: тВ╣${total.toFixed(2)}`;
+  window.open("https://wa.me/917003764905?text="+encodeURIComponent(msg),"_blank");
 }
 
-/* FIX ID */
-const gstSpan=document.getElementById("gst");
-const totalSpan=document.getElementById("total");
+// Admin Login
+function adminLogin(){
+  const email=document.getElementById("adminEmail").value;
+  const pass=document.getElementById("adminPass").value;
+  auth.signInWithEmailAndPassword(email,pass)
+  .then(()=>{
+    document.getElementById("adminLogin").style.display="none";
+    document.getElementById("adminPanel").style.display="block";
+    loadProducts();
+  })
+  .catch(e=>alert("Login Error тЭМ\n"+e.message));
+}
+
+// Admin Logout
+function logoutAdmin(){
+  auth.signOut().then(()=>{
+    document.getElementById("adminPanel").style.display="none";
+    document.getElementById("adminLogin").style.display="block";
+  });
+}
+
+// Admin dropdowns
+document.getElementById("adminCategory").onchange=updateAdminSizeOptions;
+document.getElementById("adminType").onchange=updateAdminSizeOptions;
+function updateAdminSizeOptions(){
+  let sizes=products.filter(p=>p.category===adminCategory.value && p.type===adminType.value).map(p=>p.size);
+  let sizeSelect=document.getElementById("adminSize");
+  sizeSelect.innerHTML='<option value="">Select</option>';
+  [...new Set(sizes)].forEach(s=>sizeSelect.innerHTML+=`<option value="${s}">${s}</option>`);
+  document.getElementById("adminPrice").value="";
+  document.getElementById("adminStock").value="";
+}
+
+// Admin: Load price/stock
+document.getElementById("adminSize").onchange=()=> {
+  let p=products.find(p=>p.category===adminCategory.value && p.type===adminType.value && p.size===adminSize.value);
+  if(p){
+    document.getElementById("adminPrice").value=p.price;
+    document.getElementById("adminStock").value=p.stock;
+  }
+}
+
+// Admin Update
+function updateProduct(){
+  let p=products.find(p=>p.category===adminCategory.value && p.type===adminType.value && p.size===adminSize.value);
+  if(!p){alert("Select valid product"); return;}
+  db.collection("products").doc(p.id).update({
+    price:Number(document.getElementById("adminPrice").value),
+    stock:Number(document.getElementById("adminStock").value)
+  }).then(()=>{alert("Updated тЬЕ"); loadProducts(); });
+}
+
+// INIT
+loadProducts();
 </script>
 
 </body>
