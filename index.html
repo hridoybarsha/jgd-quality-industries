@@ -41,15 +41,15 @@ button.logout{background:#dc3545;color:#fff;}
 <label>Size</label>
 <select id="size"><option value="">Select</option></select>
 
-<label>Price (тВ╣)</label>
+<label>Price ()</label>
 <input type="number" id="price" readonly>
 
 <label>Quantity</label>
 <input type="number" id="qty" value="1" min="1">
 
-<div id="total">Subtotal: тВ╣0
-GST: тВ╣0
-Total: тВ╣0</div>
+<div id="total">Subtotal: 0
+GST: 0
+Total: 0</div>
 
 <button class="order" onclick="orderWhatsApp()">Order via WhatsApp</button>
 </section>
@@ -78,7 +78,7 @@ Total: тВ╣0</div>
 <label>Size</label>
 <select id="adminSize"><option value="">Select</option></select>
 
-<label>Price (тВ╣)</label>
+<label>Price </label>
 <input type="number" id="adminPrice">
 
 <label>Stock</label>
@@ -170,9 +170,9 @@ function calculate(){
   let gst=sub*0.18;
   let total=sub+gst;
   document.getElementById("total").innerText=
-`Subtotal: тВ╣${sub}
-GST: тВ╣${gst.toFixed(2)}
-Total: тВ╣${total.toFixed(2)}`;
+`Subtotal: ${sub}
+GST: ${gst.toFixed(2)}
+Total: ${total.toFixed(2)}`;
 }
 
 // WhatsApp Order
@@ -188,11 +188,11 @@ Company: JGD QUALITY
 Category: ${category.value}
 Size: ${size.value}
 Type: ${type.value}
-Price: тВ╣${price}
+Price: ${price}
 Quantity: ${qty}
-Subtotal: тВ╣${sub}
-GST: тВ╣${gst.toFixed(2)}
-Total: тВ╣${total.toFixed(2)}`;
+Subtotal: ${sub}
+GST: ${gst.toFixed(2)}
+Total: ${total.toFixed(2)}`;
   window.open("https://wa.me/917003764905?text="+encodeURIComponent(msg),"_blank");
 }
 
@@ -206,7 +206,7 @@ function adminLogin(){
     document.getElementById("adminPanel").style.display="block";
     loadProducts();
   })
-  .catch(e=>alert("Login Error тЭМ\n"+e.message));
+  .catch(e=>alert("Login Error\n"+e.message));
 }
 
 // Admin Logout
@@ -245,7 +245,7 @@ function updateProduct(){
   db.collection("products").doc(p.id).update({
     price:Number(document.getElementById("adminPrice").value),
     stock:Number(document.getElementById("adminStock").value)
-  }).then(()=>{alert("Updated тЬЕ"); loadProducts(); });
+  }).then(()=>{alert("Updated"); loadProducts(); });
 }
 
 // INIT
@@ -254,3 +254,4 @@ loadProducts();
 
 </body>
 </html>
+
